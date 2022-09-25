@@ -1,0 +1,5 @@
+flutter_native_splash:
+  background_image: "assets/background-black.png"
+  info_plist_files:
+    - 'ios/Runner/Info-Debug.plist'
+    - 'ios/Runner/Info-Release.plist'
