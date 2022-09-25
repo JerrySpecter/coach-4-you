@@ -94,7 +94,6 @@ class Trainers extends StatelessWidget {
                               imageSize: 36,
                               headingMargin: 0,
                               showAvailable: false,
-                              id: trainer['id'],
                               useSpacerBottom: true,
                               onTap: () {
                                 Navigator.pushNamed(

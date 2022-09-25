@@ -546,13 +546,17 @@ class RootPageState extends State<RootPage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         menuBarIcon(context, RootScreens.home, setState,
-                            CupertinoIcons.home),
+                            CupertinoIcons.home, hideFloatingButtonOptions),
                         menuBarIcon(context, RootScreens.calendar, setState,
-                            CupertinoIcons.calendar),
-                        menuBarIcon(context, RootScreens.chat, setState,
-                            CupertinoIcons.chat_bubble_2),
+                            CupertinoIcons.calendar, hideFloatingButtonOptions),
+                        menuBarIcon(
+                            context,
+                            RootScreens.chat,
+                            setState,
+                            CupertinoIcons.chat_bubble_2,
+                            hideFloatingButtonOptions),
                         menuBarIcon(context, RootScreens.settings, setState,
-                            CupertinoIcons.settings),
+                            CupertinoIcons.settings, hideFloatingButtonOptions),
                       ],
                     ),
                   ),
@@ -625,7 +629,8 @@ fetchCalendarEvents(
   );
 }
 
-Widget menuBarIcon(BuildContext context, page, setState, icon) {
+Widget menuBarIcon(
+    BuildContext context, page, setState, icon, hideFloatingButtonOptions) {
   return Container(
     padding: const EdgeInsets.all(0),
     height: iconSize,
@@ -642,6 +647,7 @@ Widget menuBarIcon(BuildContext context, page, setState, icon) {
       onPressed: () {
         setState(() {
           context.read<HFGlobalState>().setRootScreenState(page);
+          hideFloatingButtonOptions();
         });
       },
       icon: Icon(

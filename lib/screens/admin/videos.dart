@@ -98,7 +98,6 @@ class _VideosState extends State<Videos> {
                               imageUrl: video['thumbnail'],
                               showAvailable: false,
                               headingMargin: 0,
-                              id: video['id'],
                               useSpacerBottom: true,
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,

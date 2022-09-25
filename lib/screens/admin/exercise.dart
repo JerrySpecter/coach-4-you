@@ -98,7 +98,6 @@ class _ExerciseState extends State<Exercise> {
                               showAvailable: false,
                               imageUrl: exercise['videoThumbnail'],
                               headingMargin: 0,
-                              id: exercise['id'],
                               tags: exercise['types'],
                               useSpacerBottom: true,
                               child: Column(
@@ -111,11 +110,13 @@ class _ExerciseState extends State<Exercise> {
                                 ],
                               ),
                               onTap: () {
-                                print('Open exercise');
                                 Navigator.pushNamed(
                                   context,
                                   adminExerciseSingle,
-                                  arguments: exerciseData(exercise),
+                                  arguments: {
+                                    ...exerciseData(exercise),
+                                    'note': ''
+                                  },
                                 );
                               },
                             );

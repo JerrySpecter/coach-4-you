@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:health_factory/constants/global_state.dart';
 import 'package:health_factory/widgets/hf_paragraph.dart';
+import 'package:provider/provider.dart';
 import '../../constants/colors.dart';
 import '../hf_heading.dart';
 
@@ -79,7 +81,9 @@ class HFEventTile extends StatelessWidget {
                   ),
                   Row(
                     children: [
-                      if (client.containsKey('name'))
+                      if (client.containsKey('name') &&
+                          context.read<HFGlobalState>().userAccessLevel ==
+                              accessLevels.trainer)
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -95,7 +99,9 @@ class HFEventTile extends StatelessWidget {
                             ),
                           ],
                         ),
-                      if (client.containsKey('name'))
+                      if (client.containsKey('name') &&
+                          context.read<HFGlobalState>().userAccessLevel ==
+                              accessLevels.trainer)
                         SizedBox(
                           width: 20,
                         ),

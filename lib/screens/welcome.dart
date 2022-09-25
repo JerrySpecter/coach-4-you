@@ -122,38 +122,42 @@ class _WelcomePageState extends State<WelcomePage> {
                     controller: _trainerLastNameController,
                     labelText: 'Last name',
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  HFInput(
-                    controller: _trainerBirthdayController,
-                    labelText: 'Birthday',
-                    hintText: '01 01 1900',
-                    showCursor: false,
-                    readOnly: true,
-                    onTap: () {
-                      return showSheet(
-                        context,
-                        child: SizedBox(
-                          height: 180,
-                          child: CupertinoDatePicker(
-                            initialDateTime: DateTime.now(),
-                            mode: CupertinoDatePickerMode.date,
-                            onDateTimeChanged: (dateTime) =>
-                                setState(() => this.dateTime = dateTime),
+                  if (context.read<HFGlobalState>().userAccessLevel ==
+                      accessLevels.trainer)
+                    const SizedBox(
+                      height: 20,
+                    ),
+                  if (context.read<HFGlobalState>().userAccessLevel ==
+                      accessLevels.trainer)
+                    HFInput(
+                      controller: _trainerBirthdayController,
+                      labelText: 'Birthday',
+                      hintText: '01 01 1900',
+                      showCursor: false,
+                      readOnly: true,
+                      onTap: () {
+                        return showSheet(
+                          context,
+                          child: SizedBox(
+                            height: 180,
+                            child: CupertinoDatePicker(
+                              initialDateTime: DateTime.now(),
+                              mode: CupertinoDatePickerMode.date,
+                              onDateTimeChanged: (dateTime) =>
+                                  setState(() => this.dateTime = dateTime),
+                            ),
                           ),
-                        ),
-                        onClicked: () {
-                          final value =
-                              DateFormat('dd. MM. yyyy.').format(dateTime);
+                          onClicked: () {
+                            final value =
+                                DateFormat('dd. MM. yyyy.').format(dateTime);
 
-                          _trainerBirthdayController.text = value;
+                            _trainerBirthdayController.text = value;
 
-                          Navigator.pop(context);
-                        },
-                      );
-                    },
-                  ),
+                            Navigator.pop(context);
+                          },
+                        );
+                      },
+                    ),
                   const SizedBox(
                     height: 20,
                   ),
@@ -179,130 +183,152 @@ class _WelcomePageState extends State<WelcomePage> {
                   const SizedBox(
                     height: 20,
                   ),
-                  HFHeading(
-                    text: 'Select your locations:',
-                    size: 3,
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  StreamBuilder(
-                    stream: FirebaseFirestore.instance
-                        .collection('locations')
-                        .snapshots(),
-                    builder: ((context, snapshot) {
-                      if (!snapshot.hasData) {
-                        return const Center(
-                          child: HFParagrpah(
-                            text: 'No locations.',
-                            size: 10,
-                            textAlign: TextAlign.center,
-                          ),
-                        );
-                      }
-
-                      var data = snapshot.data as QuerySnapshot;
-
-                      if (data.docs.isEmpty) {
-                        return const Center(
-                          child: HFParagrpah(
-                            text: 'No locations.',
-                            size: 10,
-                            textAlign: TextAlign.center,
-                          ),
-                        );
-                      }
-
-                      return MultiSelectChipField(
-                        chipColor: HFColors().primaryColor(),
-                        selectedChipColor: HFColors().greenColor(),
-                        decoration: BoxDecoration(),
-                        showHeader: false,
-                        scroll: false,
-                        items: [
-                          ...data.docs.map(
-                            (dynamic location) {
-                              return MultiSelectItem(
-                                  location['name'], location['name']);
-                            },
-                          ).toList()
-                        ],
-                        itemBuilder: (item, state) {
-                          // return your custom widget here
-
-                          return InkWell(
-                            splashColor: Colors.transparent,
-                            onTap: () {
-                              _selectedLocations.contains(item.label)
-                                  ? _selectedLocations.remove(item.label)
-                                  : _selectedLocations.add(item.label);
-
-                              setState(() {
-                                _selectedLocations = _selectedLocations;
-                              });
-                            },
-                            child: Container(
-                              padding: EdgeInsets.only(right: 10, bottom: 10),
-                              child: AnimatedContainer(
-                                duration: Duration(milliseconds: 100),
-                                curve: Curves.easeInOut,
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 6,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: _selectedLocations.contains(item.label)
-                                      ? HFColors().primaryColor()
-                                      : HFColors().secondaryColor(),
-                                  border: Border.all(
-                                    color: HFColors().primaryColor(),
-                                  ),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: HFParagrpah(
-                                  text: item.label,
-                                  size: 8,
-                                  color: _selectedLocations.contains(item.label)
-                                      ? HFColors().secondaryColor()
-                                      : HFColors().primaryColor(),
-                                ),
-                              ),
+                  if (context.read<HFGlobalState>().userAccessLevel ==
+                      accessLevels.trainer)
+                    HFHeading(
+                      text: 'Select your locations:',
+                      size: 3,
+                    ),
+                  if (context.read<HFGlobalState>().userAccessLevel ==
+                      accessLevels.trainer)
+                    const SizedBox(
+                      height: 10,
+                    ),
+                  if (context.read<HFGlobalState>().userAccessLevel ==
+                      accessLevels.trainer)
+                    StreamBuilder(
+                      stream: FirebaseFirestore.instance
+                          .collection('locations')
+                          .snapshots(),
+                      builder: ((context, snapshot) {
+                        if (!snapshot.hasData) {
+                          return const Center(
+                            child: HFParagrpah(
+                              text: 'No locations.',
+                              size: 10,
+                              textAlign: TextAlign.center,
                             ),
                           );
-                        },
-                      );
-                    }),
-                  ),
+                        }
+
+                        var data = snapshot.data as QuerySnapshot;
+
+                        if (data.docs.isEmpty) {
+                          return const Center(
+                            child: HFParagrpah(
+                              text: 'No locations.',
+                              size: 10,
+                              textAlign: TextAlign.center,
+                            ),
+                          );
+                        }
+
+                        return MultiSelectChipField(
+                          chipColor: HFColors().primaryColor(),
+                          selectedChipColor: HFColors().greenColor(),
+                          decoration: BoxDecoration(),
+                          showHeader: false,
+                          scroll: false,
+                          items: [
+                            ...data.docs.map(
+                              (dynamic location) {
+                                return MultiSelectItem(
+                                    location['name'], location['name']);
+                              },
+                            ).toList()
+                          ],
+                          itemBuilder: (item, state) {
+                            // return your custom widget here
+
+                            return InkWell(
+                              splashColor: Colors.transparent,
+                              onTap: () {
+                                _selectedLocations.contains(item.label)
+                                    ? _selectedLocations.remove(item.label)
+                                    : _selectedLocations.add(item.label);
+
+                                setState(() {
+                                  _selectedLocations = _selectedLocations;
+                                });
+                              },
+                              child: Container(
+                                padding: EdgeInsets.only(right: 10, bottom: 10),
+                                child: AnimatedContainer(
+                                  duration: Duration(milliseconds: 100),
+                                  curve: Curves.easeInOut,
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 6,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color:
+                                        _selectedLocations.contains(item.label)
+                                            ? HFColors().primaryColor()
+                                            : HFColors().secondaryColor(),
+                                    border: Border.all(
+                                      color: HFColors().primaryColor(),
+                                    ),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: HFParagrpah(
+                                    text: item.label,
+                                    size: 8,
+                                    color:
+                                        _selectedLocations.contains(item.label)
+                                            ? HFColors().secondaryColor()
+                                            : HFColors().primaryColor(),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      }),
+                    ),
                   const SizedBox(
                     height: 20,
                   ),
-                  HFHeading(
-                    text: 'Write about yourself:',
-                    size: 3,
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  HFInput(
-                    maxLines: 7,
-                    keyboardType: TextInputType.multiline,
-                    controller: _trainerIntroController,
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  HFHeading(
-                    text: 'Write about your education:',
-                    size: 3,
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  HFInput(
-                    maxLines: 7,
-                    keyboardType: TextInputType.multiline,
-                    controller: _trainerEducationController,
-                  ),
+                  if (context.read<HFGlobalState>().userAccessLevel ==
+                      accessLevels.trainer)
+                    HFHeading(
+                      text: 'Write about yourself:',
+                      size: 3,
+                    ),
+                  if (context.read<HFGlobalState>().userAccessLevel ==
+                      accessLevels.trainer)
+                    const SizedBox(
+                      height: 10,
+                    ),
+                  if (context.read<HFGlobalState>().userAccessLevel ==
+                      accessLevels.trainer)
+                    HFInput(
+                      maxLines: 7,
+                      keyboardType: TextInputType.multiline,
+                      controller: _trainerIntroController,
+                    ),
+                  if (context.read<HFGlobalState>().userAccessLevel ==
+                      accessLevels.trainer)
+                    const SizedBox(
+                      height: 20,
+                    ),
+                  if (context.read<HFGlobalState>().userAccessLevel ==
+                      accessLevels.trainer)
+                    HFHeading(
+                      text: 'Write about your education:',
+                      size: 3,
+                    ),
+                  if (context.read<HFGlobalState>().userAccessLevel ==
+                      accessLevels.trainer)
+                    const SizedBox(
+                      height: 10,
+                    ),
+                  if (context.read<HFGlobalState>().userAccessLevel ==
+                      accessLevels.trainer)
+                    HFInput(
+                      maxLines: 7,
+                      keyboardType: TextInputType.multiline,
+                      controller: _trainerEducationController,
+                    ),
                   const SizedBox(
                     height: 40,
                   ),
@@ -310,6 +336,9 @@ class _WelcomePageState extends State<WelcomePage> {
                     text: _startUpload ? 'Updating...' : 'Update profile',
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     onPressed: () async {
+                      var userType =
+                          context.read<HFGlobalState>().userAccessLevel;
+
                       if (_imageUrl != '') {
                         setState(() {
                           _startUpload = true;
@@ -381,49 +410,94 @@ class _WelcomePageState extends State<WelcomePage> {
                         }
                       }
 
-                      HFFirebaseFunctions()
-                          .getFirebaseAuthUser(context)
-                          .update({
-                        'birthday': '$dateTime',
-                        'firstName': _trainerFirstNameController.text,
-                        'lastName': _trainerLastNameController.text,
-                        'height': _trainerHeightController.text,
-                        'weight': _trainerWeightController.text,
-                        'intro': _trainerIntroController.text,
-                        'education': _trainerEducationController.text,
-                        'locations': _selectedLocations,
-                      }).then((res) {
-                        context
-                            .read<HFGlobalState>()
-                            .setUserBirthday('$dateTime');
-                        context
-                            .read<HFGlobalState>()
-                            .setUserName(_trainerFirstNameController.text);
-                        context
-                            .read<HFGlobalState>()
-                            .setUserLastName(_trainerLastNameController.text);
-                        context
-                            .read<HFGlobalState>()
-                            .setUserHeight(_trainerHeightController.text);
-                        context
-                            .read<HFGlobalState>()
-                            .setUserWeight(_trainerWeightController.text);
-                        context
-                            .read<HFGlobalState>()
-                            .setUserIntro(_trainerIntroController.text);
-                        context
-                            .read<HFGlobalState>()
-                            .setUserEducation(_trainerEducationController.text);
-                        context
-                            .read<HFGlobalState>()
-                            .setUserLocations(_selectedLocations);
-                      }).then((value) {
-                        closeWelcomeScreen(context);
-                        ScaffoldMessenger.of(context).showSnackBar(getSnackBar(
-                          text: 'Trainer information updated',
-                          color: HFColors().primaryColor(opacity: 1),
-                        ));
-                      }).catchError((error) => print('Add failed: $error'));
+                      if (userType == accessLevels.client) {
+                        HFFirebaseFunctions()
+                            .getFirebaseAuthUser(context)
+                            .update({
+                          'firstName': _trainerFirstNameController.text,
+                          'lastName': _trainerLastNameController.text,
+                          'name':
+                              '${_trainerFirstNameController.text} ${_trainerLastNameController.text}',
+                          'height': _trainerHeightController.text,
+                          'weight': _trainerWeightController.text,
+                        }).then((res) {
+                          context.read<HFGlobalState>().setUserFirstName(
+                              _trainerFirstNameController.text);
+                          context
+                              .read<HFGlobalState>()
+                              .setUserLastName(_trainerLastNameController.text);
+                          context.read<HFGlobalState>().setUserName(
+                              '${_trainerFirstNameController.text} ${_trainerLastNameController.text}');
+                          context
+                              .read<HFGlobalState>()
+                              .setUserHeight(_trainerHeightController.text);
+                          context
+                              .read<HFGlobalState>()
+                              .setUserWeight(_trainerWeightController.text);
+                        }).then((value) {
+                          FirebaseFirestore.instance
+                              .collection('trainers')
+                              .doc(context.read<HFGlobalState>().userTrainerId)
+                              .collection('clients')
+                              .doc(context.read<HFGlobalState>().userEmail)
+                              .update({
+                            'name':
+                                '${_trainerFirstNameController.text} ${_trainerLastNameController.text}',
+                            'imageUrl': context.read<HFGlobalState>().userImage
+                          });
+                        }).then((value) {
+                          closeWelcomeScreen(context);
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(getSnackBar(
+                            text: 'Information updated',
+                            color: HFColors().primaryColor(opacity: 1),
+                          ));
+                        }).catchError((error) => print('Add failed: $error'));
+                      } else {
+                        HFFirebaseFunctions()
+                            .getFirebaseAuthUser(context)
+                            .update({
+                          'birthday': '$dateTime',
+                          'firstName': _trainerFirstNameController.text,
+                          'lastName': _trainerLastNameController.text,
+                          'height': _trainerHeightController.text,
+                          'weight': _trainerWeightController.text,
+                          'intro': _trainerIntroController.text,
+                          'education': _trainerEducationController.text,
+                          'locations': _selectedLocations,
+                        }).then((res) {
+                          context
+                              .read<HFGlobalState>()
+                              .setUserBirthday('$dateTime');
+                          context
+                              .read<HFGlobalState>()
+                              .setUserName(_trainerFirstNameController.text);
+                          context
+                              .read<HFGlobalState>()
+                              .setUserLastName(_trainerLastNameController.text);
+                          context
+                              .read<HFGlobalState>()
+                              .setUserHeight(_trainerHeightController.text);
+                          context
+                              .read<HFGlobalState>()
+                              .setUserWeight(_trainerWeightController.text);
+                          context
+                              .read<HFGlobalState>()
+                              .setUserIntro(_trainerIntroController.text);
+                          context.read<HFGlobalState>().setUserEducation(
+                              _trainerEducationController.text);
+                          context
+                              .read<HFGlobalState>()
+                              .setUserLocations(_selectedLocations);
+                        }).then((value) {
+                          closeWelcomeScreen(context);
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(getSnackBar(
+                            text: 'Information updated',
+                            color: HFColors().primaryColor(opacity: 1),
+                          ));
+                        }).catchError((error) => print('Add failed: $error'));
+                      }
                     },
                   ),
                   HFTextButton(

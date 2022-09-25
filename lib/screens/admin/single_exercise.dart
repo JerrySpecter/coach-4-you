@@ -30,6 +30,7 @@ class SingleExercise extends StatefulWidget {
     required this.thumbnail,
     required this.types,
     required this.repetitionType,
+    this.note = '',
   }) : super(key: key);
 
   final String id;
@@ -40,6 +41,7 @@ class SingleExercise extends StatefulWidget {
   final String video;
   final List<dynamic> types;
   final String repetitionType;
+  final String note;
 
   @override
   State<SingleExercise> createState() => _SingleExerciseState();
@@ -171,11 +173,6 @@ class _SingleExerciseState extends State<SingleExercise> {
                 const SizedBox(
                   height: 20,
                 ),
-                if (isEdited)
-                  HFHeading(
-                    text: 'Edited',
-                    size: 7,
-                  ),
                 HFHeading(
                   text: _nameState,
                   size: 7,
@@ -227,8 +224,35 @@ class _SingleExerciseState extends State<SingleExercise> {
                     ),
                   ),
                 ),
+                if (widget.note != '')
+                  const SizedBox(
+                    height: 30,
+                  ),
+                if (widget.note != '')
+                  const HFHeading(
+                    text: 'Coach notes:',
+                    size: 6,
+                  ),
+                if (widget.note != '')
+                  const SizedBox(
+                    height: 8,
+                  ),
+                if (widget.note != '')
+                  HFParagrpah(
+                    text: widget.note,
+                    size: 9,
+                    lineHeight: 1.4,
+                    maxLines: 999,
+                  ),
                 const SizedBox(
                   height: 30,
+                ),
+                const HFHeading(
+                  text: 'Exercise description:',
+                  size: 6,
+                ),
+                const SizedBox(
+                  height: 8,
                 ),
                 HFParagrpah(
                   text: _descriptionState,

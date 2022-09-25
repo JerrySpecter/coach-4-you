@@ -65,9 +65,13 @@ class _AddTrainingState extends State<AddTraining> {
   final TextEditingController _exerciseSeriesNumberController =
       TextEditingController();
   String _exerciseSearchText = '';
+  String _exerciseDescription = '';
+  String _exerciseVideo = '';
+  String _exerciseThumbnail = '';
   String _exerciseSelected = '';
   String _exerciseIdSelected = '';
   String _exerciseRepetitionType = '';
+  List _exerciseTypes = [];
   late Stream _exerciseStream;
 
   // Initial state
@@ -173,7 +177,7 @@ class _AddTrainingState extends State<AddTraining> {
                                         child: Theme(
                                           data: ThemeData(
                                               canvasColor: Colors.transparent),
-                                          child: ReorderableListView(
+                                          child: ListView(
                                             padding: const EdgeInsets.all(0),
                                             shrinkWrap: true,
                                             children: <Widget>[
@@ -223,7 +227,8 @@ class _AddTrainingState extends State<AddTraining> {
                                                           _selectedExercises[
                                                               index]['series']),
                                                       type: _selectedExercises[
-                                                          index]['type'],
+                                                              index]
+                                                          ['repetitionType'],
                                                       note: _selectedExercises[
                                                           index]['note'],
                                                       useImage: false,
@@ -242,30 +247,6 @@ class _AddTrainingState extends State<AddTraining> {
                                                   textAlign: TextAlign.center,
                                                 )
                                             ],
-                                            onReorderStart: (index) {
-                                              setState(() {
-                                                _exerciseReorderStarted = true;
-                                                _selectedReorderItem = index;
-                                              });
-                                            },
-                                            onReorderEnd: (index) {
-                                              setState(() {
-                                                _exerciseReorderStarted = false;
-                                                _selectedReorderItem = -1;
-                                              });
-                                            },
-                                            onReorder:
-                                                (int oldIndex, int newIndex) {
-                                              setState(() {
-                                                if (oldIndex < newIndex) {
-                                                  newIndex -= 1;
-                                                }
-                                                final item = _selectedExercises
-                                                    .removeAt(oldIndex);
-                                                _selectedExercises.insert(
-                                                    newIndex, item);
-                                              });
-                                            },
                                           ),
                                         ),
                                       ),
@@ -553,7 +534,16 @@ class _AddTrainingState extends State<AddTraining> {
                                             ],
                                           ),
                                           onTap: () {
+                                            print(exercise);
                                             setState(() {
+                                              _exerciseTypes =
+                                                  exercise['types'];
+                                              _exerciseDescription =
+                                                  exercise['description'];
+                                              _exerciseVideo =
+                                                  exercise['video'];
+                                              _exerciseThumbnail =
+                                                  exercise['videoThumbnail'];
                                               _exerciseSelected =
                                                   exercise['name'];
                                               _exerciseIdSelected =
@@ -649,16 +639,22 @@ class _AddTrainingState extends State<AddTraining> {
                           onPressed: () {
                             setState(() {
                               print(_selectedExercises);
+                              FocusScope.of(context).requestFocus(FocusNode());
+
                               var newId = const Uuid().v4();
                               _selectedExercises.add({
                                 'id': newId,
                                 'name': _exerciseSelected,
                                 'exerciseId': _exerciseIdSelected,
+                                'description': _exerciseDescription,
+                                'video': _exerciseVideo,
+                                'videoThumbnail': _exerciseThumbnail,
                                 'amount': _exerciseTypeNumberController.text,
                                 'repetitions':
                                     _exerciseRepsNumberController.text,
                                 'series': _exerciseRepsNumberController.text,
-                                'type': _exerciseRepetitionType,
+                                'repetitionType': _exerciseRepetitionType,
+                                'types': _exerciseTypes,
                                 'note': _exerciseNoteController.text
                               });
 
@@ -685,12 +681,16 @@ class _AddTrainingState extends State<AddTraining> {
   }
 
   closePullUp() {
+    _exerciseDescription = '';
+    _exerciseVideo = '';
+    _exerciseThumbnail = '';
     _exerciseSelected = '';
     _exerciseIdSelected = '';
     _exerciseTypeNumberController.text = '';
     _exerciseRepsNumberController.text = '';
     _exerciseSeriesNumberController.text = '';
     _exerciseRepetitionType = '';
+    _exerciseTypes = [];
     _exerciseNoteController.text = '';
     _pullUp = false;
   }

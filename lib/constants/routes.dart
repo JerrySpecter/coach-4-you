@@ -17,6 +17,7 @@ const String clientsRoute = '/clients';
 const String addClientsRoute = '/add-clients';
 const String singleClientsRoute = '/single-clients';
 const String trainerProfileRoute = '/trainer-profile';
+const String clientProfileRoute = '/client-profile';
 const String trainerProfileLoggedInRoute = '/trainer-profile-logged-in';
 const String requestsRoute = '/requests';
 const String singleRequestRoute = '/single-request';

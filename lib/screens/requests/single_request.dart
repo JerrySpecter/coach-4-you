@@ -17,10 +17,12 @@ class SingleRequest extends StatelessWidget {
     required this.name,
     required this.email,
     required this.content,
+    this.dateCreated = '',
   }) : super(key: key);
 
   final String name;
   final String content;
+  final String dateCreated;
   final String email;
 
   @override
@@ -63,20 +65,86 @@ class SingleRequest extends StatelessWidget {
             const SizedBox(
               height: 20,
             ),
-            const HFParagrpah(
-              text: 'Email address:',
-              size: 7,
+            SizedBox(
+              height: 15,
             ),
-            HFHeading(
-              text: email,
-              size: 6,
+            Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: HFColors().primaryColor(),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Icon(
+                    CupertinoIcons.mail,
+                    color: HFColors().secondaryColor(),
+                  ),
+                ),
+                SizedBox(
+                  width: 20,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    HFHeading(
+                      text: 'Email:',
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    HFParagrpah(
+                      size: 8,
+                      text: email,
+                      color: HFColors().whiteColor(opacity: 0.8),
+                    )
+                  ],
+                )
+              ],
             ),
             const SizedBox(
               height: 20,
             ),
-            const HFParagrpah(
+            Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: HFColors().primaryColor(),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Icon(
+                    CupertinoIcons.calendar,
+                    color: HFColors().secondaryColor(),
+                  ),
+                ),
+                SizedBox(
+                  width: 20,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    HFHeading(
+                      text: 'Date created',
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    HFParagrpah(
+                      size: 8,
+                      text: dateCreated,
+                      color: HFColors().whiteColor(opacity: 0.8),
+                    )
+                  ],
+                )
+              ],
+            ),
+            const SizedBox(
+              height: 30,
+            ),
+            const HFHeading(
               text: 'Message:',
-              size: 7,
+              size: 6,
             ),
             const SizedBox(
               height: 10,
@@ -94,24 +162,29 @@ class SingleRequest extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               onPressed: () {
                 print('Accept request');
-                FirebaseFirestore.instance
-                    .collection('trainers')
-                    .doc(context.read<HFGlobalState>().userId)
+                HFFirebaseFunctions()
+                    .getFirebaseAuthUser(context)
                     .collection('clients')
-                    .doc()
+                    .doc(email)
                     .set({
                   'name': name,
                   'email': email,
-                }).then((value) => {
-                          ScaffoldMessenger.of(context)
-                              .showSnackBar(getSnackBar(
-                            text: '$name has been added to clients!',
-                            color: HFColors().primaryColor(opacity: 1),
-                          ))
+                  'imageUrl': '',
+                  'accountReady': false,
+                }).then((value) {
+                  ScaffoldMessenger.of(context).showSnackBar(getSnackBar(
+                    text: '$name added to clients!',
+                    color: HFColors().primaryColor(opacity: 1),
+                  ));
 
-                          // TODO: go back
-                          // TODO: remove request after accepting
-                        });
+                  HFFirebaseFunctions()
+                      .getFirebaseAuthUser(context)
+                      .collection('requests')
+                      .doc(email)
+                      .delete();
+
+                  Navigator.pop(context);
+                });
               },
             )
           ],

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:email_validator/email_validator.dart';
 import 'package:health_factory/widgets/hf_snackbar.dart';
 import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -49,6 +50,7 @@ class _TrainerProfileState extends State<TrainerProfile> {
   final TextEditingController emailAddressController = TextEditingController();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController contentController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
   bool pullUpOpen = false;
   bool isLoading = false;
   double topOffset = 60;
@@ -357,7 +359,7 @@ class _TrainerProfileState extends State<TrainerProfile> {
             left: 0,
             right: 0,
             child: SizedBox(
-              height: MediaQuery.of(context).size.height * 0.6,
+              height: MediaQuery.of(context).size.height * 0.65,
               child: SnappingSheet(
                 onSnapCompleted: (positionData, snappingPosition) {
                   if (positionData.relativeToSnappingPositions == 0.0) {
@@ -398,114 +400,156 @@ class _TrainerProfileState extends State<TrainerProfile> {
                     ),
                     width: MediaQuery.of(context).size.width,
                     child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          const HFHeading(
-                            text: 'Send a request to trainer.',
-                            size: 7,
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          HFInput(
-                            hintText: 'Full name',
-                            controller: nameController,
-                            keyboardType: TextInputType.text,
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          const HFParagrpah(
-                            text: 'Enter your email address.',
-                            size: 7,
-                          ),
-                          HFInput(
-                            hintText: 'Email address',
-                            controller: emailAddressController,
-                            keyboardType: TextInputType.emailAddress,
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          const HFParagrpah(
-                            text: 'Compose a message for your trainer.',
-                            size: 7,
-                          ),
-                          const SizedBox(
-                            height: 6,
-                          ),
-                          TextFormField(
-                            toolbarOptions: const ToolbarOptions(
-                              copy: true,
-                              cut: true,
-                              paste: true,
-                              selectAll: true,
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            const HFHeading(
+                              text: 'Send a request to trainer.',
+                              size: 7,
                             ),
-                            maxLines: 4,
-                            keyboardType: TextInputType.multiline,
-                            controller: contentController,
-                          ),
-                          const SizedBox(
-                            height: 30,
-                          ),
-                          HFButton(
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            text: isLoading ? 'Loading...' : 'Apply',
-                            onPressed: () {
-                              FocusManager.instance.primaryFocus?.unfocus();
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            HFInput(
+                              hintText: 'Full name',
+                              controller: nameController,
+                              keyboardType: TextInputType.text,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your name.';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            const HFParagrpah(
+                              text: 'Enter your email address.',
+                              size: 7,
+                            ),
+                            HFInput(
+                              hintText: 'Email address',
+                              controller: emailAddressController,
+                              keyboardType: TextInputType.emailAddress,
+                              textCapitalization: TextCapitalization.none,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter email.';
+                                }
 
-                              FirebaseFirestore.instance
-                                  .collection('trainers')
-                                  .doc(widget.id)
-                                  .collection('requests')
-                                  .doc(emailAddressController.text)
-                                  .set({
-                                'name': nameController.text,
-                                'email': emailAddressController.text,
-                                'content': contentController.text,
-                              }).then((value) {
-                                setState(() {
-                                  isLoading = true;
-                                });
+                                if (!EmailValidator.validate(value)) {
+                                  return 'Please enter valid email address.';
+                                }
 
-                                http
-                                    .post(
-                                  Uri.parse(
-                                      'https://hf.specter.design/wp-json/hfapp/v1/send-request-email'),
-                                  headers: <String, String>{
-                                    'Content-Type':
-                                        'application/json; charset=UTF-8',
-                                  },
-                                  body: jsonEncode(<String, String>{
-                                    'trainerName': widget.name,
-                                    'trainerEmail': widget.email,
-                                    'clientEmail': emailAddressController.text,
-                                    'clientName': nameController.text,
-                                    'clientContent': contentController.text,
-                                  }),
-                                )
-                                    .then((value) {
-                                  snappingSheetController.snapToPosition(
-                                    const SnappingPosition.factor(
-                                        positionFactor: 0),
-                                  );
+                                return null;
+                              },
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            const HFParagrpah(
+                              text: 'Compose a message for your trainer.',
+                              size: 7,
+                            ),
+                            const SizedBox(
+                              height: 6,
+                            ),
+                            TextFormField(
+                              toolbarOptions: const ToolbarOptions(
+                                copy: true,
+                                cut: true,
+                                paste: true,
+                                selectAll: true,
+                              ),
+                              maxLines: 4,
+                              keyboardType: TextInputType.multiline,
+                              controller: contentController,
+                              style: TextStyle(color: HFColors().whiteColor()),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter a message.';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(
+                              height: 30,
+                            ),
+                            HFButton(
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              text: isLoading ? 'Loading...' : 'Apply',
+                              onPressed: () {
+                                FocusManager.instance.primaryFocus?.unfocus();
 
+                                if (_formKey.currentState!.validate()) {
                                   setState(() {
-                                    pullUpOpen = false;
-                                    isLoading = false;
+                                    isLoading = true;
                                   });
 
+                                  FirebaseFirestore.instance
+                                      .collection('trainers')
+                                      .doc(widget.id)
+                                      .collection('requests')
+                                      .doc(emailAddressController.text)
+                                      .set({
+                                    'name': nameController.text,
+                                    'email': emailAddressController.text,
+                                    'dateCreated': DateTime.now(),
+                                    'content': contentController.text,
+                                  }).then((value) {
+                                    http
+                                        .post(
+                                      Uri.parse(
+                                          'https://hf.specter.design/wp-json/hfapp/v1/send-request-email'),
+                                      headers: <String, String>{
+                                        'Content-Type':
+                                            'application/json; charset=UTF-8',
+                                      },
+                                      body: jsonEncode(<String, String>{
+                                        'trainerName': widget.name,
+                                        'trainerEmail': widget.email,
+                                        'clientEmail':
+                                            emailAddressController.text,
+                                        'clientName': nameController.text,
+                                        'clientContent': contentController.text,
+                                      }),
+                                    )
+                                        .then((value) {
+                                      snappingSheetController.snapToPosition(
+                                        const SnappingPosition.factor(
+                                            positionFactor: 0),
+                                      );
+
+                                      setState(() {
+                                        pullUpOpen = false;
+                                        isLoading = false;
+                                      });
+
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(getSnackBar(
+                                        text: 'Request has been sent',
+                                        color:
+                                            HFColors().primaryColor(opacity: 1),
+                                      ));
+                                    }).catchError((error) => print(error));
+                                  });
+                                } else {
                                   ScaffoldMessenger.of(context)
                                       .showSnackBar(getSnackBar(
-                                    text: 'Request has been sent',
-                                    color: HFColors().primaryColor(opacity: 1),
+                                    text: 'Fill in required fields',
+                                    color: HFColors().redColor(opacity: 1),
                                   ));
-                                }).catchError((error) => print(error));
-                              });
-                            },
-                          )
-                        ],
+                                }
+                              },
+                            ),
+                            const SizedBox(
+                              height: 40,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),

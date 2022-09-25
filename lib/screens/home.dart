@@ -34,25 +34,42 @@ class Home extends StatelessWidget {
                 children: [
                   InkWell(
                     onTap: () {
-                      Navigator.pushNamed(context, trainerProfileLoggedInRoute,
-                          arguments: {
-                            'email': context.read<HFGlobalState>().userEmail,
-                            'imageUrl': context.read<HFGlobalState>().userImage,
-                            'name': context.read<HFGlobalState>().userName,
-                            'id': context.read<HFGlobalState>().userId,
-                            'locations':
-                                context.read<HFGlobalState>().userLocations,
-                            'birthday':
-                                context.read<HFGlobalState>().userBirthday,
-                            'intro': context.read<HFGlobalState>().userIntro,
-                            'available':
-                                context.read<HFGlobalState>().userAvailable,
-                            'education':
-                                context.read<HFGlobalState>().userEducation,
-                            'profileBackgroundImageUrl': context
-                                .read<HFGlobalState>()
-                                .userBackgroundImage,
-                          });
+                      if (context.read<HFGlobalState>().userAccessLevel ==
+                          accessLevels.client) {
+                        Navigator
+                            .pushNamed(context, clientProfileRoute, arguments: {
+                          'email': context.read<HFGlobalState>().userEmail,
+                          'imageUrl': context.read<HFGlobalState>().userImage,
+                          'name': context.read<HFGlobalState>().userName,
+                          'id': context.read<HFGlobalState>().userId,
+                          'height': context.read<HFGlobalState>().userHeight,
+                          'weight': context.read<HFGlobalState>().userWeight,
+                          'profileBackgroundImageUrl':
+                              context.read<HFGlobalState>().userBackgroundImage,
+                        });
+                      } else {
+                        Navigator.pushNamed(
+                            context, trainerProfileLoggedInRoute,
+                            arguments: {
+                              'email': context.read<HFGlobalState>().userEmail,
+                              'imageUrl':
+                                  context.read<HFGlobalState>().userImage,
+                              'name': context.read<HFGlobalState>().userName,
+                              'id': context.read<HFGlobalState>().userId,
+                              'locations':
+                                  context.read<HFGlobalState>().userLocations,
+                              'birthday':
+                                  context.read<HFGlobalState>().userBirthday,
+                              'intro': context.read<HFGlobalState>().userIntro,
+                              'available':
+                                  context.read<HFGlobalState>().userAvailable,
+                              'education':
+                                  context.read<HFGlobalState>().userEducation,
+                              'profileBackgroundImageUrl': context
+                                  .read<HFGlobalState>()
+                                  .userBackgroundImage,
+                            });
+                      }
                     },
                     child: Container(
                       height: 50,

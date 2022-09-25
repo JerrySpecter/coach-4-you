@@ -18,7 +18,7 @@ Map<String, dynamic> trainerProfileData(data) {
     'email': data['email'],
     'imageUrl': data['imageUrl'],
     'profileBackgroundImageUrl': data['profileBackgroundImageUrl'],
-    'id': data['id'],
+    'id': data['id'].replaceAll(' ', ''),
     'intro': data['intro'],
     'available': data['available'],
     'education': data['education'],

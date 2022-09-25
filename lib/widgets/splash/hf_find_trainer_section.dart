@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:health_factory/constants/colors.dart';
 import 'package:health_factory/widgets/hf_heading.dart';
+import 'package:health_factory/widgets/hf_tag.dart';
 import 'package:provider/provider.dart';
 
 import '../../constants/firebase_functions.dart';
@@ -24,20 +25,11 @@ class FindTrainerSection extends StatefulWidget {
 class _FindTrainerSectionState extends State<FindTrainerSection> {
   final TextEditingController _searchFieldController = TextEditingController();
   String searchText = '';
-  Stream stream = FirebaseFirestore.instance
-      .collection('trainers')
-      .orderBy("firstName", descending: false)
-      .snapshots();
+  String selectedLocations = '';
+  bool showLocationsFilter = false;
 
   @override
   void initState() {
-    stream = FirebaseFirestore.instance
-        .collection('trainers')
-        .where('firstName', isGreaterThanOrEqualTo: searchText)
-        .where('firstName', isLessThan: '${searchText}z')
-        .orderBy("firstName", descending: false)
-        .snapshots();
-
     super.initState();
   }
 
@@ -71,12 +63,6 @@ class _FindTrainerSectionState extends State<FindTrainerSection> {
 
                     setState(() {
                       searchText = '';
-                      stream = FirebaseFirestore.instance
-                          .collection('trainers')
-                          .where('name', isGreaterThanOrEqualTo: searchText)
-                          .where('name', isLessThan: '${searchText}z')
-                          .orderBy("name", descending: false)
-                          .snapshots();
                     });
 
                     _searchFieldController.clear();
@@ -88,27 +74,150 @@ class _FindTrainerSectionState extends State<FindTrainerSection> {
                 )
               ],
             ),
-            HFInput(
-              controller: _searchFieldController,
-              onChanged: (value) {
-                setState(() {
-                  searchText = value;
-                  stream = FirebaseFirestore.instance
-                      .collection('trainers')
-                      .where('name', isGreaterThanOrEqualTo: searchText)
-                      .where('name', isLessThan: '${searchText}z')
-                      .orderBy("name", descending: false)
-                      .snapshots();
-                });
-              },
-              hintText: 'Search',
-              keyboardType: TextInputType.text,
-              verticalContentPadding: 12,
+            Flex(
+              direction: Axis.horizontal,
+              children: [
+                Expanded(
+                  flex: 6,
+                  child: HFInput(
+                    controller: _searchFieldController,
+                    onChanged: (value) {
+                      setState(() {
+                        searchText = value;
+                      });
+                    },
+                    hintText: 'Search',
+                    keyboardType: TextInputType.text,
+                    verticalContentPadding: 12,
+                  ),
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: HFColors().primaryColor(),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: IconButton(
+                      onPressed: (() {
+                        setState(() {
+                          showLocationsFilter = !showLocationsFilter;
+                          selectedLocations = '';
+                        });
+                      }),
+                      icon: Icon(showLocationsFilter
+                          ? CupertinoIcons.multiply
+                          : CupertinoIcons.map_pin_ellipse),
+                    ),
+                  ),
+                )
+              ],
             ),
+            if (showLocationsFilter) SizedBox(height: 10),
+            if (showLocationsFilter)
+              StreamBuilder<Object>(
+                stream: FirebaseFirestore.instance
+                    .collection('locations')
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return Center(
+                        child: HFParagrpah(
+                      text: 'No locations',
+                    ));
+                  }
+
+                  var data = snapshot.data as QuerySnapshot;
+
+                  if (data.docs.isEmpty) {
+                    return const Center(
+                      child: HFParagrpah(
+                        text: 'No Locations.',
+                        size: 10,
+                        textAlign: TextAlign.center,
+                      ),
+                    );
+                  }
+
+                  return SizedBox(
+                    width: MediaQuery.of(context).size.width - 32,
+                    height: 40,
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: [
+                        ...data.docs.map(
+                          (location) {
+                            return Row(
+                              children: [
+                                Center(
+                                  child: InkWell(
+                                    splashColor: Colors.transparent,
+                                    onTap: () {
+                                      print('tap');
+                                      setState(() {
+                                        if (selectedLocations ==
+                                            location['name']) {
+                                          selectedLocations = '';
+                                        } else {
+                                          selectedLocations = location['name'];
+                                        }
+                                      });
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.only(
+                                          right: 10, bottom: 10),
+                                      child: AnimatedContainer(
+                                        duration: Duration(milliseconds: 100),
+                                        curve: Curves.easeInOut,
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 12,
+                                          vertical: 6,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: selectedLocations ==
+                                                  location['name']
+                                              ? HFColors().primaryColor()
+                                              : HFColors()
+                                                  .secondaryLightColor(),
+                                          border: Border.all(
+                                            color: HFColors().primaryColor(),
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                        child: HFParagrpah(
+                                          text: location['name'],
+                                          size: 8,
+                                          color: selectedLocations ==
+                                                  location['name']
+                                              ? HFColors().secondaryLightColor()
+                                              : HFColors().primaryColor(),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            );
+                          },
+                        )
+                      ],
+                    ),
+                  );
+                },
+              ),
             SizedBox(
               height: MediaQuery.of(context).size.height - 310,
               child: StreamBuilder(
-                stream: stream,
+                stream: FirebaseFirestore.instance
+                    .collection('trainers')
+                    .where('firstName', isGreaterThanOrEqualTo: searchText)
+                    .where('firstName', isLessThan: '${searchText}z')
+                    .orderBy("firstName", descending: false)
+                    .snapshots(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return const Center(
@@ -138,14 +247,24 @@ class _FindTrainerSectionState extends State<FindTrainerSection> {
                         (trainer) {
                           List<dynamic> locations = trainer['locations'];
 
+                          if (trainer['newAccount']) {
+                            return SizedBox(height: 0);
+                          }
+
+                          if (selectedLocations != '' &&
+                              !locations.contains(selectedLocations)) {
+                            return SizedBox(height: 0);
+                          }
+
                           return HFListViewTile(
                             name:
                                 "${trainer['firstName']} ${trainer['lastName']}",
                             email: trainer['email'],
                             imageUrl: trainer['imageUrl'],
                             available: trainer['available'],
-                            id: trainer['id'],
                             onTap: () {
+                              print('tap "${trainer['id']}"');
+
                               Navigator.pushNamed(
                                 context,
                                 trainerProfileRoute,

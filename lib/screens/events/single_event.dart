@@ -1,12 +1,17 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:health_factory/constants/routes.dart';
+import 'package:health_factory/utils/helpers.dart';
 import 'package:health_factory/widgets/hf_heading.dart';
 import 'package:health_factory/widgets/hf_paragraph.dart';
 import 'package:health_factory/widgets/hf_snackbar.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import '../../constants/colors.dart';
 import '../../constants/firebase_functions.dart';
+import '../../constants/global_state.dart';
 import '../../widgets/hf_training_list_view_tile.dart';
 
 class EventScreen extends StatelessWidget {
@@ -41,69 +46,92 @@ class EventScreen extends StatelessWidget {
         foregroundColor: HFColors().primaryColor(),
         shadowColor: Colors.transparent,
         actions: [
-          IconButton(
-            onPressed: () {
-              HFFirebaseFunctions()
-                  .getFirebaseAuthUser(context)
-                  .collection('days')
-                  .doc('$date')
-                  .collection('events')
-                  .doc(id)
-                  .delete()
-                  .then((value) {
-                HFFirebaseFunctions().updateUserChangedDate(context);
+          if (context.read<HFGlobalState>().userAccessLevel ==
+              accessLevels.trainer)
+            IconButton(
+              onPressed: () {
+                HFFirebaseFunctions()
+                    .getFirebaseAuthUser(context)
+                    .collection('days')
+                    .doc('$date')
+                    .collection('events')
+                    .doc(id)
+                    .delete()
+                    .then((value) {
+                  HFFirebaseFunctions().updateUserChangedDate(context);
 
-                ScaffoldMessenger.of(context).showSnackBar(getSnackBar(
-                  text: 'Training removed!',
-                  color: HFColors().primaryColor(opacity: 1),
-                ));
+                  FirebaseFirestore.instance
+                      .collection('clients')
+                      .doc(client['id'])
+                      .collection('days')
+                      .doc('$date')
+                      .collection('events')
+                      .doc(id)
+                      .delete()
+                      .then((value) {
+                    FirebaseFirestore.instance
+                        .collection('clients')
+                        .doc(client['id'])
+                        .update({
+                      'changed': '${DateTime.now()}',
+                    });
+                  }).then((value) {
+                    ScaffoldMessenger.of(context).showSnackBar(getSnackBar(
+                      text: 'Training removed!',
+                      color: HFColors().primaryColor(opacity: 1),
+                    ));
 
-                Navigator.pop(context);
-              });
-            },
-            icon: Icon(
-              CupertinoIcons.trash,
-              color: HFColors().redColor(),
+                    Navigator.pop(context);
+                  });
+                });
+              },
+              icon: Icon(
+                CupertinoIcons.trash,
+                color: HFColors().redColor(),
+              ),
             ),
-          ),
-          IconButton(
-            onPressed: () {
-              print('duplicate');
-              // Navigator.pushNamed(
-              //   context,
-              //   editTrainingRoute,
-              //   arguments: {
-              //     'parentContext': context,
-              //     'id': widget.id,
-              //     'name': _nameState,
-              //     'note': _noteState,
-              //     'exercises': _exercisesState,
-              //     'isEdit': false,
-              //     'isDuplicate': true
-              //   },
-              // );
-            },
-            icon: const Icon(CupertinoIcons.doc_on_clipboard),
-          ),
-          IconButton(
-            onPressed: () {
-              print('edit');
-              // Navigator.pushNamed(
-              //   context,
-              //   editTrainingRoute,
-              //   arguments: {
-              //     'parentContext': context,
-              //     'id': widget.id,
-              //     'name': _nameState,
-              //     'note': _noteState,
-              //     'exercises': _exercisesState,
-              //     'isEdit': true,
-              //     'isDuplicate': false
-              //   },
-              // );
-            },
-            icon: const Icon(CupertinoIcons.pen),
-          )
+          if (context.read<HFGlobalState>().userAccessLevel ==
+              accessLevels.trainer)
+            IconButton(
+              onPressed: () {
+                print('duplicate');
+                // Navigator.pushNamed(
+                //   context,
+                //   editTrainingRoute,
+                //   arguments: {
+                //     'parentContext': context,
+                //     'id': widget.id,
+                //     'name': _nameState,
+                //     'note': _noteState,
+                //     'exercises': _exercisesState,
+                //     'isEdit': false,
+                //     'isDuplicate': true
+                //   },
+                // );
+              },
+              icon: const Icon(CupertinoIcons.doc_on_clipboard),
+            ),
+          if (context.read<HFGlobalState>().userAccessLevel ==
+              accessLevels.trainer)
+            IconButton(
+              onPressed: () {
+                print('edit');
+                // Navigator.pushNamed(
+                //   context,
+                //   editTrainingRoute,
+                //   arguments: {
+                //     'parentContext': context,
+                //     'id': widget.id,
+                //     'name': _nameState,
+                //     'note': _noteState,
+                //     'exercises': _exercisesState,
+                //     'isEdit': true,
+                //     'isDuplicate': false
+                //   },
+                // );
+              },
+              icon: const Icon(CupertinoIcons.pen),
+            )
         ],
         systemOverlayStyle: SystemUiOverlayStyle.light,
       ),
@@ -200,40 +228,42 @@ class EventScreen extends StatelessWidget {
                   SizedBox(
                     height: 15,
                   ),
-                  Row(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: HFColors().primaryColor(),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Icon(
-                          CupertinoIcons.person,
-                          color: HFColors().secondaryColor(),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 20,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          HFHeading(
-                            text: 'Client:',
+                  if (context.read<HFGlobalState>().userAccessLevel ==
+                      accessLevels.trainer)
+                    Row(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: HFColors().primaryColor(),
+                            borderRadius: BorderRadius.circular(16),
                           ),
-                          SizedBox(
-                            height: 5,
+                          child: Icon(
+                            CupertinoIcons.person,
+                            color: HFColors().secondaryColor(),
                           ),
-                          HFParagrpah(
-                            size: 8,
-                            text: client['name'],
-                            color: HFColors().whiteColor(opacity: 0.8),
-                          )
-                        ],
-                      )
-                    ],
-                  )
+                        ),
+                        SizedBox(
+                          width: 20,
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            HFHeading(
+                              text: 'Client:',
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            HFParagrpah(
+                              size: 8,
+                              text: client['name'],
+                              color: HFColors().whiteColor(opacity: 0.8),
+                            )
+                          ],
+                        )
+                      ],
+                    )
                 ],
               ),
               const SizedBox(
@@ -263,10 +293,19 @@ class EventScreen extends StatelessWidget {
                         showDelete: false,
                         name: exercise['name'],
                         note: exercise['note'],
-                        type: exercise['type'],
+                        type: exercise['repetitionType'],
                         amount: double.parse(exercise['amount']),
                         repetitions: double.parse(exercise['repetitions']),
                         series: double.parse(exercise['series']),
+                        onTap: () {
+                          print({...exerciseData(exercise), 'author': 'bla'});
+                          Navigator.pushNamed(context, adminExerciseSingle,
+                              arguments: {
+                                ...exerciseData(exercise),
+                                'note': exercise['note'],
+                                'author': ''
+                              });
+                        },
                       );
                     })
                   ],

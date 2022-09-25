@@ -11,6 +11,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../constants/firebase_functions.dart';
+import '../../widgets/hf_client_list_view_tile.dart';
 import '../../widgets/hf_input_field.dart';
 
 class ClientsPage extends StatefulWidget {
@@ -117,12 +118,12 @@ class ClientsPageState extends State<ClientsPage> {
                     child: ListView(
                       children: [
                         ...data.docs.map((client) {
-                          return HFListViewTile(
+                          return HFClientListViewTile(
                             name: client['name'],
                             email: client['email'],
                             imageUrl: client['imageUrl'],
-                            id: client['id'],
-                            showAvailable: false,
+                            available: client['accountReady'],
+                            showAvailable: true,
                             useSpacerBottom: true,
                             onTap: () {
                               Navigator.pushNamed(context, singleClientsRoute,

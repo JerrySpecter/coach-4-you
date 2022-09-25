@@ -48,8 +48,12 @@ class AddEventScreenState extends State<AddEventScreen> {
   final TextEditingController exerciseSearchFieldController =
       TextEditingController();
   String exerciseSelected = '';
+  String exerciseDescription = '';
+  String exerciseVideo = '';
+  String exerciseThumbnail = '';
   String exerciseIdSelected = '';
   String exerciseRepetitionType = '';
+  List exerciseTypes = [];
   String searchText = '';
   String exerciseSearchText = '';
   String searchClientsText = '';
@@ -603,7 +607,7 @@ class AddEventScreenState extends State<AddEventScreen> {
                                                     ['series']),
                                             type:
                                                 selectedTrainingExercises[index]
-                                                    ['type'],
+                                                    ['repetitionType'],
                                             note:
                                                 selectedTrainingExercises[index]
                                                     ['note'],
@@ -651,7 +655,8 @@ class AddEventScreenState extends State<AddEventScreen> {
                                                 ['repetitions']),
                                         series: double.parse(
                                             selectedExercises[index]['series']),
-                                        type: selectedExercises[index]['type'],
+                                        type: selectedExercises[index]
+                                            ['repetitionType'],
                                         note: selectedExercises[index]['note'],
                                         useImage: false,
                                         showDelete: true,
@@ -981,6 +986,25 @@ class AddEventScreenState extends State<AddEventScreen> {
                                       .update({
                                     'changed': '$newDate',
                                   }).then((value) {
+                                    FirebaseFirestore.instance
+                                        .collection('clients')
+                                        .doc(selectedClient)
+                                        .collection('days')
+                                        .doc('${selectedEventDate}')
+                                        .collection('events')
+                                        .doc(newId)
+                                        .set(eventData)
+                                        .then((value) {
+                                      initClientDay(
+                                          selectedEventDate, selectedClient);
+                                      FirebaseFirestore.instance
+                                          .collection('clients')
+                                          .doc(selectedClient)
+                                          .update({
+                                        'changed': '$newDate',
+                                      });
+                                    });
+                                  }).then((value) {
                                     context
                                         .read<HFGlobalState>()
                                         .setCalendarLastUpdated('$newDate');
@@ -1033,12 +1057,15 @@ class AddEventScreenState extends State<AddEventScreen> {
               right: 0,
               child: SizedBox(
                 height: MediaQuery.of(context).size.height - 100,
-                child: GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      pullUp = false;
-                    });
-                  },
+                child: IgnorePointer(
+                  ignoring: !pullUp,
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        pullUp = false;
+                      });
+                    },
+                  ),
                 ),
               ),
             ),
@@ -1048,246 +1075,263 @@ class AddEventScreenState extends State<AddEventScreen> {
               bottom: pullUp ? 0 : -MediaQuery.of(context).size.height * 0.8,
               left: 0,
               right: 0,
-              child: Container(
-                padding: const EdgeInsets.only(top: 16),
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(16),
-                    topRight: Radius.circular(16),
+              child: IgnorePointer(
+                ignoring: !pullUp,
+                child: Container(
+                  padding: const EdgeInsets.only(top: 16),
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(16),
+                      topRight: Radius.circular(16),
+                    ),
+                    color: HFColors().secondaryLightColor(),
                   ),
-                  color: HFColors().secondaryLightColor(),
-                ),
-                height: MediaQuery.of(context).size.height * 0.8,
-                child: SingleChildScrollView(
-                  child: Container(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const HFHeading(
-                              text: 'Add exercise',
-                              size: 7,
-                            ),
-                            IconButton(
-                              onPressed: (() {
-                                setState(() {
-                                  closePullUp();
-                                });
-                              }),
-                              icon: Icon(
-                                CupertinoIcons.multiply,
-                                color: HFColors().primaryColor(),
-                              ),
-                            )
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              width: 1,
-                              color: HFColors().primaryColor(opacity: 0.2),
-                            ),
-                            borderRadius: BorderRadius.circular(22),
-                          ),
-                          child: ConstrainedBox(
-                            constraints: const BoxConstraints(
-                              maxHeight: 350,
-                              minHeight: 100,
-                            ),
-                            child: StreamBuilder(
-                              stream: exerciseStream,
-                              builder: (context, snapshot) {
-                                if (!snapshot.hasData) {
-                                  return const Center(
-                                    child: HFParagrpah(
-                                      text: 'No exercises. no data',
-                                      size: 10,
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  );
-                                }
-
-                                var data = snapshot.data as QuerySnapshot;
-
-                                if (data.docs.isEmpty) {
-                                  return const Center(
-                                    child: HFParagrpah(
-                                      text: 'No exercises. empty',
-                                      size: 10,
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  );
-                                }
-
-                                return ListView(
-                                  shrinkWrap: true,
-                                  children: [
-                                    ...data.docs.map(
-                                      (exercise) {
-                                        print(exercise.toString());
-
-                                        return HFSelectListViewTile(
-                                          name: exercise['name'],
-                                          imageUrl: exercise['videoThumbnail'],
-                                          showAvailable: false,
-                                          isSelected: exerciseSelected ==
-                                              exercise['name'],
-                                          headingMargin: 0,
-                                          imageSize: 48,
-                                          backgroundColor:
-                                              HFColors().secondaryColor(),
-                                          id: exercise['id'],
-                                          useSpacerBottom: true,
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              HFParagrpah(
-                                                text:
-                                                    'Author: ${exercise['author']}',
-                                                size: 5,
-                                              ),
-                                              const SizedBox(
-                                                height: 5,
-                                              ),
-                                              HFParagrpah(
-                                                text: exercise['description'],
-                                                size: 6,
-                                                maxLines: 1,
-                                                color: HFColors()
-                                                    .whiteColor(opacity: 0.7),
-                                              ),
-                                            ],
-                                          ),
-                                          onTap: () {
-                                            setState(() {
-                                              exerciseSelected =
-                                                  exercise['name'];
-                                              exerciseIdSelected =
-                                                  exercise['id'];
-                                              exerciseRepetitionType =
-                                                  exercise['repetitionType'];
-                                            });
-                                          },
-                                        );
-                                      },
-                                    )
-                                  ],
-                                );
-                              },
-                            ),
-                          ),
-                        ),
-                        HFInput(
-                          controller: exerciseSearchFieldController,
-                          onChanged: (value) {
-                            setState(() {
-                              exerciseSearchText = value;
-
-                              exerciseStream = getStream(
-                                  true,
-                                  context.read<HFGlobalState>().userDisplayName,
-                                  exerciseSearchText);
-                              ;
-                            });
-                          },
-                          hintText: 'Filter exercises',
-                          keyboardType: TextInputType.text,
-                          verticalContentPadding: 12,
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        if (exerciseSelected.isNotEmpty)
-                          Flex(
-                            direction: Axis.horizontal,
+                  height: MediaQuery.of(context).size.height * 0.8,
+                  child: SingleChildScrollView(
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Expanded(
-                                child: HFInput(
-                                  keyboardType: TextInputType.number,
-                                  labelText: exerciseRepetitionType == 'weight'
-                                      ? 'kg'
-                                      : exerciseRepetitionType == 'time'
-                                          ? 'Minutes'
-                                          : '',
-                                  controller: exerciseTypeNumberController,
+                              const HFHeading(
+                                text: 'Add exercise',
+                                size: 7,
+                              ),
+                              IconButton(
+                                onPressed: (() {
+                                  setState(() {
+                                    closePullUp();
+                                  });
+                                }),
+                                icon: Icon(
+                                  CupertinoIcons.multiply,
+                                  color: HFColors().primaryColor(),
                                 ),
-                                flex: 1,
-                              ),
-                              const SizedBox(
-                                width: 20,
-                              ),
-                              Expanded(
-                                child: HFInput(
-                                  keyboardType: TextInputType.number,
-                                  labelText: 'Reps',
-                                  controller: exerciseRepsNumberController,
-                                ),
-                                flex: 1,
-                              ),
-                              const SizedBox(
-                                width: 20,
-                              ),
-                              Expanded(
-                                child: HFInput(
-                                  keyboardType: TextInputType.number,
-                                  labelText: 'Series',
-                                  controller: exerciseSeriesNumberController,
-                                ),
-                                flex: 1,
-                              ),
+                              )
                             ],
                           ),
-                        if (exerciseSelected.isNotEmpty)
                           const SizedBox(
                             height: 20,
                           ),
-                        HFInput(
-                          controller: exerciseNoteController,
-                          hintText: 'Exercise notes',
-                          maxLines: 8,
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        HFButton(
-                          text: 'Add exercise',
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          onPressed: () {
-                            setState(() {
-                              print(selectedExercises);
-                              var newId = const Uuid().v4();
-                              selectedExercises.add({
-                                'id': newId,
-                                'name': exerciseSelected,
-                                'exerciseId': exerciseIdSelected,
-                                'amount': exerciseTypeNumberController.text,
-                                'repetitions':
-                                    exerciseRepsNumberController.text,
-                                'series': exerciseRepsNumberController.text,
-                                'type': exerciseRepetitionType,
-                                'note': exerciseNoteController.text
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                width: 1,
+                                color: HFColors().primaryColor(opacity: 0.2),
+                              ),
+                              borderRadius: BorderRadius.circular(22),
+                            ),
+                            child: ConstrainedBox(
+                              constraints: const BoxConstraints(
+                                maxHeight: 350,
+                                minHeight: 100,
+                              ),
+                              child: StreamBuilder(
+                                stream: exerciseStream,
+                                builder: (context, snapshot) {
+                                  if (!snapshot.hasData) {
+                                    return const Center(
+                                      child: HFParagrpah(
+                                        text: 'No exercises. no data',
+                                        size: 10,
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    );
+                                  }
+
+                                  var data = snapshot.data as QuerySnapshot;
+
+                                  if (data.docs.isEmpty) {
+                                    return const Center(
+                                      child: HFParagrpah(
+                                        text: 'No exercises. empty',
+                                        size: 10,
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    );
+                                  }
+
+                                  return ListView(
+                                    shrinkWrap: true,
+                                    children: [
+                                      ...data.docs.map(
+                                        (exercise) {
+                                          return HFSelectListViewTile(
+                                            name: exercise['name'],
+                                            imageUrl:
+                                                exercise['videoThumbnail'],
+                                            showAvailable: false,
+                                            isSelected: exerciseSelected ==
+                                                exercise['name'],
+                                            headingMargin: 0,
+                                            imageSize: 48,
+                                            backgroundColor:
+                                                HFColors().secondaryColor(),
+                                            id: exercise['id'],
+                                            useSpacerBottom: true,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                HFParagrpah(
+                                                  text:
+                                                      'Author: ${exercise['author']}',
+                                                  size: 5,
+                                                ),
+                                                const SizedBox(
+                                                  height: 5,
+                                                ),
+                                                HFParagrpah(
+                                                  text: exercise['description'],
+                                                  size: 6,
+                                                  maxLines: 1,
+                                                  color: HFColors()
+                                                      .whiteColor(opacity: 0.7),
+                                                ),
+                                              ],
+                                            ),
+                                            onTap: () {
+                                              setState(() {
+                                                exerciseDescription =
+                                                    exercise['description'];
+                                                exerciseVideo =
+                                                    exercise['video'];
+                                                exerciseThumbnail =
+                                                    exercise['videoThumbnail'];
+                                                exerciseSelected =
+                                                    exercise['name'];
+                                                exerciseIdSelected =
+                                                    exercise['id'];
+                                                exerciseRepetitionType =
+                                                    exercise['repetitionType'];
+                                                exerciseTypes =
+                                                    exercise['types'];
+                                              });
+                                            },
+                                          );
+                                        },
+                                      )
+                                    ],
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                          HFInput(
+                            controller: exerciseSearchFieldController,
+                            onChanged: (value) {
+                              setState(() {
+                                exerciseSearchText = value;
+
+                                exerciseStream = getStream(
+                                    true,
+                                    context
+                                        .read<HFGlobalState>()
+                                        .userDisplayName,
+                                    exerciseSearchText);
+                                ;
+                              });
+                            },
+                            hintText: 'Filter exercises',
+                            keyboardType: TextInputType.text,
+                            verticalContentPadding: 12,
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          if (exerciseSelected.isNotEmpty)
+                            Flex(
+                              direction: Axis.horizontal,
+                              children: [
+                                Expanded(
+                                  child: HFInput(
+                                    keyboardType: TextInputType.number,
+                                    labelText:
+                                        exerciseRepetitionType == 'weight'
+                                            ? 'kg'
+                                            : exerciseRepetitionType == 'time'
+                                                ? 'Minutes'
+                                                : '',
+                                    controller: exerciseTypeNumberController,
+                                  ),
+                                  flex: 1,
+                                ),
+                                const SizedBox(
+                                  width: 20,
+                                ),
+                                Expanded(
+                                  child: HFInput(
+                                    keyboardType: TextInputType.number,
+                                    labelText: 'Reps',
+                                    controller: exerciseRepsNumberController,
+                                  ),
+                                  flex: 1,
+                                ),
+                                const SizedBox(
+                                  width: 20,
+                                ),
+                                Expanded(
+                                  child: HFInput(
+                                    keyboardType: TextInputType.number,
+                                    labelText: 'Series',
+                                    controller: exerciseSeriesNumberController,
+                                  ),
+                                  flex: 1,
+                                ),
+                              ],
+                            ),
+                          if (exerciseSelected.isNotEmpty)
+                            const SizedBox(
+                              height: 20,
+                            ),
+                          HFInput(
+                            controller: exerciseNoteController,
+                            hintText: 'Exercise notes',
+                            maxLines: 8,
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          HFButton(
+                            text: 'Add exercise',
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            onPressed: () {
+                              setState(() {
+                                print(selectedExercises);
+                                var newId = const Uuid().v4();
+                                selectedExercises.add({
+                                  'id': newId,
+                                  'name': exerciseSelected,
+                                  'exerciseId': exerciseIdSelected,
+                                  'amount': exerciseTypeNumberController.text,
+                                  'repetitions':
+                                      exerciseRepsNumberController.text,
+                                  'series': exerciseRepsNumberController.text,
+                                  'repetitionType': exerciseRepetitionType,
+                                  'types': exerciseTypes,
+                                  'note': exerciseNoteController.text,
+                                  'description': exerciseDescription,
+                                  'video': exerciseVideo,
+                                  'videoThumbnail': exerciseThumbnail
+                                });
+
+                                closePullUp();
                               });
 
-                              closePullUp();
-                            });
-
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                getSnackBar(text: 'Exercise added'));
-                          },
-                        ),
-                        const SizedBox(
-                          height: 40,
-                        ),
-                      ],
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  getSnackBar(text: 'Exercise added'));
+                            },
+                          ),
+                          const SizedBox(
+                            height: 40,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -1336,12 +1380,16 @@ class AddEventScreenState extends State<AddEventScreen> {
   }
 
   closePullUp() {
+    exerciseDescription = '';
+    exerciseVideo = '';
+    exerciseThumbnail = '';
     exerciseSelected = '';
     exerciseIdSelected = '';
     exerciseTypeNumberController.text = '';
     exerciseRepsNumberController.text = '';
     exerciseSeriesNumberController.text = '';
     exerciseRepetitionType = '';
+    exerciseTypes = [];
     exerciseNoteController.text = '';
     pullUp = false;
   }
@@ -1377,6 +1425,16 @@ void showSheet(
 void initDay(date) {
   HFFirebaseFunctions()
       .getTrainersUser()
+      .collection('days')
+      .doc('$date')
+      .set({'exists': true})
+      .then((value) => print('Day created: $date'))
+      .catchError((error) => print(error));
+}
+
+void initClientDay(date, id) {
+  HFFirebaseFunctions()
+      .getClientsUser(id)
       .collection('days')
       .doc('$date')
       .set({'exists': true})

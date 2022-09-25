@@ -9,25 +9,21 @@ import 'package:intl/intl.dart';
 
 import 'hf_image.dart';
 
-class HFListViewTile extends StatefulWidget {
-  const HFListViewTile({
+class HFClientListViewTile extends StatefulWidget {
+  const HFClientListViewTile({
     Key? key,
     this.name = 'John Doe',
     this.email = 'example@gmail.com',
     this.useSpacerBottom = false,
     this.useImage = true,
+    this.imageUrl = '',
     this.imageSize = 72,
     this.headingMargin = 8,
     this.showAvailable = true,
     this.available = false,
     this.onTap,
-    this.onLongPress,
-    this.tags = const [],
-    this.showTags = false,
     this.icon = CupertinoIcons.chevron_right,
-    this.imageUrl = '',
     this.backgroundColor = const Color.fromRGBO(34, 34, 34, 1),
-    this.longPressColor = const Color.fromRGBO(34, 34, 34, 1),
     this.child = const SizedBox(
       height: 0,
       width: 0,
@@ -37,27 +33,22 @@ class HFListViewTile extends StatefulWidget {
   final String name;
   final String email;
   final String imageUrl;
-
   final double imageSize;
   final double headingMargin;
   final bool useSpacerBottom;
   final bool useImage;
   final bool showAvailable;
   final bool available;
-  final bool showTags;
-  final List<dynamic> tags;
   final IconData icon;
   final VoidCallback? onTap;
-  final VoidCallback? onLongPress;
   final Color backgroundColor;
-  final Color longPressColor;
   final Widget child;
 
   @override
-  State<HFListViewTile> createState() => _HFListViewTileState();
+  State<HFClientListViewTile> createState() => _HFClientListViewTileState();
 }
 
-class _HFListViewTileState extends State<HFListViewTile> {
+class _HFClientListViewTileState extends State<HFClientListViewTile> {
   String _imageUrl = '';
 
   @override
@@ -82,7 +73,7 @@ class _HFListViewTileState extends State<HFListViewTile> {
             boxShadow: getShadow(),
           ),
           child: InkWell(
-            onTap: widget.onTap,
+            onTap: widget.available ? widget.onTap : () {},
             child: Flex(
               direction: Axis.horizontal,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -128,9 +119,7 @@ class _HFListViewTileState extends State<HFListViewTile> {
                             HFParagrpah(
                               size: 5,
                               color: HFColors().whiteColor(),
-                              text: widget.available
-                                  ? 'Available'
-                                  : 'Currently not available',
+                              text: widget.available ? 'Ready' : 'Not ready',
                             )
                           ],
                         ),
@@ -139,31 +128,14 @@ class _HFListViewTileState extends State<HFListViewTile> {
                           height: widget.headingMargin,
                         ),
                       widget.child,
-                      if (widget.tags.isNotEmpty)
-                        SizedBox(
-                          height: 20,
-                        ),
-                      if (widget.tags.isNotEmpty)
-                        Wrap(
-                          spacing: 4,
-                          children: [
-                            ...widget.tags.map((tag) {
-                              return HFTag(
-                                text: tag,
-                                size: 6,
-                                backgroundColor: HFColors().primaryColor(),
-                                color: HFColors().secondaryColor(),
-                              );
-                            })
-                          ],
-                        )
                     ],
                   ),
                 ),
-                Icon(
-                  widget.icon,
-                  color: HFColors().primaryColor(),
-                )
+                if (widget.available)
+                  Icon(
+                    widget.icon,
+                    color: HFColors().primaryColor(),
+                  )
               ],
             ),
           ),

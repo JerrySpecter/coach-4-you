@@ -8,6 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../../constants/firebase_functions.dart';
 import '../../widgets/hf_input_field.dart';
+import 'package:intl/intl.dart';
 
 class RequestsPage extends StatefulWidget {
   const RequestsPage({Key? key}) : super(key: key);
@@ -116,10 +117,13 @@ class RequestsPageState extends State<RequestsPage> {
                       height: MediaQuery.of(context).size.height - 136,
                       child: ListView(children: [
                         ...data.docs.map((request) {
+                          var dateCreated = request['dateCreated'] as Timestamp;
+
                           return HFListViewTile(
                             name: request['name'],
                             email: request['email'],
-                            imageUrl: '',
+                            useImage: false,
+                            showAvailable: false,
                             useSpacerBottom: true,
                             onTap: () {
                               Navigator.pushNamed(
@@ -129,12 +133,23 @@ class RequestsPageState extends State<RequestsPage> {
                                   'name': request['name'],
                                   'email': request['email'],
                                   'content': request['content'],
+                                  'dateCreated': DateFormat('EEE, d/M/y')
+                                      .format(dateCreated.toDate()),
                                 },
                               );
                             },
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                                HFParagrpah(
+                                  text: DateFormat('EEE, d/M/y')
+                                      .format(dateCreated.toDate()),
+                                  size: 7,
+                                  color: HFColors().whiteColor(),
+                                ),
+                                SizedBox(
+                                  height: 5,
+                                ),
                                 HFParagrpah(
                                   text: 'Message:',
                                   size: 7,

@@ -88,7 +88,6 @@ class Locations extends StatelessWidget {
                           (location) {
                             return HFListViewTile(
                               name: "${location['name']}",
-                              id: location['id'],
                               useSpacerBottom: true,
                               showAvailable: false,
                               useImage: false,

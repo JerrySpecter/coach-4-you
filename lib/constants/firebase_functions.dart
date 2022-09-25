@@ -45,7 +45,7 @@ class HFFirebaseFunctions {
 
   DocumentReference<Map<String, dynamic>> getClientsUser(id) {
     var collectionName = 'clients';
-    var userId = id ? id : FirebaseAuth.instance.currentUser?.uid;
+    var userId = id;
 
     return FirebaseFirestore.instance.collection(collectionName).doc(userId);
   }
@@ -119,16 +119,39 @@ class HFFirebaseFunctions {
         .doc(userId)
         .get()
         .then((client) {
-      context.read<HFGlobalState>().setUserDisplayName(client['firstName']);
+      if (!client['newAccount']) {
+        context.read<HFGlobalState>().setUserFirstName(client['firstName']);
+        context.read<HFGlobalState>().setUserLastName(client['lastName']);
+        context.read<HFGlobalState>().setUserImage(client['imageUrl']);
+        context
+            .read<HFGlobalState>()
+            .setUserBackgroundImage(client['profileBackgroundImageUrl']);
+        context.read<HFGlobalState>().setUserHeight(client['height']);
+        context.read<HFGlobalState>().setUserWeight(client['weight']);
+      }
       context.read<HFGlobalState>().setUserEmail(client['email']);
-      context.read<HFGlobalState>().setUserImage(client['imageUrl']);
       context.read<HFGlobalState>().setUserName(client['name']);
       context.read<HFGlobalState>().setUserId(client['id']);
       context.read<HFGlobalState>().setUserTrainerId(client['trainerId']);
-      context
-          .read<HFGlobalState>()
-          .setUserBackgroundImage(client['profileBackgroundImageUrl']);
       context.read<HFGlobalState>().setUserNewAccount(client['newAccount']);
+
+      HFFirebaseFunctions().getFirebaseAuthUser(context).snapshots().listen(
+            ((event) => fetchCalendarEvents(context, event)),
+            onError: (error) => print("Listen failed: $error"),
+          );
+    }).then((value) {
+      if (context.read<HFGlobalState>().userNewAccount &&
+          context.read<HFGlobalState>().rootScreenState !=
+              RootScreens.welcome) {
+        context.read<HFGlobalState>().setUserFirstName(
+            context.read<HFGlobalState>().userName.split(' ')[0]);
+        context.read<HFGlobalState>().setRootScreenState(RootScreens.welcome);
+      } else {
+        if (context.read<HFGlobalState>().rootScreenState !=
+            RootScreens.welcome) {
+          context.read<HFGlobalState>().setRootScreenState(RootScreens.home);
+        }
+      }
     }).catchError((error) => print(error));
   }
 

@@ -67,6 +67,11 @@ class _SettingsPageState extends State<SettingsPage> {
                 textColor: HFColors().whiteColor(),
                 onPressed: () {
                   FirebaseAuth.instance.signOut();
+                  context.read<HFGlobalState>().setUserName('');
+                  context.read<HFGlobalState>().setUserFirstName('');
+                  context.read<HFGlobalState>().setUserLastName('');
+                  context.read<HFGlobalState>().setUserImage('');
+                  context.read<HFGlobalState>().setUserBackgroundImage('');
                 },
               ),
               const SizedBox(

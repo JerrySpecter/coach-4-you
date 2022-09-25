@@ -114,14 +114,16 @@ class _LoginSectionState extends State<LoginSection> {
             text: 'Login',
             padding: const EdgeInsets.symmetric(vertical: 20),
             onPressed: () async {
+              FocusScope.of(context).requestFocus(FocusNode());
+
               try {
                 await widget.authInstance
                     .signInWithEmailAndPassword(
                   email: widget.emailController.text == ''
-                      ? 'biscan.karlo@gmail.com' //'biscan.karlof@gmail.com'
+                      ? 'biscan.karlo@gmail.com'
                       : widget.emailController.text,
                   password: widget.passwordController.text == ''
-                      ? '12345678' //'3Vt#Npb&Jde68'
+                      ? 'f(wZzzi0X5Akr'
                       : widget.passwordController.text,
                 )
                     .then((value) {
@@ -131,6 +133,8 @@ class _LoginSectionState extends State<LoginSection> {
                     context
                         .read<HFGlobalState>()
                         .setUserAccessLevel(accessLevel);
+
+                    print(context.read<HFGlobalState>().userAccessLevel);
 
                     if (context.read<HFGlobalState>().userAccessLevel ==
                         accessLevels.client) {

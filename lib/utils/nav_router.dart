@@ -6,8 +6,9 @@ import 'package:health_factory/screens/admin/admin.dart';
 import 'package:health_factory/screens/admin/single_videos.dart';
 import 'package:health_factory/screens/admin/trainers.dart';
 import 'package:health_factory/screens/admin/videos.dart';
+import 'package:health_factory/screens/client_profile.dart';
 import 'package:health_factory/screens/news/add_news.dart';
-import 'package:health_factory/screens/events/event.dart';
+import 'package:health_factory/screens/events/single_event.dart';
 import 'package:health_factory/screens/news/news.dart';
 import 'package:health_factory/screens/requests/requests.dart';
 import 'package:health_factory/screens/requests/single_request.dart';
@@ -138,7 +139,10 @@ Route<dynamic>? genRoute(RouteSettings settings) {
 
       return MaterialPageRoute(
         builder: (_) => SingleRequest(
-            name: data['name'], content: data['content'], email: data['email']),
+            name: data['name'],
+            content: data['content'],
+            email: data['email'],
+            dateCreated: data['dateCreated']),
       );
     case trainerProfileRoute:
       var data = settings.arguments as Map;
@@ -154,6 +158,20 @@ Route<dynamic>? genRoute(RouteSettings settings) {
           intro: data['intro'],
           available: data['available'],
           education: data['education'],
+          profileBackgroundImageUrl: data['profileBackgroundImageUrl'],
+        ),
+      );
+    case clientProfileRoute:
+      var data = settings.arguments as Map;
+
+      return MaterialPageRoute(
+        builder: (_) => ClientProfile(
+          id: data['id'],
+          name: data['name'],
+          imageUrl: data['imageUrl'],
+          email: data['email'],
+          weight: data['weight'],
+          height: data['height'],
           profileBackgroundImageUrl: data['profileBackgroundImageUrl'],
         ),
       );
@@ -253,6 +271,7 @@ Route<dynamic>? genRoute(RouteSettings settings) {
           id: data['id'],
           name: data['name'],
           description: data['description'],
+          note: data['note'],
           author: data['author'],
           video: data['video'],
           thumbnail: data['videoThumbnail'],
