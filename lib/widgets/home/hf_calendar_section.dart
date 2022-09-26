@@ -63,14 +63,6 @@ class HFCalendarSection extends StatelessWidget {
               ),
             ),
             events.where((event) {
-              // print(event);
-
-              print('start');
-              print(
-                  '${DateFormat('yyyy-MM-dd').format(DateTime.now())} ${event.startTime}:00.000Z');
-              print('now');
-              print(
-                  '${DateFormat('yyyy-MM-dd HH:mm').format(DateTime.now())}:00.000Z');
               DateTime eventStart = DateTime.parse(
                   '${DateFormat('yyyy-MM-dd').format(DateTime.now())} ${event.startTime}:00.000Z');
               DateTime now = DateTime.parse(

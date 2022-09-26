@@ -22,7 +22,6 @@ class ActionsSection extends StatelessWidget {
           primaryColor: HFColors().blueColor(opacity: 0.1),
           secondaryColor: HFColors().blueColor(opacity: 0.6),
           onTap: () {
-            print('tap trainings');
             Navigator.pushNamed(context, trainingsRoute);
           },
         ),
@@ -47,7 +46,6 @@ class ActionsSection extends StatelessWidget {
           primaryColor: HFColors().yellowColor(opacity: 0.1),
           secondaryColor: HFColors().yellowColor(opacity: 0.6),
           onTap: () {
-            print('tap exercise');
             Navigator.pushNamed(context, adminExerciseRoute,
                 arguments: {'isCoach': true});
           },
@@ -61,7 +59,6 @@ class ActionsSection extends StatelessWidget {
           primaryColor: HFColors().purpleColor(opacity: 0.1),
           secondaryColor: HFColors().purpleColor(opacity: 0.6),
           onTap: () {
-            print('tap exercise');
             Navigator.pushNamed(context, adminVideosRoute,
                 arguments: {'isCoach': true});
           },

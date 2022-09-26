@@ -230,7 +230,6 @@ class _AddVideosFormState extends State<AddVideosForm> {
                 };
 
                 if (_initialVideoUrl != _videoUrlController.text) {
-                  print('video changed');
                   try {
                     setState(() {
                       _startUpload = true;
@@ -247,15 +246,12 @@ class _AddVideosFormState extends State<AddVideosForm> {
                       },
                     ).then((value) {
                       if (widget.isEdit) {
-                        print('edit video');
                         editedData.update('video', (v) => value.secureUrl);
                         editedData.update(
                             'thumbnail',
                             (v) =>
                                 '${value.secureUrl.split(value.secureUrl.split(value.publicId)[1])[0]}.jpg');
                       } else {
-                        print('add new video');
-
                         var newId = const Uuid().v4();
 
                         FirebaseFirestore.instance
@@ -280,20 +276,15 @@ class _AddVideosFormState extends State<AddVideosForm> {
                     });
                   } on CloudinaryException catch (e) {
                     _startUpload = false;
-                    print(e.message);
-                    print(e.request);
                   }
                 }
 
                 if (widget.isEdit) {
-                  print('edit');
                   if (_initialName != _videoNameController.text) {
-                    print('edit name');
                     editedData.update(
                         'name', (value) => _videoNameController.text);
                   }
                   if (_initialDescription != _videoDescriptionController.text) {
-                    print('edit description');
                     editedData.update('description',
                         (value) => _videoDescriptionController.text);
                   }

@@ -118,7 +118,6 @@ class _VideosState extends State<Videos> {
                                 ],
                               ),
                               onTap: () {
-                                print('Open video');
                                 Navigator.pushNamed(
                                   context,
                                   adminVideosSingle,

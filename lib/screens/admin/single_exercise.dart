@@ -3,19 +3,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:health_factory/constants/routes.dart';
 import 'package:health_factory/utils/helpers.dart';
 import 'package:health_factory/widgets/hf_dialog.dart';
 import 'package:health_factory/widgets/hf_heading.dart';
 import 'package:health_factory/widgets/hf_image.dart';
 import 'package:health_factory/widgets/hf_paragraph.dart';
-import 'package:health_factory/widgets/hf_snackbar.dart';
 import 'package:health_factory/widgets/hf_tag.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../constants/colors.dart';
-import '../../constants/firebase_functions.dart';
 import '../../constants/global_state.dart';
 import 'add_exercise.dart';
 
@@ -94,8 +91,6 @@ class _SingleExerciseState extends State<SingleExercise> {
     _repetitionTypeState = widget.repetitionType;
 
     getVideoById(widget.video).get().then((value) {
-      print(value['url']);
-
       initializePlayer(value['url']);
     });
 
@@ -269,8 +264,6 @@ class _SingleExerciseState extends State<SingleExercise> {
   // A method that launches the SelectionScreen and awaits the result from
   Future<void> _navigateAndDisplayEditScreen(
       BuildContext context, data, setState) async {
-    // Navigator.push returns a Future that completes after calling
-    // Navigator.pop on the Selection Screen.
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
@@ -287,14 +280,7 @@ class _SingleExerciseState extends State<SingleExercise> {
               )),
     );
 
-    // When a BuildContext is used from a StatefulWidget, the mounted property
-    // must be checked after an asynchronous gap.
     if (!mounted) return;
-
-    // After the Selection Screen returns a result, hide any previous snackbars
-    // and show the new result.
-
-    print(result);
 
     setState(() {
       _nameState = result['name'];
@@ -307,8 +293,6 @@ class _SingleExerciseState extends State<SingleExercise> {
 
     if (widget.video != result['video']) {
       getVideoById(result['video']).get().then((value) {
-        print(value['url']);
-
         initializePlayer(value['url']);
       });
     }

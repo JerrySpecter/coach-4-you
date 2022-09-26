@@ -57,8 +57,6 @@ class _TrainerProfileState extends State<TrainerProfile> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.birthday);
-
     return Scaffold(
       backgroundColor: HFColors().backgroundColor(),
       body: Stack(

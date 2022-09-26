@@ -134,8 +134,6 @@ class _LoginSectionState extends State<LoginSection> {
                         .read<HFGlobalState>()
                         .setUserAccessLevel(accessLevel);
 
-                    print(context.read<HFGlobalState>().userAccessLevel);
-
                     if (context.read<HFGlobalState>().userAccessLevel ==
                         accessLevels.client) {
                       HFFirebaseFunctions()

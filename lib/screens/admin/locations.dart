@@ -93,8 +93,6 @@ class Locations extends StatelessWidget {
                               useImage: false,
                               icon: CupertinoIcons.trash,
                               onTap: () {
-                                print(location['name']);
-
                                 showAlertDialog(
                                   context,
                                   'Are you sure you want to delete location: ${location['name']}',

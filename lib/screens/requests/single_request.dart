@@ -161,7 +161,6 @@ class SingleRequest extends StatelessWidget {
               text: 'Accept request',
               padding: const EdgeInsets.all(16),
               onPressed: () {
-                print('Accept request');
                 HFFirebaseFunctions()
                     .getFirebaseAuthUser(context)
                     .collection('clients')

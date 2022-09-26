@@ -49,7 +49,6 @@ class RootPageState extends State<RootPage> {
 
     FirebaseAuth.instance.authStateChanges().listen((user) {
       if (user != null) {
-        print('user signed in');
         context.read<HFGlobalState>().setUserLoggedIn(true);
 
         user.getIdTokenResult(true).then((result) {
@@ -68,7 +67,6 @@ class RootPageState extends State<RootPage> {
           }
         });
       } else {
-        print('user not signed in');
         context.read<HFGlobalState>().setUserLoggedIn(false);
         context.read<HFGlobalState>().setRootScreenState(RootScreens.login);
         context
@@ -95,7 +93,6 @@ class RootPageState extends State<RootPage> {
         }
 
         if (details.primaryVelocity! < sensitivity) {
-          print('swipe right');
           if (context.read<HFGlobalState>().rootScreenState !=
               RootScreens.settings) {
             switch (context.read<HFGlobalState>().rootScreenState) {
@@ -120,7 +117,6 @@ class RootPageState extends State<RootPage> {
         }
 
         if (details.primaryVelocity! > -sensitivity) {
-          print('swipe left');
           if (context.read<HFGlobalState>().rootScreenState !=
               RootScreens.home) {
             switch (context.read<HFGlobalState>().rootScreenState) {
@@ -342,7 +338,6 @@ class RootPageState extends State<RootPage> {
                           padding: const EdgeInsets.all(10),
                           text: 'Event',
                           onPressed: () {
-                            print('Add Event');
                             hideFloatingButtonOptions();
 
                             Navigator.pushNamed(context, addEventRoute,
@@ -389,7 +384,6 @@ class RootPageState extends State<RootPage> {
                           padding: const EdgeInsets.all(10),
                           text: 'News',
                           onPressed: () {
-                            print('Add News');
                             hideFloatingButtonOptions();
                             Navigator.pushNamed(context, addNewsRoute);
                           },
@@ -470,7 +464,6 @@ class RootPageState extends State<RootPage> {
                         onPressed: () {
                           if (context.read<HFGlobalState>().rootScreenState ==
                               RootScreens.home) {
-                            print('Add on home');
                             setState(() {
                               floatingButtonShowEvent =
                                   !floatingButtonShowEvent;
@@ -495,7 +488,6 @@ class RootPageState extends State<RootPage> {
 
                           if (context.read<HFGlobalState>().rootScreenState ==
                               RootScreens.calendar) {
-                            print('Add on calendar');
                             Navigator.pushNamed(
                               context,
                               addEventRoute,

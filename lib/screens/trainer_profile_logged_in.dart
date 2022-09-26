@@ -249,7 +249,6 @@ class _TrainerProfileLoggedInState extends State<TrainerProfileLoggedIn> {
                         children: [
                           InkWell(
                             onTap: () {
-                              print('tap clients');
                               Navigator.pushNamed(context, clientsRoute);
                             },
                             child: Container(
@@ -334,7 +333,6 @@ class _TrainerProfileLoggedInState extends State<TrainerProfileLoggedIn> {
                           ),
                           InkWell(
                             onTap: () {
-                              print('tap requests');
                               Navigator.pushNamed(context, requestsRoute);
                             },
                             child: Container(

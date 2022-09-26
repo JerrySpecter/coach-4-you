@@ -350,8 +350,6 @@ class AddEventScreenState extends State<AddEventScreen> {
                                         ),
                                         ...data.docs.map(
                                           (client) {
-                                            print(client.toString());
-
                                             return Padding(
                                               padding:
                                                   const EdgeInsets.symmetric(
@@ -462,8 +460,6 @@ class AddEventScreenState extends State<AddEventScreen> {
                                         ),
                                         ...data.docs.map(
                                           (training) {
-                                            print(training.toString());
-
                                             return Padding(
                                               padding:
                                                   const EdgeInsets.symmetric(
@@ -762,8 +758,6 @@ class AddEventScreenState extends State<AddEventScreen> {
                                         ),
                                         ...data.docs.map(
                                           (location) {
-                                            print(location.toString());
-
                                             return Padding(
                                               padding:
                                                   const EdgeInsets.symmetric(
@@ -941,7 +935,6 @@ class AddEventScreenState extends State<AddEventScreen> {
                             //     : 'Create training',
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             onPressed: () {
-                              print('Create event');
                               var newId = const Uuid().v4();
 
                               var exerciseList = [];
@@ -1302,7 +1295,6 @@ class AddEventScreenState extends State<AddEventScreen> {
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             onPressed: () {
                               setState(() {
-                                print(selectedExercises);
                                 var newId = const Uuid().v4();
                                 selectedExercises.add({
                                   'id': newId,

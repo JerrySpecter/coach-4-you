@@ -17,8 +17,6 @@ class HFNewsSection extends StatelessWidget {
     var isClient =
         context.read<HFGlobalState>().userAccessLevel == accessLevels.client;
 
-    print(isClient);
-
     return Column(
       children: [
         const SizedBox(

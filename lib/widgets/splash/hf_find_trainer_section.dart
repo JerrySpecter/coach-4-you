@@ -156,7 +156,6 @@ class _FindTrainerSectionState extends State<FindTrainerSection> {
                                   child: InkWell(
                                     splashColor: Colors.transparent,
                                     onTap: () {
-                                      print('tap');
                                       setState(() {
                                         if (selectedLocations ==
                                             location['name']) {
@@ -263,8 +262,6 @@ class _FindTrainerSectionState extends State<FindTrainerSection> {
                             imageUrl: trainer['imageUrl'],
                             available: trainer['available'],
                             onTap: () {
-                              print('tap "${trainer['id']}"');
-
                               Navigator.pushNamed(
                                 context,
                                 trainerProfileRoute,

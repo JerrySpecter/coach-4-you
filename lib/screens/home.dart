@@ -92,11 +92,7 @@ class Home extends StatelessWidget {
                     ),
                   ),
                   IconButton(
-                      onPressed: () {
-                        print(
-                          'notifications',
-                        );
-                      },
+                      onPressed: () {},
                       icon: Icon(
                         CupertinoIcons.bell,
                         color: HFColors().primaryColor(),

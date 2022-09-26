@@ -8,8 +8,6 @@ import 'global_state.dart';
 
 class HFFirebaseFunctions {
   updateUserChangedDate(BuildContext context) {
-    print('updateUserChangedDate');
-
     var newDate = DateTime.now();
     FirebaseFirestore.instance
         .collection('trainers')
@@ -18,8 +16,6 @@ class HFFirebaseFunctions {
       'changed': '$newDate',
     }).then((value) {
       context.read<HFGlobalState>().setCalendarLastUpdated('$newDate');
-
-      print('Updated user: ${FirebaseAuth.instance.currentUser?.email}');
     }).catchError((error) => print('Update user failed: $error'));
   }
 
@@ -51,7 +47,6 @@ class HFFirebaseFunctions {
   }
 
   getUserDays(BuildContext context) {
-    print('getUserDays');
     FirebaseFirestore.instance
         .collection('trainers')
         .doc(FirebaseAuth.instance.currentUser?.email)
@@ -95,21 +90,10 @@ class HFFirebaseFunctions {
 
             newMap[DateTime.parse(day.id)] = events;
 
-            // context.read<HFGlobalState>().setTempCalendarDays(newMap);
-
-            print('loop ${data.length} ${count}');
-
-            if (data.length == count + 1) {
-              print(
-                'gotovo',
-              );
-              // context.read<HFGlobalState>().setCalendarDays();
-            }
+            if (data.length == count + 1) {}
           },
         ).then((value) => count++);
       });
-
-      print('poslije loopa');
     });
   }
 

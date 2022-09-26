@@ -234,10 +234,6 @@ class _AddExerciseFormState extends State<AddExerciseForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          if (widget.isCoach)
-            HFHeading(
-              text: 'is coach',
-            ),
           HFInput(
             hintText: 'Exercise name',
             controller: _exerciseNameController,
@@ -319,8 +315,6 @@ class _AddExerciseFormState extends State<AddExerciseForm> {
                         ),
                         ...data.docs.map(
                           (video) {
-                            print(video.toString());
-
                             return Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 8.0),

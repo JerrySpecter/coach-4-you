@@ -26,13 +26,11 @@ class HFImage extends StatelessWidget {
         placeholder: 'assets/placeholder.jpg',
         image: imageUrl,
         placeholderErrorBuilder: (context, error, stackTrace) {
-          print('placeholderErrorBuilder');
           return HFParagrpah(
             text: error.toString(),
           );
         },
         imageErrorBuilder: (context, error, stackTrace) {
-          print('imageErrorBuilder');
           return HFParagrpah(
             text: error.toString(),
           );

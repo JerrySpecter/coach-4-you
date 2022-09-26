@@ -36,7 +36,6 @@ class _SingleTrainingState extends State<SingleTraining> {
 
   @override
   void initState() {
-    print('init state single training');
     _nameState = widget.name;
     _noteState = widget.note;
     _exercisesState = widget.exercises;
@@ -46,8 +45,6 @@ class _SingleTrainingState extends State<SingleTraining> {
 
   @override
   void dispose() {
-    print('dispose');
-
     super.dispose();
   }
 

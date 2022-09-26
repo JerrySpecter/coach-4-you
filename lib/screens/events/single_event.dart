@@ -90,48 +90,46 @@ class EventScreen extends StatelessWidget {
                 color: HFColors().redColor(),
               ),
             ),
-          if (context.read<HFGlobalState>().userAccessLevel ==
-              accessLevels.trainer)
-            IconButton(
-              onPressed: () {
-                print('duplicate');
-                // Navigator.pushNamed(
-                //   context,
-                //   editTrainingRoute,
-                //   arguments: {
-                //     'parentContext': context,
-                //     'id': widget.id,
-                //     'name': _nameState,
-                //     'note': _noteState,
-                //     'exercises': _exercisesState,
-                //     'isEdit': false,
-                //     'isDuplicate': true
-                //   },
-                // );
-              },
-              icon: const Icon(CupertinoIcons.doc_on_clipboard),
-            ),
-          if (context.read<HFGlobalState>().userAccessLevel ==
-              accessLevels.trainer)
-            IconButton(
-              onPressed: () {
-                print('edit');
-                // Navigator.pushNamed(
-                //   context,
-                //   editTrainingRoute,
-                //   arguments: {
-                //     'parentContext': context,
-                //     'id': widget.id,
-                //     'name': _nameState,
-                //     'note': _noteState,
-                //     'exercises': _exercisesState,
-                //     'isEdit': true,
-                //     'isDuplicate': false
-                //   },
-                // );
-              },
-              icon: const Icon(CupertinoIcons.pen),
-            )
+          // if (context.read<HFGlobalState>().userAccessLevel ==
+          //     accessLevels.trainer)
+          //   IconButton(
+          //     onPressed: () {
+          // Navigator.pushNamed(
+          //   context,
+          //   editTrainingRoute,
+          //   arguments: {
+          //     'parentContext': context,
+          //     'id': widget.id,
+          //     'name': _nameState,
+          //     'note': _noteState,
+          //     'exercises': _exercisesState,
+          //     'isEdit': false,
+          //     'isDuplicate': true
+          //   },
+          // );
+          // },
+          //   icon: const Icon(CupertinoIcons.doc_on_clipboard),
+          // ),
+          // if (context.read<HFGlobalState>().userAccessLevel ==
+          //     accessLevels.trainer)
+          // IconButton(
+          //   onPressed: () {
+          // Navigator.pushNamed(
+          //   context,
+          //   editTrainingRoute,
+          //   arguments: {
+          //     'parentContext': context,
+          //     'id': widget.id,
+          //     'name': _nameState,
+          //     'note': _noteState,
+          //     'exercises': _exercisesState,
+          //     'isEdit': true,
+          //     'isDuplicate': false
+          //   },
+          // );
+          //   },
+          //   icon: const Icon(CupertinoIcons.pen),
+          // )
         ],
         systemOverlayStyle: SystemUiOverlayStyle.light,
       ),
@@ -298,7 +296,6 @@ class EventScreen extends StatelessWidget {
                         repetitions: double.parse(exercise['repetitions']),
                         series: double.parse(exercise['series']),
                         onTap: () {
-                          print({...exerciseData(exercise), 'author': 'bla'});
                           Navigator.pushNamed(context, adminExerciseSingle,
                               arguments: {
                                 ...exerciseData(exercise),

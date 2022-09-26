@@ -37,7 +37,6 @@ class HFEventTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(client);
     return Column(
       children: [
         Container(

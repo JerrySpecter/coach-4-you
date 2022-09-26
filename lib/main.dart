@@ -31,10 +31,7 @@ class HFApp extends StatelessWidget {
 
   checkForPermissions() async {
     var status = await Permission.photos.status;
-
-    // print(status);
     if (status.isDenied) {
-      // We didn't ask for permission yet or the permission has been denied before but not permanently.
       Permission.photos.request();
       Permission.notification.request();
     }
@@ -43,8 +40,6 @@ class HFApp extends StatelessWidget {
       Permission.photos,
       Permission.notification,
     ].request();
-
-    print(statuses);
   }
 
   // This widget is the root of your application.

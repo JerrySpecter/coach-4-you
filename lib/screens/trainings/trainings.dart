@@ -40,7 +40,6 @@ class _TrainingsState extends State<Trainings> {
         ),
         child: IconButton(
           onPressed: () {
-            print('Add training');
             Navigator.pushNamed(context, addTrainingRoute);
           },
           icon: const Icon(CupertinoIcons.add),
@@ -97,7 +96,6 @@ class _TrainingsState extends State<Trainings> {
                               useImage: false,
                               showAvailable: false,
                               onTap: () {
-                                print('Open training');
                                 Navigator.pushNamed(
                                   context,
                                   singleTrainingRoute,

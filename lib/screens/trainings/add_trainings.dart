@@ -498,8 +498,6 @@ class _AddTrainingState extends State<AddTraining> {
                                   children: [
                                     ...data.docs.map(
                                       (exercise) {
-                                        print(exercise.toString());
-
                                         return HFSelectListViewTile(
                                           name: exercise['name'],
                                           imageUrl: exercise['videoThumbnail'],
@@ -534,7 +532,6 @@ class _AddTrainingState extends State<AddTraining> {
                                             ],
                                           ),
                                           onTap: () {
-                                            print(exercise);
                                             setState(() {
                                               _exerciseTypes =
                                                   exercise['types'];
@@ -638,7 +635,6 @@ class _AddTrainingState extends State<AddTraining> {
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           onPressed: () {
                             setState(() {
-                              print(_selectedExercises);
                               FocusScope.of(context).requestFocus(FocusNode());
 
                               var newId = const Uuid().v4();
