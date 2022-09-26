@@ -91,12 +91,12 @@ class Home extends StatelessWidget {
                       ),
                     ),
                   ),
-                  IconButton(
-                      onPressed: () {},
-                      icon: Icon(
-                        CupertinoIcons.bell,
-                        color: HFColors().primaryColor(),
-                      ))
+                  // IconButton(
+                  //     onPressed: () {},
+                  //     icon: Icon(
+                  //       CupertinoIcons.bell,
+                  //       color: HFColors().primaryColor(),
+                  //     ))
                 ],
               ),
             ),

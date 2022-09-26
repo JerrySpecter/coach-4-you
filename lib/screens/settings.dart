@@ -89,6 +89,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   context.read<HFGlobalState>().setUserLastName('');
                   context.read<HFGlobalState>().setUserImage('');
                   context.read<HFGlobalState>().setUserBackgroundImage('');
+                  context.read<HFGlobalState>().setUserIsAdmin(false);
                 },
               ),
               const SizedBox(
