@@ -6,7 +6,12 @@ import 'package:health_factory/screens/admin/admin.dart';
 import 'package:health_factory/screens/admin/single_videos.dart';
 import 'package:health_factory/screens/admin/trainers.dart';
 import 'package:health_factory/screens/admin/videos.dart';
-import 'package:health_factory/screens/client_profile.dart';
+import 'package:health_factory/screens/client/client_arm.dart';
+import 'package:health_factory/screens/client/client_profile.dart';
+import 'package:health_factory/screens/client/client_shoulders.dart';
+import 'package:health_factory/screens/client/client_thigh.dart';
+import 'package:health_factory/screens/client/client_waist.dart';
+import 'package:health_factory/screens/client/client_weight.dart';
 import 'package:health_factory/screens/news/add_news.dart';
 import 'package:health_factory/screens/events/single_event.dart';
 import 'package:health_factory/screens/news/news.dart';
@@ -25,6 +30,8 @@ import '../screens/admin/add_location.dart';
 import '../screens/admin/exercise.dart';
 import '../screens/admin/locations.dart';
 import '../screens/admin/single_exercise.dart';
+import '../screens/client/client_add_measurement.dart';
+import '../screens/client/client_chest.dart';
 import '../screens/clients/clients.dart';
 import '../screens/clients/single_client.dart';
 import '../screens/events/add_event.dart';
@@ -294,6 +301,72 @@ Route<dynamic>? genRoute(RouteSettings settings) {
           types: data['types'],
           repetitionType: data['repetitionType'],
           isEdit: true,
+        ),
+      );
+    case clientWeightRoute:
+      return MaterialPageRoute(
+        builder: (_) => ClientWeight(),
+      );
+    case clientAddWeightRoute:
+      return MaterialPageRoute(
+        builder: (_) => ClientAddMeasurement(
+          collection: 'weight',
+          hintText: 'Weight',
+        ),
+      );
+    case clientChestRoute:
+      return MaterialPageRoute(
+        builder: (_) => ClientChest(),
+      );
+    case clientAddChestRoute:
+      return MaterialPageRoute(
+        builder: (_) => ClientAddMeasurement(
+          collection: 'chest',
+          hintText: 'Chest circumference',
+        ),
+      );
+    case clientShouldersRoute:
+      return MaterialPageRoute(
+        builder: (_) => const ClientShoulders(),
+      );
+    case clientAddShouldersRoute:
+      return MaterialPageRoute(
+        builder: (_) => ClientAddMeasurement(
+          collection: 'shoulders',
+          hintText: 'Shoulders circumference',
+        ),
+      );
+    case clientUpperArmRoute:
+      return MaterialPageRoute(
+        builder: (_) => ClientArm(),
+      );
+    case clientAddUpperArmRoute:
+      return MaterialPageRoute(
+        builder: (_) => ClientAddMeasurement(
+          collection: 'arm',
+          hintText: 'Upper arm circumference',
+        ),
+      );
+    case clientWaistRoute:
+      return MaterialPageRoute(
+        builder: (_) => ClientWaist(),
+      );
+    case clientAddWaistRoute:
+      return MaterialPageRoute(
+        builder: (_) => ClientAddMeasurement(
+          collection: 'waist',
+          hintText: 'Waist circumference',
+        ),
+      );
+    case clientMidThighRoute:
+      return MaterialPageRoute(
+        builder: (_) => ClientThigh(),
+      );
+    case clientAddMidThighRoute:
+      return MaterialPageRoute(
+        builder: (_) => ClientAddMeasurement(
+          collection: 'thigh',
+          hintText: 'Mid thigh circumference',
         ),
       );
     default:

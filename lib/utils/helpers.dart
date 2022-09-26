@@ -61,6 +61,67 @@ Map<String, dynamic> exerciseData(data) {
   };
 }
 
+List<Map<String, dynamic>> getChartData() {
+  return [
+    {
+      'date': '2022-09-21 00:00:00.000Z',
+      'value': 80,
+    },
+    {
+      'date': '2022-09-22 00:00:00.000Z',
+      'value': 85,
+    },
+    {
+      'date': '2022-09-23 00:00:00.000Z',
+      'value': 78,
+    },
+    {
+      'date': '2022-09-24 00:00:00.000Z',
+      'value': 100,
+    },
+    {
+      'date': '2022-09-25 00:00:00.000Z',
+      'value': 90,
+    },
+    {
+      'date': '2022-09-26 00:00:00.000Z',
+      'value': 103,
+    },
+    {
+      'date': '2022-09-27 00:00:00.000Z',
+      'value': 85,
+    },
+    {
+      'date': '2022-09-28 00:00:00.000Z',
+      'value': 89,
+    },
+    {
+      'date': '2022-09-29 00:00:00.000Z',
+      'value': 78,
+    },
+    {
+      'date': '2022-09-30 00:00:00.000Z',
+      'value': 90,
+    },
+    {
+      'date': '2022-09-25 00:00:00.000Z',
+      'value': 90,
+    },
+    {
+      'date': '2022-09-26 00:00:00.000Z',
+      'value': 103,
+    },
+    {
+      'date': '2022-09-27 00:00:00.000Z',
+      'value': 85,
+    },
+    {
+      'date': '2022-09-28 00:00:00.000Z',
+      'value': 89,
+    }
+  ];
+}
+
 DocumentReference<Map<String, dynamic>> getVideoById(id) {
   return FirebaseFirestore.instance.collection('videos').doc(id);
 }
