@@ -46,6 +46,7 @@ class Home extends StatelessWidget {
                           'weight': context.read<HFGlobalState>().userWeight,
                           'profileBackgroundImageUrl':
                               context.read<HFGlobalState>().userBackgroundImage,
+                          'asTrainer': false,
                         });
                       } else {
                         Navigator.pushNamed(

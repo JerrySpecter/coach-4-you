@@ -274,6 +274,9 @@ class ClientShoulders extends StatelessWidget {
                 ),
               ],
             ),
+            SizedBox(
+              height: 40,
+            )
           ],
         ),
       ),

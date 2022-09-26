@@ -272,6 +272,9 @@ class ClientThigh extends StatelessWidget {
                 ),
               ],
             ),
+            SizedBox(
+              height: 40,
+            )
           ],
         ),
       ),

@@ -53,6 +53,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     'weight': context.read<HFGlobalState>().userWeight,
                     'profileBackgroundImageUrl':
                         context.read<HFGlobalState>().userBackgroundImage,
+                    'asTrainer': false
                   });
                 } else {
                   Navigator.pushNamed(context, trainerProfileLoggedInRoute,

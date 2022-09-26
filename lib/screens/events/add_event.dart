@@ -1419,9 +1419,7 @@ void initDay(date) {
       .getTrainersUser()
       .collection('days')
       .doc('$date')
-      .set({'exists': true})
-      .then((value) => print('Day created: $date'))
-      .catchError((error) => print(error));
+      .set({'exists': true}).catchError((error) => print(error));
 }
 
 void initClientDay(date, id) {
@@ -1429,9 +1427,7 @@ void initClientDay(date, id) {
       .getClientsUser(id)
       .collection('days')
       .doc('$date')
-      .set({'exists': true})
-      .then((value) => print('Day created: $date'))
-      .catchError((error) => print(error));
+      .set({'exists': true}).catchError((error) => print(error));
 }
 
 Widget colorBox(color, isActive, onTap) {

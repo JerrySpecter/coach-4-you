@@ -270,6 +270,9 @@ class ClientWeight extends StatelessWidget {
                 ),
               ],
             ),
+            SizedBox(
+              height: 40,
+            )
           ],
         ),
       ),

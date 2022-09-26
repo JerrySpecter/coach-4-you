@@ -272,6 +272,9 @@ class ClientChest extends StatelessWidget {
                 ),
               ],
             ),
+            SizedBox(
+              height: 40,
+            )
           ],
         ),
       ),

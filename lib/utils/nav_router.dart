@@ -180,6 +180,7 @@ Route<dynamic>? genRoute(RouteSettings settings) {
           weight: data['weight'],
           height: data['height'],
           profileBackgroundImageUrl: data['profileBackgroundImageUrl'],
+          asTrainer: data['asTrainer'],
         ),
       );
     case trainerProfileLoggedInRoute:

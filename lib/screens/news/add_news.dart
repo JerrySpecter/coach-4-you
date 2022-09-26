@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:health_factory/constants/colors.dart';
 import 'package:health_factory/constants/firebase_functions.dart';
+import 'package:health_factory/constants/global_state.dart';
 import 'package:health_factory/screens/root.dart';
 import 'package:health_factory/widgets/hf_button.dart';
 import 'package:health_factory/widgets/hf_heading.dart';
 import 'package:health_factory/widgets/hf_input_field.dart';
 import 'package:health_factory/widgets/hf_snackbar.dart';
+import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import '../../widgets/hf_upload_photo.dart';
 
@@ -24,6 +26,7 @@ class AddNewsScreen extends StatefulWidget {
 class AddNewsScreenState extends State<AddNewsScreen> {
   final TextEditingController newsTitleController = TextEditingController();
   final TextEditingController newsExcerptController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
   String _imageUrl = '';
   bool _startUpload = false;
   double _uploadingPercentage = 0;
@@ -44,20 +47,6 @@ class AddNewsScreenState extends State<AddNewsScreen> {
           text: 'Add news',
           size: 6,
         ),
-        actions: [
-          IconButton(
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const RootPage(),
-                  ),
-                );
-                newsTitleController.clear();
-                newsExcerptController.clear();
-              },
-              icon: const Icon(CupertinoIcons.multiply))
-        ],
         systemOverlayStyle: SystemUiOverlayStyle.light,
       ),
       backgroundColor: HFColors().backgroundColor(),
@@ -67,87 +56,129 @@ class AddNewsScreenState extends State<AddNewsScreen> {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  HFUploadPhoto(
-                    onImageSelect: (imageUrl) {
-                      setState(() {
-                        _imageUrl = imageUrl;
-                      });
-                    },
-                    startUpload: _startUpload,
-                    uploadingPercentage: _uploadingPercentage,
-                  ),
-                  HFInput(
-                    controller: newsTitleController,
-                    hintText: 'News title',
-                    labelText: 'News title',
-                    showCursor: true,
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  HFInput(
-                    controller: newsExcerptController,
-                    hintText: 'News content',
-                    labelText: 'News content',
-                    showCursor: true,
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  HFButton(
-                    text: _startUpload ? 'Adding...' : 'Add news',
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    onPressed: () async {
-                      var newId = const Uuid().v4();
-                      setState(() {
-                        _startUpload = true;
-                      });
-
-                      try {
-                        await cloudinary.uploadFile(
-                          CloudinaryFile.fromFile(
-                            _imageUrl,
-                            resourceType: CloudinaryResourceType.Image,
-                          ),
-                          onProgress: (count, total) {
-                            setState(() {
-                              _uploadingPercentage = (count / total);
-                            });
-                          },
-                        ).then((value) {
-                          HFFirebaseFunctions()
-                              .getFirebaseAuthUser(context)
-                              .collection('news')
-                              .doc(newId)
-                              .set({
-                            'title': newsTitleController.text,
-                            'excerpt': newsExcerptController.text,
-                            'id': newId,
-                            'date': '${DateTime.now()}',
-                            'imageUrl': value.secureUrl,
-                          }).then(
-                            (value) {
-                              Navigator.pop(context);
-
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(getSnackBar(
-                                text: 'New post published!',
-                                color: HFColors().primaryColor(),
-                              ));
-                            },
-                          ).catchError((error) => print('Add failed: $error'));
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    HFUploadPhoto(
+                      onImageSelect: (imageUrl) {
+                        setState(() {
+                          _imageUrl = imageUrl;
                         });
-                      } on CloudinaryException catch (e) {
-                        print(e.message);
-                        print(e.request);
-                      }
-                    },
-                  ),
-                ],
+                      },
+                      startUpload: _startUpload,
+                      uploadingPercentage: _uploadingPercentage,
+                    ),
+                    HFInput(
+                      controller: newsTitleController,
+                      hintText: 'News title',
+                      labelText: 'News title',
+                      showCursor: true,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter title.';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    HFInput(
+                      controller: newsExcerptController,
+                      hintText: 'News content',
+                      labelText: 'News content',
+                      showCursor: true,
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    HFButton(
+                      text: _startUpload ? 'Adding...' : 'Add news',
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      onPressed: () async {
+                        if (_formKey.currentState!.validate()) {
+                          var newId = const Uuid().v4();
+
+                          if (_imageUrl != '') {
+                            setState(() {
+                              _startUpload = true;
+                            });
+                            try {
+                              await cloudinary.uploadFile(
+                                CloudinaryFile.fromFile(
+                                  _imageUrl,
+                                  resourceType: CloudinaryResourceType.Image,
+                                ),
+                                onProgress: (count, total) {
+                                  setState(() {
+                                    _uploadingPercentage = (count / total);
+                                  });
+                                },
+                              ).then((value) {
+                                HFFirebaseFunctions()
+                                    .getFirebaseAuthUser(context)
+                                    .collection('news')
+                                    .doc(newId)
+                                    .set({
+                                  'title': newsTitleController.text,
+                                  'excerpt': newsExcerptController.text,
+                                  'author':
+                                      context.read<HFGlobalState>().userName,
+                                  'likes': [],
+                                  'id': newId,
+                                  'date': '${DateTime.now()}',
+                                  'imageUrl': value.secureUrl,
+                                }).then(
+                                  (value) {
+                                    Navigator.pop(context);
+
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(getSnackBar(
+                                      text: 'New post published!',
+                                      color: HFColors().primaryColor(),
+                                    ));
+                                  },
+                                ).catchError(
+                                        (error) => print('Add failed: $error'));
+                              });
+                            } on CloudinaryException catch (e) {
+                              print(e.message);
+                              print(e.request);
+                            }
+                          } else {
+                            HFFirebaseFunctions()
+                                .getFirebaseAuthUser(context)
+                                .collection('news')
+                                .doc(newId)
+                                .set({
+                              'title': newsTitleController.text,
+                              'excerpt': newsExcerptController.text,
+                              'author': context.read<HFGlobalState>().userName,
+                              'likes': [],
+                              'id': newId,
+                              'date': '${DateTime.now()}',
+                              'imageUrl': _imageUrl,
+                            }).then(
+                              (value) {
+                                Navigator.pop(context);
+
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(getSnackBar(
+                                  text: 'New post published!',
+                                  color: HFColors().primaryColor(),
+                                ));
+                              },
+                            ).catchError(
+                                    (error) => print('Add failed: $error'));
+                          }
+                        }
+                      },
+                    ),
+                  ],
+                ),
               ),
             )
           ],

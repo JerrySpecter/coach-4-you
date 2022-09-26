@@ -8,7 +8,9 @@ import 'package:intl/intl.dart';
 class HFNewsTile extends StatelessWidget {
   const HFNewsTile({
     Key? key,
-    this.title = 'News title',
+    this.title = 'Title',
+    this.author = 'Author',
+    this.likes = const [],
     this.excerpt =
         'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries,',
     this.date = '00:00',
@@ -19,6 +21,8 @@ class HFNewsTile extends StatelessWidget {
   }) : super(key: key);
 
   final String title;
+  final String author;
+  final List likes;
   final String excerpt;
   final String date;
   final String imageUrl;
@@ -65,7 +69,7 @@ class HFNewsTile extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               HFParagrpah(
-                                text: 'Fran Hojsak',
+                                text: author,
                                 size: 6,
                                 color: HFColors().whiteColor(),
                               ),

@@ -272,6 +272,9 @@ class ClientArm extends StatelessWidget {
                 ),
               ],
             ),
+            SizedBox(
+              height: 40,
+            )
           ],
         ),
       ),

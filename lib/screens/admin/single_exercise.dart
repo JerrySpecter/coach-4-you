@@ -161,102 +161,106 @@ class _SingleExerciseState extends State<SingleExercise> {
       backgroundColor: HFColors().backgroundColor(),
       body: SingleChildScrollView(
         child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(
-                  height: 20,
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(
+                height: 20,
+              ),
+              HFHeading(
+                text: _nameState,
+                size: 7,
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              HFParagrpah(
+                text: widget.author,
+                size: 7,
+                maxLines: 999,
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              if (_typesState.isNotEmpty)
+                Wrap(
+                  spacing: 8,
+                  children: [
+                    ..._typesState.map(
+                      (type) => HFTag(
+                        text: type,
+                        size: 6,
+                        color: HFColors().secondaryColor(),
+                        backgroundColor: HFColors().primaryColor(),
+                      ),
+                    )
+                  ],
                 ),
-                HFHeading(
-                  text: _nameState,
-                  size: 7,
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                HFParagrpah(
-                  text: widget.author,
-                  size: 7,
-                  maxLines: 999,
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                if (_typesState.isNotEmpty)
-                  Wrap(
-                    spacing: 8,
+              const SizedBox(
+                height: 20,
+              ),
+              SizedBox(
+                height: (MediaQuery.of(context).size.width - 32) / (16 / 9),
+                width: MediaQuery.of(context).size.width - 32,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16.0),
+                  child: Stack(
+                    fit: StackFit.passthrough,
                     children: [
-                      ..._typesState.map(
-                        (type) => HFTag(
-                          text: type,
-                          size: 6,
-                          color: HFColors().secondaryColor(),
-                          backgroundColor: HFColors().primaryColor(),
-                        ),
-                      )
+                      _chewieController != null &&
+                              _chewieController!
+                                  .videoPlayerController.value.isInitialized
+                          ? Chewie(
+                              controller: _chewieController!,
+                            )
+                          : const HFImage()
                     ],
                   ),
-                const SizedBox(
-                  height: 20,
                 ),
-                SizedBox(
-                  height: (MediaQuery.of(context).size.width - 32) / (16 / 9),
-                  width: MediaQuery.of(context).size.width - 32,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(16.0),
-                    child: Stack(
-                      fit: StackFit.passthrough,
-                      children: [
-                        _chewieController != null &&
-                                _chewieController!
-                                    .videoPlayerController.value.isInitialized
-                            ? Chewie(
-                                controller: _chewieController!,
-                              )
-                            : const HFImage()
-                      ],
-                    ),
-                  ),
-                ),
-                if (widget.note != '')
-                  const SizedBox(
-                    height: 30,
-                  ),
-                if (widget.note != '')
-                  const HFHeading(
-                    text: 'Coach notes:',
-                    size: 6,
-                  ),
-                if (widget.note != '')
-                  const SizedBox(
-                    height: 8,
-                  ),
-                if (widget.note != '')
-                  HFParagrpah(
-                    text: widget.note,
-                    size: 9,
-                    lineHeight: 1.4,
-                    maxLines: 999,
-                  ),
+              ),
+              if (widget.note != '')
                 const SizedBox(
                   height: 30,
                 ),
+              if (widget.note != '')
                 const HFHeading(
-                  text: 'Exercise description:',
+                  text: 'Coach notes:',
                   size: 6,
                 ),
+              if (widget.note != '')
                 const SizedBox(
                   height: 8,
                 ),
+              if (widget.note != '')
                 HFParagrpah(
-                  text: _descriptionState,
+                  text: widget.note,
                   size: 9,
                   lineHeight: 1.4,
                   maxLines: 999,
                 ),
-              ],
-            )),
+              const SizedBox(
+                height: 30,
+              ),
+              const HFHeading(
+                text: 'Exercise description:',
+                size: 6,
+              ),
+              const SizedBox(
+                height: 8,
+              ),
+              HFParagrpah(
+                text: _descriptionState,
+                size: 9,
+                lineHeight: 1.4,
+                maxLines: 999,
+              ),
+              SizedBox(
+                height: 60,
+              )
+            ],
+          ),
+        ),
       ),
     );
   }

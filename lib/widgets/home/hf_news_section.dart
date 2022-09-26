@@ -40,7 +40,8 @@ class HFNewsSection extends StatelessWidget {
             StreamBuilder(
               stream: HFFirebaseFunctions()
                   .getTrainersUser(
-                    isClient
+                    context.read<HFGlobalState>().userAccessLevel ==
+                            accessLevels.client
                         ? context.read<HFGlobalState>().userTrainerId
                         : context.read<HFGlobalState>().userId,
                   )
@@ -90,6 +91,8 @@ class HFNewsSection extends StatelessWidget {
                               date: news['date'],
                               imageUrl: news['imageUrl'],
                               id: news['id'],
+                              author: news['author'],
+                              likes: news['likes'],
                               useSpacerBottom: true,
                               onTap: () {
                                 Navigator.pushNamed(context, singleNewsRoute,

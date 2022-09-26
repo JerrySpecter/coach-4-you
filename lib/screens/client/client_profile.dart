@@ -14,6 +14,7 @@ import 'package:intl/intl.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
 import '../../constants/routes.dart';
+import '../../widgets/hf_dialog.dart';
 
 class ClientProfile extends StatefulWidget {
   const ClientProfile({
@@ -22,9 +23,10 @@ class ClientProfile extends StatefulWidget {
     required this.id,
     required this.email,
     required this.imageUrl,
-    required this.profileBackgroundImageUrl,
+    this.profileBackgroundImageUrl = '',
     this.height = '',
     this.weight = '',
+    this.asTrainer = false,
   }) : super(key: key);
 
   final String name;
@@ -33,6 +35,7 @@ class ClientProfile extends StatefulWidget {
   final String email;
   final String profileBackgroundImageUrl;
 
+  final bool asTrainer;
   final String height;
   final String weight;
 
@@ -41,15 +44,46 @@ class ClientProfile extends StatefulWidget {
 }
 
 class _ClientProfileState extends State<ClientProfile> {
-  final SnappingSheetController snappingSheetController =
-      SnappingSheetController();
-  final TextEditingController emailAddressController = TextEditingController();
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController contentController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
-  bool pullUpOpen = false;
-  bool isLoading = false;
   double topOffset = 60;
+  String initialName = '';
+  String initialId = '';
+  String initialImageUrl = '';
+  String initialEmail = '';
+  String initialProfileBackgroundImageUrl = '';
+  String initialHeight = '';
+
+  @override
+  void initState() {
+    initialName = widget.name;
+    initialId = widget.id;
+    initialImageUrl = widget.imageUrl;
+    initialEmail = widget.email;
+    initialProfileBackgroundImageUrl = widget.profileBackgroundImageUrl;
+    initialHeight = widget.height;
+
+    if (widget.asTrainer) {
+      FirebaseFirestore.instance
+          .collection('clients')
+          .doc(widget.id)
+          .get()
+          .then((value) {
+        print(value.data());
+        var data = value.data();
+
+        if (data != null) {
+          setState(() {
+            initialHeight = data['height'];
+            initialImageUrl = data['imageUrl'];
+            initialProfileBackgroundImageUrl =
+                data['profileBackgroundImageUrl'];
+          });
+        }
+      });
+    }
+
+    // TODO: implement initState
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +105,7 @@ class _ClientProfileState extends State<ClientProfile> {
                         height: 300,
                         child: ClipRRect(
                           child: HFImage(
-                              imageUrl: widget.profileBackgroundImageUrl),
+                              imageUrl: initialProfileBackgroundImageUrl),
                         ),
                       ),
                       Positioned(
@@ -91,6 +125,50 @@ class _ClientProfileState extends State<ClientProfile> {
                           )),
                         ),
                       ),
+                      if (widget.asTrainer)
+                        Positioned(
+                          top: topOffset,
+                          right: 16,
+                          child: Container(
+                            height: 40,
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            decoration: BoxDecoration(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(12)),
+                              color: HFColors().primaryColor(),
+                              boxShadow: getShadow(),
+                            ),
+                            child: InkWell(
+                              onTap: () {
+                                showAlertDialog(
+                                  context,
+                                  'Are you sure you want to delete client: $initialName',
+                                  () {
+                                    HFFirebaseFunctions()
+                                        .getFirebaseAuthUser(context)
+                                        .collection('clients')
+                                        .doc(widget.email)
+                                        .delete()
+                                        .then((value) {
+                                      Navigator.pop(context);
+                                    }).then((value) {
+                                      Navigator.pop(context);
+                                    });
+                                  },
+                                  'Yes',
+                                  () {
+                                    Navigator.pop(context);
+                                  },
+                                  'No',
+                                );
+                              },
+                              child: Icon(
+                                CupertinoIcons.trash,
+                                color: HFColors().secondaryColor(),
+                              ),
+                            ),
+                          ),
+                        ),
                       Positioned(
                         bottom: -40,
                         left: (MediaQuery.of(context).size.width / 2) - 75,
@@ -115,7 +193,7 @@ class _ClientProfileState extends State<ClientProfile> {
                             ),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(24.0),
-                              child: HFImage(imageUrl: widget.imageUrl),
+                              child: HFImage(imageUrl: initialImageUrl),
                             ),
                           ),
                         ),
@@ -152,11 +230,11 @@ class _ClientProfileState extends State<ClientProfile> {
                   height: 70,
                 ),
                 HFHeading(
-                  text: widget.name,
+                  text: initialName,
                   size: 8,
                   textAlign: TextAlign.center,
                 ),
-                ClientInformation(context, widget),
+                ClientInformation(context, initialHeight),
                 CarouselSlider(
                   options: CarouselOptions(
                     aspectRatio: 2.0,
@@ -169,69 +247,87 @@ class _ClientProfileState extends State<ClientProfile> {
                   ),
                   items: [
                     SliderBox(
-                        context,
-                        HFFirebaseFunctions()
-                            .getFirebaseAuthUser(context)
-                            .collection('weight')
-                            .orderBy('date', descending: true)
-                            .snapshots(),
-                        'Weight',
-                        'kg',
-                        clientWeightRoute),
+                      context,
+                      FirebaseFirestore.instance
+                          .collection('clients')
+                          .doc(widget.id)
+                          .collection('weight')
+                          .orderBy('date', descending: true)
+                          .snapshots(),
+                      'Weight',
+                      'kg',
+                      clientWeightRoute,
+                      widget.asTrainer,
+                    ),
                     SliderBox(
-                        context,
-                        HFFirebaseFunctions()
-                            .getFirebaseAuthUser(context)
-                            .collection('chest')
-                            .orderBy('date', descending: true)
-                            .snapshots(),
-                        'Chest circumference',
-                        'cm',
-                        clientChestRoute),
+                      context,
+                      FirebaseFirestore.instance
+                          .collection('clients')
+                          .doc(widget.id)
+                          .collection('chest')
+                          .orderBy('date', descending: true)
+                          .snapshots(),
+                      'Chest circumference',
+                      'cm',
+                      clientChestRoute,
+                      widget.asTrainer,
+                    ),
                     SliderBox(
-                        context,
-                        HFFirebaseFunctions()
-                            .getFirebaseAuthUser(context)
-                            .collection('shoulders')
-                            .orderBy('date', descending: true)
-                            .snapshots(),
-                        'Shoulder circ.',
-                        'cm',
-                        clientShouldersRoute),
+                      context,
+                      FirebaseFirestore.instance
+                          .collection('clients')
+                          .doc(widget.id)
+                          .collection('shoulders')
+                          .orderBy('date', descending: true)
+                          .snapshots(),
+                      'Shoulder circ.',
+                      'cm',
+                      clientShouldersRoute,
+                      widget.asTrainer,
+                    ),
                     SliderBox(
-                        context,
-                        HFFirebaseFunctions()
-                            .getFirebaseAuthUser(context)
-                            .collection('arm')
-                            .orderBy('date', descending: true)
-                            .snapshots(),
-                        'Arm circumference',
-                        'cm',
-                        clientUpperArmRoute),
+                      context,
+                      FirebaseFirestore.instance
+                          .collection('clients')
+                          .doc(widget.id)
+                          .collection('arm')
+                          .orderBy('date', descending: true)
+                          .snapshots(),
+                      'Arm circumference',
+                      'cm',
+                      clientUpperArmRoute,
+                      widget.asTrainer,
+                    ),
                     SliderBox(
-                        context,
-                        HFFirebaseFunctions()
-                            .getFirebaseAuthUser(context)
-                            .collection('waist')
-                            .orderBy('date', descending: true)
-                            .snapshots(),
-                        'Waist circumference',
-                        'cm',
-                        clientWaistRoute),
+                      context,
+                      FirebaseFirestore.instance
+                          .collection('clients')
+                          .doc(widget.id)
+                          .collection('waist')
+                          .orderBy('date', descending: true)
+                          .snapshots(),
+                      'Waist circumference',
+                      'cm',
+                      clientWaistRoute,
+                      widget.asTrainer,
+                    ),
                     SliderBox(
-                        context,
-                        HFFirebaseFunctions()
-                            .getFirebaseAuthUser(context)
-                            .collection('thigh')
-                            .orderBy('date', descending: true)
-                            .snapshots(),
-                        'Thigh circumference',
-                        'cm',
-                        clientMidThighRoute),
+                      context,
+                      FirebaseFirestore.instance
+                          .collection('clients')
+                          .doc(widget.id)
+                          .collection('thigh')
+                          .orderBy('date', descending: true)
+                          .snapshots(),
+                      'Thigh circumference',
+                      'cm',
+                      clientMidThighRoute,
+                      widget.asTrainer,
+                    ),
                   ],
                 ),
                 const SizedBox(
-                  height: 30,
+                  height: 60,
                 ),
                 // Padding(
                 //   padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -304,7 +400,7 @@ Widget ProfileDataListTile(context, text, value) {
   );
 }
 
-Widget ClientInformation(context, data) {
+Widget ClientInformation(context, height) {
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 40),
     child: Column(
@@ -320,7 +416,7 @@ Widget ClientInformation(context, data) {
         Container(
           child: Column(
             children: [
-              ProfileDataListTile(context, 'Height:', '${data.height}cm'),
+              ProfileDataListTile(context, 'Height:', '${height}cm'),
             ],
           ),
         ),
@@ -329,7 +425,7 @@ Widget ClientInformation(context, data) {
   );
 }
 
-Widget SliderBox(BuildContext context, data, title, measure, route) {
+Widget SliderBox(BuildContext context, data, title, measure, route, isTrainer) {
   return StreamBuilder<Object>(
       stream: data,
       builder: (context, snapshot) {
@@ -342,8 +438,9 @@ Widget SliderBox(BuildContext context, data, title, measure, route) {
 
         return InkWell(
           onTap: (() {
-            print('tap');
-            Navigator.pushNamed(context, route, arguments: {});
+            if (!isTrainer) {
+              Navigator.pushNamed(context, route, arguments: {});
+            }
           }),
           child: Stack(
             children: [

@@ -126,12 +126,16 @@ class ClientsPageState extends State<ClientsPage> {
                             showAvailable: true,
                             useSpacerBottom: true,
                             onTap: () {
-                              Navigator.pushNamed(context, singleClientsRoute,
+                              Navigator.pushNamed(context, clientProfileRoute,
                                   arguments: {
                                     'name': client['name'],
                                     'email': client['email'],
                                     'imageUrl': client['imageUrl'],
                                     'id': client['id'],
+                                    'weight': '',
+                                    'height': '',
+                                    'profileBackgroundImageUrl': '',
+                                    'asTrainer': true
                                   });
                             },
                             child: Column(

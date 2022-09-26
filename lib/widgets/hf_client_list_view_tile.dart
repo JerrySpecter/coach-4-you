@@ -103,14 +103,12 @@ class _HFClientListViewTileState extends State<HFClientListViewTile> {
                         size: 4,
                         color: HFColors().whiteColor(),
                       ),
-                      if (widget.showAvailable)
+                      if (!widget.available)
                         Row(
                           children: [
                             Icon(
                               CupertinoIcons.circle_filled,
-                              color: widget.available
-                                  ? HFColors().greenColor()
-                                  : HFColors().redColor(),
+                              color: HFColors().redColor(),
                               size: 8,
                             ),
                             SizedBox(
@@ -119,7 +117,7 @@ class _HFClientListViewTileState extends State<HFClientListViewTile> {
                             HFParagrpah(
                               size: 5,
                               color: HFColors().whiteColor(),
-                              text: widget.available ? 'Ready' : 'Not ready',
+                              text: 'Not ready',
                             )
                           ],
                         ),
