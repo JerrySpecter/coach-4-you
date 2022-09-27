@@ -1,11 +1,8 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:chewie/chewie.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudinary_public/cloudinary_public.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:health_factory/constants/colors.dart';
@@ -15,20 +12,13 @@ import 'package:health_factory/widgets/hf_button.dart';
 import 'package:health_factory/widgets/hf_heading.dart';
 import 'package:health_factory/widgets/hf_input_field.dart';
 import 'package:health_factory/widgets/hf_select_list_view_tile.dart';
-import 'package:health_factory/widgets/hf_snackbar.dart';
-import 'package:email_validator/email_validator.dart';
-import 'package:health_factory/widgets/hf_upload_photo.dart';
-import 'package:health_factory/widgets/hf_upload_video.dart';
-import 'package:http/http.dart' as http;
 import 'package:multi_select_flutter/chip_field/multi_select_chip_field.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:video_player/video_player.dart';
 
-import '../../constants/routes.dart';
 import '../../widgets/hf_image.dart';
-import '../../widgets/hf_list_view_tile.dart';
 import '../../widgets/hf_paragraph.dart';
 
 class AddExercise extends StatefulWidget {
@@ -152,9 +142,7 @@ class _AddExerciseFormState extends State<AddExerciseForm> {
   final cloudinary =
       CloudinaryPublic('jerryspecter', 'hf_upload', cache: false);
 
-  File _exercise = File('');
   String _exerciseUrl = '';
-  bool _startUpload = false;
   double _uploadingPercentage = 0;
   String _initialVideoId = '';
   String _initialName = '';

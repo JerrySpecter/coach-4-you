@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:504027153680:android:6009e61344b3e494655195",
         "android_client_info": {
-          "package_name": "com.example.health_factory"
+          "package_name": "design.specter.c4y"
         }
       },
       "oauth_client": [

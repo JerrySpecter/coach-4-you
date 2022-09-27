@@ -136,7 +136,7 @@ class _AddTrainersFormState extends State<AddTrainersForm> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Flexible(
-                            flex: 2,
+                            flex: 3,
                             child: HFHeading(
                               text: 'Trainer is admin',
                               size: 4,
@@ -147,7 +147,7 @@ class _AddTrainersFormState extends State<AddTrainersForm> {
                             width: 20,
                           ),
                           Flexible(
-                            flex: 3,
+                            flex: 1,
                             child: CupertinoSwitch(
                               value: _isAdmin,
                               onChanged: (value) {
