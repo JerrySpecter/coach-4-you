@@ -3,9 +3,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:health_factory/constants/firebase_functions.dart';
+import 'package:health_factory/constants/global_state.dart';
 import 'package:health_factory/utils/helpers.dart';
 import 'package:health_factory/widgets/hf_heading.dart';
 import 'package:health_factory/widgets/hf_paragraph.dart';
+import 'package:provider/provider.dart';
 import '../../../constants/colors.dart';
 import '../../../widgets/hf_image.dart';
 import 'package:snapping_sheet/snapping_sheet.dart';
@@ -15,6 +17,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 
 import '../../constants/routes.dart';
 import '../../widgets/hf_dialog.dart';
+import '../../widgets/home/hf_archive_tile.dart';
 
 class ClientProfile extends StatefulWidget {
   const ClientProfile({
@@ -329,13 +332,90 @@ class _ClientProfileState extends State<ClientProfile> {
                 const SizedBox(
                   height: 60,
                 ),
-                // Padding(
-                //   padding: const EdgeInsets.symmetric(horizontal: 16),
-                //   child: HFHeading(
-                //     text: 'Past trainings',
-                //     size: 8,
-                //   ),
-                // ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: HFArchiveTile(
+                    image: 'assets/exercises.svg',
+                    hideTitle: true,
+                    useChildren: true,
+                    primaryColor: HFColors().purpleColor(opacity: 0.1),
+                    secondaryColor: HFColors().purpleColor(opacity: 0.6),
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        clientCompletedTrainingsRoute,
+                        arguments: {
+                          'id': widget.id,
+                        },
+                      );
+                    },
+                    children: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        HFHeading(
+                          text: 'Completed',
+                          size: 8,
+                          color: HFColors().whiteColor(opacity: 1),
+                        ),
+                        HFHeading(
+                          text: 'trainings',
+                          size: 8,
+                          color: HFColors().whiteColor(opacity: 1),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                if (context.read<HFGlobalState>().userAccessLevel ==
+                    accessLevels.client)
+                  SizedBox(
+                    height: 20,
+                  ),
+                if (context.read<HFGlobalState>().userAccessLevel ==
+                    accessLevels.client)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: HFArchiveTile(
+                      image: 'assets/clients.svg',
+                      hideTitle: true,
+                      useChildren: true,
+                      children: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          HFHeading(
+                            text: 'Trainer',
+                            size: 8,
+                            color: HFColors().whiteColor(opacity: 1),
+                          ),
+                          HFHeading(
+                            text: 'profile',
+                            size: 8,
+                            color: HFColors().whiteColor(opacity: 1),
+                          ),
+                        ],
+                      ),
+                      primaryColor: HFColors().yellowColor(opacity: 0.1),
+                      secondaryColor: HFColors().yellowColor(opacity: 0.6),
+                      onTap: () {
+                        Navigator.pushNamed(context, trainerProfileRoute,
+                            arguments: {
+                              'id': context.read<HFGlobalState>().userTrainerId,
+                              'name': '',
+                              'imageUrl': '',
+                              'email': '',
+                              'locations': [],
+                              'birthday': '',
+                              'intro': '',
+                              'available': false,
+                              'education': '',
+                              'profileBackgroundImageUrl': '',
+                            });
+                      },
+                    ),
+                  ),
+                SizedBox(
+                  height: 60,
+                ),
               ],
             ),
           ),

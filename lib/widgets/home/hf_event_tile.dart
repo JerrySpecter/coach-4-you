@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:health_factory/constants/global_state.dart';
 import 'package:health_factory/widgets/hf_paragraph.dart';
@@ -19,6 +20,7 @@ class HFEventTile extends StatelessWidget {
       this.notes = '',
       this.location = 'Strojarska',
       this.useSpacerBottom = false,
+      this.isDone = false,
       this.onTap})
       : super(key: key);
 
@@ -33,6 +35,7 @@ class HFEventTile extends StatelessWidget {
   final String notes;
   final String location;
   final bool useSpacerBottom;
+  final bool isDone;
   final VoidCallback? onTap;
 
   @override
@@ -62,10 +65,32 @@ class HFEventTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  HFHeading(
-                    text: title,
-                    size: 4,
-                    color: getTextColor(),
+                  Flex(
+                    direction: Axis.horizontal,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        flex: 10,
+                        child: HFHeading(
+                          text: title,
+                          size: 4,
+                          color: getTextColor(),
+                        ),
+                      ),
+                      if (isDone)
+                        SizedBox(
+                          width: 10,
+                        ),
+                      if (isDone)
+                        Expanded(
+                          flex: 1,
+                          child: Icon(
+                            CupertinoIcons.check_mark_circled,
+                            color: getTextColor(),
+                          ),
+                        )
+                    ],
                   ),
                   SizedBox(
                     height: 5,

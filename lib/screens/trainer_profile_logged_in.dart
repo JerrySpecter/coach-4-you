@@ -174,6 +174,13 @@ class _TrainerProfileLoggedInState extends State<TrainerProfileLoggedIn> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      HFParagrpah(
+                        text: 'Show if you are accepting new clients',
+                        size: 8,
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
                       Container(
                         padding: const EdgeInsets.symmetric(
                             vertical: 0, horizontal: 10),
@@ -189,7 +196,7 @@ class _TrainerProfileLoggedInState extends State<TrainerProfileLoggedIn> {
                               Flexible(
                                 child: Container(
                                   padding:
-                                      const EdgeInsets.symmetric(vertical: 12),
+                                      const EdgeInsets.symmetric(vertical: 2),
                                   child: Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
@@ -240,6 +247,7 @@ class _TrainerProfileLoggedInState extends State<TrainerProfileLoggedIn> {
                       ),
                       HFHeading(
                         text: 'Clients overview:',
+                        size: 5,
                       ),
                       SizedBox(
                         height: 10,
@@ -420,7 +428,8 @@ class _TrainerProfileLoggedInState extends State<TrainerProfileLoggedIn> {
                     ],
                   ),
                 ),
-                TrainerInformation(context, widget)
+                TrainerInformation(context, widget.intro, widget.locations,
+                    widget.education, widget.birthday)
               ],
             ),
           ),

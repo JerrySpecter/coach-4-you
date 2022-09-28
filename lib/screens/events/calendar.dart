@@ -245,6 +245,7 @@ class CalendarPageState extends State<CalendarPage> {
                       color: event.color,
                       client: event.client,
                       location: event.location,
+                      isDone: event.isDone,
                       useSpacerBottom: true,
                       onTap: () {
                         Navigator.pushNamed(

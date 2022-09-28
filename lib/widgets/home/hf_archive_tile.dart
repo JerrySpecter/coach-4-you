@@ -13,6 +13,9 @@ class HFArchiveTile extends StatelessWidget {
     this.title = 'Title',
     this.onTap,
     this.onButtonTap,
+    this.useChildren = false,
+    this.hideTitle = false,
+    this.children = const Text(''),
     this.secondaryColor = Colors.amber,
     this.primaryColor = Colors.black,
   }) : super(key: key);
@@ -21,6 +24,9 @@ class HFArchiveTile extends StatelessWidget {
   String title;
   Color secondaryColor;
   Color primaryColor;
+  bool hideTitle;
+  bool useChildren;
+  Widget children;
   Function()? onTap;
   Function()? onButtonTap;
 
@@ -68,25 +74,13 @@ class HFArchiveTile extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          HFHeading(
-                            text: title,
-                            size: 8,
-                            color: HFColors().whiteColor(opacity: 1),
-                          ),
-                          // HFButton(
-                          //   text: '+',
-                          //   borderRadius: 12,
-                          //   backgroundColor:
-                          //       HFColors().primaryColor(opacity: 0.9),
-                          //   onPressed: onButtonTap,
-                          //   textColor: HFColors().secondaryColor(),
-                          //   padding: const EdgeInsets.only(
-                          //     top: 10,
-                          //     right: 12,
-                          //     left: 12,
-                          //     bottom: 8,
-                          //   ),
-                          // )
+                          if (useChildren) children,
+                          if (!hideTitle)
+                            HFHeading(
+                              text: title,
+                              size: 8,
+                              color: HFColors().whiteColor(opacity: 1),
+                            ),
                         ],
                       )
                     ],

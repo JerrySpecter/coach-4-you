@@ -106,6 +106,7 @@ class HFCalendarSection extends StatelessWidget {
                                 color: value.color,
                                 location: value.location,
                                 client: value.client,
+                                isDone: value.isDone,
                                 useSpacerBottom: events.length >= key + 1,
                                 onTap: () {
                                   Navigator.pushNamed(

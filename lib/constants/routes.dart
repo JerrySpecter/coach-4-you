@@ -46,3 +46,5 @@ const String clientAddShouldersRoute = '/client-add-shoulders';
 const String clientAddUpperArmRoute = '/client-add-upper-arm';
 const String clientAddWaistRoute = '/client-add-waist';
 const String clientAddMidThighRoute = '/client-add-mid-thigh';
+const String clientCompletedTrainingsRoute = '/client-completed-trainings';
+const String completedEventRoute = '/client-completed-event';

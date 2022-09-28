@@ -606,6 +606,7 @@ fetchCalendarEvents(
                 exercises: query['exercises'],
                 location: query['location'],
                 notes: query['notes'],
+                isDone: query['isDone'],
                 date: DateTime.parse(query['date']),
               ));
             });

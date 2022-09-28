@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:health_factory/constants/routes.dart';
 import 'package:health_factory/utils/helpers.dart';
+import 'package:health_factory/widgets/hf_button.dart';
 import 'package:health_factory/widgets/hf_heading.dart';
 import 'package:health_factory/widgets/hf_paragraph.dart';
 import 'package:health_factory/widgets/hf_snackbar.dart';
@@ -12,10 +13,11 @@ import 'package:provider/provider.dart';
 import '../../constants/colors.dart';
 import '../../constants/firebase_functions.dart';
 import '../../constants/global_state.dart';
+import '../../widgets/hf_dialog.dart';
 import '../../widgets/hf_training_list_view_tile.dart';
 
-class EventScreen extends StatelessWidget {
-  const EventScreen({
+class EventScreen extends StatefulWidget {
+  EventScreen({
     Key? key,
     required this.title,
     required this.id,
@@ -26,6 +28,7 @@ class EventScreen extends StatelessWidget {
     required this.exercises,
     required this.location,
     required this.notes,
+    required this.isDone,
   }) : super(key: key);
 
   final String title;
@@ -37,6 +40,14 @@ class EventScreen extends StatelessWidget {
   final List<dynamic> exercises;
   final String location;
   final String notes;
+  final bool isDone;
+
+  @override
+  State<EventScreen> createState() => _EventScreenState();
+}
+
+class _EventScreenState extends State<EventScreen> {
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -53,25 +64,25 @@ class EventScreen extends StatelessWidget {
                 HFFirebaseFunctions()
                     .getFirebaseAuthUser(context)
                     .collection('days')
-                    .doc('$date')
+                    .doc('${widget.date}')
                     .collection('events')
-                    .doc(id)
+                    .doc(widget.id)
                     .delete()
                     .then((value) {
                   HFFirebaseFunctions().updateUserChangedDate(context);
 
                   FirebaseFirestore.instance
                       .collection('clients')
-                      .doc(client['id'])
+                      .doc(widget.client['id'])
                       .collection('days')
-                      .doc('$date')
+                      .doc('${widget.date}')
                       .collection('events')
-                      .doc(id)
+                      .doc(widget.id)
                       .delete()
                       .then((value) {
                     FirebaseFirestore.instance
                         .collection('clients')
-                        .doc(client['id'])
+                        .doc(widget.client['id'])
                         .update({
                       'changed': '${DateTime.now()}',
                     });
@@ -144,13 +155,33 @@ class EventScreen extends StatelessWidget {
                 height: 20,
               ),
               HFHeading(
-                text: title,
+                text: widget.title,
                 size: 7,
               ),
+              SizedBox(
+                height: 5,
+              ),
+              if (widget.isDone)
+                Row(
+                  children: [
+                    Icon(
+                      CupertinoIcons.check_mark_circled,
+                      color: HFColors().greenColor(),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    HFParagrpah(
+                      text: 'Event completed',
+                      size: 6,
+                    )
+                  ],
+                ),
               const SizedBox(
                 height: 30,
               ),
               Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Row(
                     children: [
@@ -172,14 +203,14 @@ class EventScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           HFHeading(
-                            text: DateFormat('EEE, d/M/y').format(date),
+                            text: DateFormat('EEE, d/M/y').format(widget.date),
                           ),
                           SizedBox(
                             height: 5,
                           ),
                           HFParagrpah(
                             size: 8,
-                            text: '$startTime - $endTime',
+                            text: '${widget.startTime} - ${widget.endTime}',
                             color: HFColors().whiteColor(opacity: 0.8),
                           )
                         ],
@@ -216,7 +247,7 @@ class EventScreen extends StatelessWidget {
                           ),
                           HFParagrpah(
                             size: 8,
-                            text: location,
+                            text: widget.location,
                             color: HFColors().whiteColor(opacity: 0.8),
                           )
                         ],
@@ -255,80 +286,172 @@ class EventScreen extends StatelessWidget {
                             ),
                             HFParagrpah(
                               size: 8,
-                              text: client['name'],
+                              text: widget.client['name'],
                               color: HFColors().whiteColor(opacity: 0.8),
                             )
                           ],
                         )
                       ],
-                    )
-                ],
-              ),
-              const SizedBox(
-                height: 30,
-              ),
-              HFHeading(
-                size: 5,
-                text: 'Exercises:',
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    width: 1,
-                    color: HFColors().primaryColor(opacity: 0.2),
+                    ),
+                  const SizedBox(
+                    height: 30,
                   ),
-                  borderRadius: BorderRadius.circular(22),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    ...exercises.map((exercise) {
-                      return HFTrainingListViewTile(
-                        showDelete: false,
-                        name: exercise['name'],
-                        note: exercise['note'],
-                        type: exercise['repetitionType'],
-                        amount: double.parse(exercise['amount']),
-                        repetitions: double.parse(exercise['repetitions']),
-                        series: double.parse(exercise['series']),
-                        onTap: () {
-                          Navigator.pushNamed(context, adminExerciseSingle,
-                              arguments: {
-                                ...exerciseData(exercise),
-                                'note': exercise['note'],
-                                'author': ''
-                              });
-                        },
-                      );
-                    })
-                  ],
-                ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              const HFHeading(
-                text: 'Note:',
-                size: 6,
-                lineHeight: 2,
-              ),
-              HFParagrpah(
-                text: notes,
-                size: 8,
-                lineHeight: 1.4,
-                maxLines: 999,
-              ),
-              const SizedBox(
-                height: 50,
+                  HFHeading(
+                    size: 5,
+                    text: 'Exercises:',
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        width: 1,
+                        color: HFColors().primaryColor(opacity: 0.2),
+                      ),
+                      borderRadius: BorderRadius.circular(22),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        ...widget.exercises.map((exercise) {
+                          return HFTrainingListViewTile(
+                            showDelete: false,
+                            name: exercise['name'],
+                            note: exercise['note'],
+                            type: exercise['repetitionType'],
+                            amount: double.parse(exercise['amount']),
+                            repetitions: double.parse(exercise['repetitions']),
+                            series: double.parse(exercise['series']),
+                            onTap: () {
+                              if (widget.isDone) {
+                                return;
+                              }
+
+                              Navigator.pushNamed(context, adminExerciseSingle,
+                                  arguments: {
+                                    ...exerciseData(exercise),
+                                    'note': exercise['note'],
+                                    'author': ''
+                                  });
+                            },
+                          );
+                        })
+                      ],
+                    ),
+                  ),
+                  if (!widget.isDone)
+                    const SizedBox(
+                      height: 20,
+                    ),
+                  if (!widget.isDone)
+                    const HFHeading(
+                      text: 'Note:',
+                      size: 6,
+                      lineHeight: 2,
+                    ),
+                  if (!widget.isDone)
+                    HFParagrpah(
+                      text: widget.notes,
+                      size: 8,
+                      lineHeight: 1.4,
+                      maxLines: 999,
+                    ),
+                  const SizedBox(
+                    height: 50,
+                  ),
+                  if (!widget.isDone &&
+                      context.read<HFGlobalState>().userAccessLevel ==
+                          accessLevels.client)
+                    HFButton(
+                      text: isLoading ? 'Processing...' : 'Mark as done',
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      onPressed: () {
+                        showAlertDialog(
+                          context,
+                          'Are you sure you want to mark this event as done?',
+                          () {
+                            Navigator.pop(context);
+                            completeTraining(context);
+
+                            setState(() {
+                              isLoading = true;
+                            });
+                          },
+                          'Yes',
+                          () {
+                            Navigator.pop(context);
+                          },
+                          'No',
+                        );
+                      },
+                    ),
+                ],
               ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  completeTraining(BuildContext context) {
+    HFFirebaseFunctions()
+        .getFirebaseAuthUser(context)
+        .collection('days')
+        .doc('${widget.date}')
+        .collection('events')
+        .doc(widget.id)
+        .update({'isDone': true}).then((value) {
+      print('updated is done');
+      HFFirebaseFunctions().getFirebaseAuthUser(context).update({
+        'changed': '${DateTime.now()}',
+      }).then((value) {
+        print('updated is client changed');
+        FirebaseFirestore.instance
+            .collection('trainers')
+            .doc(context.read<HFGlobalState>().userTrainerId)
+            .collection('days')
+            .doc('${widget.date}')
+            .collection('events')
+            .doc(widget.id)
+            .update({'isDone': true}).then((value) {
+          print('updated trainer is done');
+          FirebaseFirestore.instance
+              .collection('trainers')
+              .doc(context.read<HFGlobalState>().userTrainerId)
+              .update({
+            'changed': '${DateTime.now()}',
+          }).then((value) {
+            print('updated trainer changed');
+            HFFirebaseFunctions()
+                .getFirebaseAuthUser(context)
+                .collection('completed')
+                .doc(widget.id)
+                .set({
+              'title': widget.title,
+              'id': widget.id,
+              'date': '${widget.date}',
+              'startTime': widget.startTime,
+              'endTime': widget.endTime,
+              'client': widget.client,
+              'exercises': widget.exercises,
+              'location': widget.location,
+              'notes': widget.notes,
+              'isDone': widget.isDone,
+            }).then((value) {
+              print('added completed item');
+
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(getSnackBar(text: 'Event marked as completed'));
+
+              Navigator.pop(context);
+            });
+          });
+        });
+      });
+    });
   }
 }

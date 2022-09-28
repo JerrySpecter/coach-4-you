@@ -85,6 +85,7 @@ class HFFirebaseFunctions {
                 exercises: query['exercises'],
                 location: query['location'],
                 notes: query['notes'],
+                isDone: query['isDone'],
               ));
             });
 

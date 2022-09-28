@@ -32,6 +32,7 @@ import '../screens/admin/locations.dart';
 import '../screens/admin/single_exercise.dart';
 import '../screens/client/client_add_measurement.dart';
 import '../screens/client/client_chest.dart';
+import '../screens/client/client_completed_trainings.dart';
 import '../screens/clients/clients.dart';
 import '../screens/clients/single_client.dart';
 import '../screens/events/add_event.dart';
@@ -55,6 +56,24 @@ Route<dynamic>? genRoute(RouteSettings settings) {
           exercises: data.exercises,
           location: data.location,
           notes: data.notes,
+          isDone: data.isDone,
+        ),
+      );
+    case completedEventRoute:
+      var data = settings.arguments as Map;
+
+      return MaterialPageRoute(
+        builder: (_) => EventScreen(
+          title: data['title'],
+          id: data['id'],
+          date: DateTime.parse(data['date']),
+          startTime: data['startTime'],
+          endTime: data['endTime'],
+          client: data['client'],
+          exercises: data['exercises'],
+          location: data['location'],
+          notes: data['notes'],
+          isDone: true,
         ),
       );
     case addEventRoute:
@@ -126,6 +145,14 @@ Route<dynamic>? genRoute(RouteSettings settings) {
     case clientsRoute:
       return MaterialPageRoute(
         builder: (_) => const ClientsPage(),
+      );
+    case clientCompletedTrainingsRoute:
+      var data = settings.arguments as Map;
+
+      return MaterialPageRoute(
+        builder: (_) => ClientsCompletedTrainings(
+          id: data['id'],
+        ),
       );
     case singleClientsRoute:
       var data = settings.arguments as Map;

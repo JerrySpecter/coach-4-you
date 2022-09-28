@@ -12,6 +12,7 @@ class Event {
   final List<dynamic> exercises;
   final String location;
   final String notes;
+  final bool isDone;
 
   Event({
     required this.title,
@@ -24,6 +25,7 @@ class Event {
     required this.exercises,
     required this.location,
     required this.notes,
+    required this.isDone,
   });
 
   @override
@@ -39,6 +41,7 @@ class Event {
           "exercises": "$exercises",
           "location": "$location",
           "notes": "$notes",
+          "isDone": "$isDone",
         },
       );
 }

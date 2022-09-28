@@ -55,6 +55,52 @@ class _TrainerProfileState extends State<TrainerProfile> {
   bool isLoading = false;
   double topOffset = 60;
 
+  String initialname = '';
+  String initialemail = '';
+  String initialimageUrl = '';
+  String initialprofileBackgroundImageUrl = '';
+  List initiallocations = [];
+  String initialeducation = '';
+  String initialintro = '';
+  String initialbirthday = '';
+  bool initialavailable = false;
+
+  @override
+  void initState() {
+    initialname = widget.name;
+    initialemail = widget.email;
+    initialimageUrl = widget.imageUrl;
+    initialprofileBackgroundImageUrl = widget.profileBackgroundImageUrl;
+    initiallocations = widget.locations;
+    initialeducation = widget.education;
+    initialintro = widget.intro;
+    initialbirthday = widget.birthday;
+    initialavailable = widget.available;
+
+    if (widget.name == '') {
+      FirebaseFirestore.instance
+          .collection('trainers')
+          .doc(widget.id)
+          .get()
+          .then((trainer) {
+        setState(() {
+          initialname = trainer['name'];
+          initialemail = trainer['email'];
+          initialimageUrl = trainer['imageUrl'];
+          initialprofileBackgroundImageUrl =
+              trainer['profileBackgroundImageUrl'];
+          initiallocations = trainer['locations'];
+          initialeducation = trainer['education'];
+          initialintro = trainer['intro'];
+          initialbirthday = trainer['birthday'];
+          initialavailable = trainer['available'];
+        });
+      });
+    }
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -75,7 +121,7 @@ class _TrainerProfileState extends State<TrainerProfile> {
                         height: 300,
                         child: ClipRRect(
                           child: HFImage(
-                              imageUrl: widget.profileBackgroundImageUrl),
+                              imageUrl: initialprofileBackgroundImageUrl),
                         ),
                       ),
                       Positioned(
@@ -119,7 +165,7 @@ class _TrainerProfileState extends State<TrainerProfile> {
                             ),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(24.0),
-                              child: HFImage(imageUrl: widget.imageUrl),
+                              child: HFImage(imageUrl: initialimageUrl),
                             ),
                           ),
                         ),
@@ -149,42 +195,43 @@ class _TrainerProfileState extends State<TrainerProfile> {
                           ),
                         ),
                       ),
-                      Positioned(
-                        top: topOffset,
-                        right: 16,
-                        child: Container(
-                          height: 40,
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          decoration: BoxDecoration(
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(12)),
-                            color: HFColors().primaryColor(),
-                            boxShadow: getShadow(),
-                          ),
-                          child: InkWell(
-                            onTap: () {
-                              snappingSheetController.snapToPosition(
-                                const SnappingPosition.factor(
-                                    positionFactor: 1),
-                              );
+                      if (widget.name != '')
+                        Positioned(
+                          top: topOffset,
+                          right: 16,
+                          child: Container(
+                            height: 40,
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            decoration: BoxDecoration(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(12)),
+                              color: HFColors().primaryColor(),
+                              boxShadow: getShadow(),
+                            ),
+                            child: InkWell(
+                              onTap: () {
+                                snappingSheetController.snapToPosition(
+                                  const SnappingPosition.factor(
+                                      positionFactor: 1),
+                                );
 
-                              setState(() {
-                                pullUpOpen = true;
-                              });
-                            },
-                            child: Row(
-                              children: [
-                                HFParagrpah(
-                                  text: 'Request',
-                                  size: 8,
-                                  fontWeight: FontWeight.bold,
-                                  color: HFColors().secondaryColor(),
-                                )
-                              ],
+                                setState(() {
+                                  pullUpOpen = true;
+                                });
+                              },
+                              child: Row(
+                                children: [
+                                  HFParagrpah(
+                                    text: 'Request',
+                                    size: 8,
+                                    fontWeight: FontWeight.bold,
+                                    color: HFColors().secondaryColor(),
+                                  )
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      )
+                        )
                     ],
                   ),
                 ),
@@ -192,7 +239,7 @@ class _TrainerProfileState extends State<TrainerProfile> {
                   height: 70,
                 ),
                 HFHeading(
-                  text: widget.name,
+                  text: initialname,
                   size: 8,
                   textAlign: TextAlign.center,
                 ),
@@ -212,7 +259,7 @@ class _TrainerProfileState extends State<TrainerProfile> {
                                 top: 4, left: 4, right: 8, bottom: 4),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(12),
-                              color: widget.available
+                              color: initialavailable
                                   ? HFColors().greenColor(opacity: 0.4)
                                   : HFColors().redColor(opacity: 0.4),
                             ),
@@ -220,7 +267,7 @@ class _TrainerProfileState extends State<TrainerProfile> {
                               children: [
                                 Icon(
                                   CupertinoIcons.circle_filled,
-                                  color: widget.available
+                                  color: initialavailable
                                       ? HFColors().greenColor()
                                       : HFColors().redColor(),
                                   size: 16,
@@ -231,7 +278,7 @@ class _TrainerProfileState extends State<TrainerProfile> {
                                 HFParagrpah(
                                   size: 8,
                                   color: HFColors().whiteColor(),
-                                  text: widget.available
+                                  text: initialavailable
                                       ? 'Available'
                                       : 'Currently not available',
                                 )
@@ -321,240 +368,246 @@ class _TrainerProfileState extends State<TrainerProfile> {
                     ],
                   ),
                 ),
-                TrainerInformation(context, widget)
+                TrainerInformation(context, initialintro, initiallocations,
+                    initialeducation, initialbirthday)
               ],
             ),
           ),
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: AnimatedOpacity(
-              opacity: pullUpOpen ? 1 : 0,
-              duration: const Duration(milliseconds: 200),
-              child: IgnorePointer(
-                ignoring: !pullUpOpen,
-                child: InkWell(
-                  onTap: () {
-                    snappingSheetController.snapToPosition(
-                      const SnappingPosition.factor(positionFactor: 0),
-                    );
+          if (widget.name != '')
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: AnimatedOpacity(
+                opacity: pullUpOpen ? 1 : 0,
+                duration: const Duration(milliseconds: 200),
+                child: IgnorePointer(
+                  ignoring: !pullUpOpen,
+                  child: InkWell(
+                    onTap: () {
+                      snappingSheetController.snapToPosition(
+                        const SnappingPosition.factor(positionFactor: 0),
+                      );
 
-                    setState(() {
-                      pullUpOpen = false;
-                    });
-                  },
-                  child: Container(
-                    color: HFColors().primaryColor(opacity: 0.6),
+                      setState(() {
+                        pullUpOpen = false;
+                      });
+                    },
+                    child: Container(
+                      color: HFColors().primaryColor(opacity: 0.6),
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: SizedBox(
-              height: MediaQuery.of(context).size.height * 0.65,
-              child: SnappingSheet(
-                onSnapCompleted: (positionData, snappingPosition) {
-                  if (positionData.relativeToSnappingPositions == 0.0) {
-                    setState(() {
-                      pullUpOpen = false;
-                    });
-                  }
-                },
-                lockOverflowDrag: true,
-                controller: snappingSheetController,
-                snappingPositions: const [
-                  SnappingPosition.factor(
-                    positionFactor: 0.0,
-                    snappingCurve: Curves.easeOutExpo,
-                    snappingDuration: Duration(milliseconds: 100),
-                    grabbingContentOffset: GrabbingContentOffset.top,
-                  ),
-                  SnappingPosition.factor(
-                    grabbingContentOffset: GrabbingContentOffset.bottom,
-                    snappingCurve: Curves.easeInOut,
-                    snappingDuration: Duration(milliseconds: 200),
-                    positionFactor: 1,
-                  ),
-                ],
-                grabbingHeight: 0,
-                sheetAbove: null,
-                sheetBelow: SnappingSheetContent(
-                  draggable: true,
-                  child: Container(
-                    padding:
-                        const EdgeInsets.only(top: 24, left: 24, right: 24),
-                    decoration: BoxDecoration(
-                      color: HFColors().secondaryLightColor(),
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(16),
-                        topRight: Radius.circular(16),
-                      ),
+          if (widget.name != '')
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height * 0.65,
+                child: SnappingSheet(
+                  onSnapCompleted: (positionData, snappingPosition) {
+                    if (positionData.relativeToSnappingPositions == 0.0) {
+                      setState(() {
+                        pullUpOpen = false;
+                      });
+                    }
+                  },
+                  lockOverflowDrag: true,
+                  controller: snappingSheetController,
+                  snappingPositions: const [
+                    SnappingPosition.factor(
+                      positionFactor: 0.0,
+                      snappingCurve: Curves.easeOutExpo,
+                      snappingDuration: Duration(milliseconds: 100),
+                      grabbingContentOffset: GrabbingContentOffset.top,
                     ),
-                    width: MediaQuery.of(context).size.width,
-                    child: SingleChildScrollView(
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            const HFHeading(
-                              text: 'Send a request to trainer.',
-                              size: 7,
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            HFInput(
-                              hintText: 'Full name',
-                              controller: nameController,
-                              keyboardType: TextInputType.text,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter your name.';
-                                }
-                                return null;
-                              },
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            const HFParagrpah(
-                              text: 'Enter your email address.',
-                              size: 7,
-                            ),
-                            HFInput(
-                              hintText: 'Email address',
-                              controller: emailAddressController,
-                              keyboardType: TextInputType.emailAddress,
-                              textCapitalization: TextCapitalization.none,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter email.';
-                                }
-
-                                if (!EmailValidator.validate(value)) {
-                                  return 'Please enter valid email address.';
-                                }
-
-                                return null;
-                              },
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            const HFParagrpah(
-                              text: 'Compose a message for your trainer.',
-                              size: 7,
-                            ),
-                            const SizedBox(
-                              height: 6,
-                            ),
-                            TextFormField(
-                              toolbarOptions: const ToolbarOptions(
-                                copy: true,
-                                cut: true,
-                                paste: true,
-                                selectAll: true,
+                    SnappingPosition.factor(
+                      grabbingContentOffset: GrabbingContentOffset.bottom,
+                      snappingCurve: Curves.easeInOut,
+                      snappingDuration: Duration(milliseconds: 200),
+                      positionFactor: 1,
+                    ),
+                  ],
+                  grabbingHeight: 0,
+                  sheetAbove: null,
+                  sheetBelow: SnappingSheetContent(
+                    draggable: true,
+                    child: Container(
+                      padding:
+                          const EdgeInsets.only(top: 24, left: 24, right: 24),
+                      decoration: BoxDecoration(
+                        color: HFColors().secondaryLightColor(),
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(16),
+                          topRight: Radius.circular(16),
+                        ),
+                      ),
+                      width: MediaQuery.of(context).size.width,
+                      child: SingleChildScrollView(
+                        child: Form(
+                          key: _formKey,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              const HFHeading(
+                                text: 'Send a request to trainer.',
+                                size: 7,
                               ),
-                              maxLines: 4,
-                              keyboardType: TextInputType.multiline,
-                              controller: contentController,
-                              style: TextStyle(color: HFColors().whiteColor()),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter a message.';
-                                }
-                                return null;
-                              },
-                            ),
-                            const SizedBox(
-                              height: 30,
-                            ),
-                            HFButton(
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              text: isLoading ? 'Loading...' : 'Apply',
-                              onPressed: () {
-                                FocusManager.instance.primaryFocus?.unfocus();
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              HFInput(
+                                hintText: 'Full name',
+                                controller: nameController,
+                                keyboardType: TextInputType.text,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter your name.';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              const HFParagrpah(
+                                text: 'Enter your email address.',
+                                size: 7,
+                              ),
+                              HFInput(
+                                hintText: 'Email address',
+                                controller: emailAddressController,
+                                keyboardType: TextInputType.emailAddress,
+                                textCapitalization: TextCapitalization.none,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter email.';
+                                  }
 
-                                if (_formKey.currentState!.validate()) {
-                                  setState(() {
-                                    isLoading = true;
-                                  });
+                                  if (!EmailValidator.validate(value)) {
+                                    return 'Please enter valid email address.';
+                                  }
 
-                                  FirebaseFirestore.instance
-                                      .collection('trainers')
-                                      .doc(widget.id)
-                                      .collection('requests')
-                                      .doc(emailAddressController.text)
-                                      .set({
-                                    'name': nameController.text,
-                                    'email': emailAddressController.text,
-                                    'dateCreated': DateTime.now(),
-                                    'content': contentController.text,
-                                  }).then((value) {
-                                    http
-                                        .post(
-                                      Uri.parse(
-                                          'https://hf.specter.design/wp-json/hfapp/v1/send-request-email'),
-                                      headers: <String, String>{
-                                        'Content-Type':
-                                            'application/json; charset=UTF-8',
-                                      },
-                                      body: jsonEncode(<String, String>{
-                                        'trainerName': widget.name,
-                                        'trainerEmail': widget.email,
-                                        'clientEmail':
-                                            emailAddressController.text,
-                                        'clientName': nameController.text,
-                                        'clientContent': contentController.text,
-                                      }),
-                                    )
-                                        .then((value) {
-                                      snappingSheetController.snapToPosition(
-                                        const SnappingPosition.factor(
-                                            positionFactor: 0),
-                                      );
+                                  return null;
+                                },
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              const HFParagrpah(
+                                text: 'Compose a message for your trainer.',
+                                size: 7,
+                              ),
+                              const SizedBox(
+                                height: 6,
+                              ),
+                              TextFormField(
+                                toolbarOptions: const ToolbarOptions(
+                                  copy: true,
+                                  cut: true,
+                                  paste: true,
+                                  selectAll: true,
+                                ),
+                                maxLines: 4,
+                                keyboardType: TextInputType.multiline,
+                                controller: contentController,
+                                style:
+                                    TextStyle(color: HFColors().whiteColor()),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter a message.';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              const SizedBox(
+                                height: 30,
+                              ),
+                              HFButton(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 16),
+                                text: isLoading ? 'Loading...' : 'Apply',
+                                onPressed: () {
+                                  FocusManager.instance.primaryFocus?.unfocus();
 
-                                      setState(() {
-                                        pullUpOpen = false;
-                                        isLoading = false;
-                                      });
+                                  if (_formKey.currentState!.validate()) {
+                                    setState(() {
+                                      isLoading = true;
+                                    });
 
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(getSnackBar(
-                                        text: 'Request has been sent',
-                                        color:
-                                            HFColors().primaryColor(opacity: 1),
-                                      ));
-                                    }).catchError((error) => print(error));
-                                  });
-                                } else {
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(getSnackBar(
-                                    text: 'Fill in required fields',
-                                    color: HFColors().redColor(opacity: 1),
-                                  ));
-                                }
-                              },
-                            ),
-                            const SizedBox(
-                              height: 40,
-                            ),
-                          ],
+                                    FirebaseFirestore.instance
+                                        .collection('trainers')
+                                        .doc(widget.id)
+                                        .collection('requests')
+                                        .doc(emailAddressController.text)
+                                        .set({
+                                      'name': nameController.text,
+                                      'email': emailAddressController.text,
+                                      'dateCreated': DateTime.now(),
+                                      'content': contentController.text,
+                                    }).then((value) {
+                                      http
+                                          .post(
+                                        Uri.parse(
+                                            'https://hf.specter.design/wp-json/hfapp/v1/send-request-email'),
+                                        headers: <String, String>{
+                                          'Content-Type':
+                                              'application/json; charset=UTF-8',
+                                        },
+                                        body: jsonEncode(<String, String>{
+                                          'trainerName': initialname,
+                                          'trainerEmail': initialemail,
+                                          'clientEmail':
+                                              emailAddressController.text,
+                                          'clientName': nameController.text,
+                                          'clientContent':
+                                              contentController.text,
+                                        }),
+                                      )
+                                          .then((value) {
+                                        snappingSheetController.snapToPosition(
+                                          const SnappingPosition.factor(
+                                              positionFactor: 0),
+                                        );
+
+                                        setState(() {
+                                          pullUpOpen = false;
+                                          isLoading = false;
+                                        });
+
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(getSnackBar(
+                                          text: 'Request has been sent',
+                                          color: HFColors()
+                                              .primaryColor(opacity: 1),
+                                        ));
+                                      }).catchError((error) => print(error));
+                                    });
+                                  } else {
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(getSnackBar(
+                                      text: 'Fill in required fields',
+                                      color: HFColors().redColor(opacity: 1),
+                                    ));
+                                  }
+                                },
+                              ),
+                              const SizedBox(
+                                height: 40,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
               ),
-            ),
-          )
+            )
         ],
       ),
     );
@@ -616,10 +669,10 @@ Widget ProfileDataListTile(context, text, value) {
   );
 }
 
-Widget TrainerInformation(context, data) {
+Widget TrainerInformation(context, intro, locations, education, birthday) {
   var differenceDays = null;
-  if (data.birthday != '') {
-    final date1 = DateTime.parse(data.birthday);
+  if (birthday != '') {
+    final date1 = DateTime.parse(birthday);
     final date2 = DateTime.now();
     differenceDays = (date2.difference(date1).inDays / 365).floor();
   }
@@ -629,23 +682,23 @@ Widget TrainerInformation(context, data) {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (data.intro != '')
+        if (intro != '')
           HFHeading(
             text: 'Introduction:',
-            size: 4,
+            size: 5,
           ),
-        if (data.intro != '')
+        if (intro != '')
           SizedBox(
             height: 10,
           ),
-        if (data.intro != '')
+        if (intro != '')
           HFParagrpah(
-            text: data.intro,
+            text: intro,
             lineHeight: 1.4,
             size: 10,
             maxLines: 30,
           ),
-        if (data.intro != '')
+        if (intro != '')
           SizedBox(
             height: 30,
           ),
@@ -661,31 +714,30 @@ Widget TrainerInformation(context, data) {
             children: [
               if (differenceDays != null)
                 ProfileDataListTile(context, 'Age:', '$differenceDays'),
-              ProfileDataListTile(
-                  context, 'Locations:', data.locations.join(', ')),
+              ProfileDataListTile(context, 'Locations:', locations.join(', ')),
             ],
           ),
         ),
         SizedBox(
           height: 30,
         ),
-        if (data.education != '')
+        if (education != '')
           HFHeading(
             text: 'Education:',
             size: 4,
           ),
-        if (data.education != '')
+        if (education != '')
           SizedBox(
             height: 10,
           ),
-        if (data.education != '')
+        if (education != '')
           HFParagrpah(
-            text: data.education,
+            text: education,
             lineHeight: 1.4,
             size: 10,
             maxLines: 30,
           ),
-        if (data.education != '')
+        if (education != '')
           SizedBox(
             height: 30,
           ),

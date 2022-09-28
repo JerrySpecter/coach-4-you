@@ -143,10 +143,10 @@ class AddEventScreenState extends State<AddEventScreen> {
                               return null;
                             },
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 20,
                           ),
-                          HFHeading(
+                          const HFHeading(
                             size: 5,
                             text: 'Date and time of the event:',
                           ),
@@ -171,7 +171,7 @@ class AddEventScreenState extends State<AddEventScreen> {
                                     use24hFormat: true,
                                     minuteInterval: 1,
                                     minimumDate: DateTime.now()
-                                        .subtract(Duration(days: 1)),
+                                        .subtract(const Duration(days: 1)),
                                     //use24hFormat: true,
                                     onDateTimeChanged: (dateTime) => setState(
                                         () => selectedEventDate =
@@ -282,10 +282,10 @@ class AddEventScreenState extends State<AddEventScreen> {
                               ),
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 30,
                           ),
-                          HFHeading(
+                          const HFHeading(
                             size: 5,
                             text: 'Choose a client:',
                           ),
@@ -302,7 +302,7 @@ class AddEventScreenState extends State<AddEventScreen> {
                             verticalContentPadding: 12,
                           ),
                           Container(
-                            padding: EdgeInsets.all(0),
+                            padding: const EdgeInsets.all(0),
                             decoration: BoxDecoration(
                               border: Border.all(
                                 width: 1,
@@ -345,7 +345,7 @@ class AddEventScreenState extends State<AddEventScreen> {
                                     return ListView(
                                       shrinkWrap: true,
                                       children: [
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 8,
                                         ),
                                         ...data.docs.map(
@@ -412,7 +412,7 @@ class AddEventScreenState extends State<AddEventScreen> {
                             verticalContentPadding: 12,
                           ),
                           Container(
-                            padding: EdgeInsets.all(0),
+                            padding: const EdgeInsets.all(0),
                             decoration: BoxDecoration(
                               border: Border.all(
                                 width: 1,
@@ -455,7 +455,7 @@ class AddEventScreenState extends State<AddEventScreen> {
                                     return ListView(
                                       shrinkWrap: true,
                                       children: [
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 8,
                                         ),
                                         ...data.docs.map(
@@ -531,7 +531,7 @@ class AddEventScreenState extends State<AddEventScreen> {
                                       children: <Widget>[
                                         if (selectedTrainingExercises
                                             .isNotEmpty)
-                                          SizedBox(
+                                          const SizedBox(
                                             height: 10,
                                           ),
                                         if (selectedTrainingExercises
@@ -551,7 +551,7 @@ class AddEventScreenState extends State<AddEventScreen> {
                                                       '$trainingNameSelected exercises:',
                                                   size: 4,
                                                 ),
-                                                SizedBox(
+                                                const SizedBox(
                                                   width: 20,
                                                 ),
                                                 InkWell(
@@ -574,7 +574,7 @@ class AddEventScreenState extends State<AddEventScreen> {
                                           ),
                                         if (selectedTrainingExercises
                                             .isNotEmpty)
-                                          SizedBox(
+                                          const SizedBox(
                                             height: 10,
                                           ),
                                         for (int index = 0;
@@ -703,12 +703,12 @@ class AddEventScreenState extends State<AddEventScreen> {
                           const SizedBox(
                             height: 30,
                           ),
-                          HFHeading(
+                          const HFHeading(
                             size: 5,
                             text: 'Select a location:',
                           ),
                           Container(
-                            padding: EdgeInsets.all(0),
+                            padding: const EdgeInsets.all(0),
                             decoration: BoxDecoration(
                               border: Border.all(
                                 width: 1,
@@ -753,7 +753,7 @@ class AddEventScreenState extends State<AddEventScreen> {
                                     return ListView(
                                       shrinkWrap: true,
                                       children: [
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 8,
                                         ),
                                         ...data.docs.map(
@@ -803,11 +803,11 @@ class AddEventScreenState extends State<AddEventScreen> {
                           const SizedBox(
                             height: 30,
                           ),
-                          HFHeading(
+                          const HFHeading(
                             size: 5,
                             text: 'Select event color:',
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           Row(
@@ -821,7 +821,7 @@ class AddEventScreenState extends State<AddEventScreen> {
                                   });
                                 },
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 10,
                               ),
                               colorBox(
@@ -833,7 +833,7 @@ class AddEventScreenState extends State<AddEventScreen> {
                                   });
                                 },
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 10,
                               ),
                               colorBox(
@@ -845,7 +845,7 @@ class AddEventScreenState extends State<AddEventScreen> {
                                   });
                                 },
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 10,
                               ),
                               colorBox(
@@ -857,7 +857,7 @@ class AddEventScreenState extends State<AddEventScreen> {
                                   });
                                 },
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 10,
                               ),
                               colorBox(
@@ -869,7 +869,7 @@ class AddEventScreenState extends State<AddEventScreen> {
                                   });
                                 },
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 10,
                               ),
                               colorBox(
@@ -881,7 +881,7 @@ class AddEventScreenState extends State<AddEventScreen> {
                                   });
                                 },
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 10,
                               ),
                               colorBox(
@@ -893,7 +893,7 @@ class AddEventScreenState extends State<AddEventScreen> {
                                   });
                                 },
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 10,
                               ),
                               colorBox(
@@ -907,7 +907,7 @@ class AddEventScreenState extends State<AddEventScreen> {
                               ),
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 30,
                           ),
                           const HFHeading(
@@ -922,7 +922,7 @@ class AddEventScreenState extends State<AddEventScreen> {
                             hintText: 'Training notes',
                             maxLines: 8,
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 40,
                           ),
                           HFButton(
@@ -955,7 +955,8 @@ class AddEventScreenState extends State<AddEventScreen> {
                                 'exercises': exerciseList,
                                 'color': selectedColor,
                                 'location': selectedLocationName,
-                                'notes': eventNoteController.text
+                                'notes': eventNoteController.text,
+                                'isDone': false
                               };
 
                               if (_formKey.currentState!.validate()) {
@@ -1032,7 +1033,7 @@ class AddEventScreenState extends State<AddEventScreen> {
                               });
                             },
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 40,
                           ),
                         ],
@@ -1227,7 +1228,6 @@ class AddEventScreenState extends State<AddEventScreen> {
                                         .read<HFGlobalState>()
                                         .userDisplayName,
                                     exerciseSearchText);
-                                ;
                               });
                             },
                             hintText: 'Filter exercises',
@@ -1242,6 +1242,7 @@ class AddEventScreenState extends State<AddEventScreen> {
                               direction: Axis.horizontal,
                               children: [
                                 Expanded(
+                                  flex: 1,
                                   child: HFInput(
                                     keyboardType: TextInputType.number,
                                     labelText:
@@ -1252,29 +1253,28 @@ class AddEventScreenState extends State<AddEventScreen> {
                                                 : '',
                                     controller: exerciseTypeNumberController,
                                   ),
-                                  flex: 1,
                                 ),
                                 const SizedBox(
                                   width: 20,
                                 ),
                                 Expanded(
+                                  flex: 1,
                                   child: HFInput(
                                     keyboardType: TextInputType.number,
                                     labelText: 'Reps',
                                     controller: exerciseRepsNumberController,
                                   ),
-                                  flex: 1,
                                 ),
                                 const SizedBox(
                                   width: 20,
                                 ),
                                 Expanded(
+                                  flex: 1,
                                   child: HFInput(
                                     keyboardType: TextInputType.number,
                                     labelText: 'Series',
                                     controller: exerciseSeriesNumberController,
                                   ),
-                                  flex: 1,
                                 ),
                               ],
                             ),
@@ -1438,7 +1438,7 @@ Widget colorBox(color, isActive, onTap) {
       child: AspectRatio(
         aspectRatio: 1 / 1,
         child: Container(
-          padding: EdgeInsets.all(3),
+          padding: const EdgeInsets.all(3),
           decoration: BoxDecoration(
             border: Border.all(
                 width: 2,
@@ -1447,7 +1447,7 @@ Widget colorBox(color, isActive, onTap) {
             borderRadius: BorderRadius.circular(12),
           ),
           child: Container(
-            padding: EdgeInsets.all(2),
+            padding: const EdgeInsets.all(2),
             decoration: BoxDecoration(
               color: color,
               borderRadius: BorderRadius.circular(7),

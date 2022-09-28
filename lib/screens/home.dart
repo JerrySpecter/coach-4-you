@@ -10,6 +10,7 @@ import 'package:health_factory/widgets/hf_paragraph.dart';
 import 'package:provider/provider.dart';
 
 import '../widgets/home/hf_actions_section.dart';
+import '../widgets/home/hf_archive_tile.dart';
 import '../widgets/home/hf_news_section.dart';
 
 class Home extends StatelessWidget {
@@ -142,6 +143,42 @@ class Home extends StatelessWidget {
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.0),
                 child: ActionsSection(),
+              ),
+            if (context.read<HFGlobalState>().userAccessLevel ==
+                accessLevels.client)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: HFArchiveTile(
+                  image: 'assets/exercises.svg',
+                  hideTitle: true,
+                  useChildren: true,
+                  primaryColor: HFColors().purpleColor(opacity: 0.1),
+                  secondaryColor: HFColors().purpleColor(opacity: 0.6),
+                  onTap: () {
+                    Navigator.pushNamed(
+                      context,
+                      clientCompletedTrainingsRoute,
+                      arguments: {
+                        'id': context.read<HFGlobalState>().userId,
+                      },
+                    );
+                  },
+                  children: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      HFHeading(
+                        text: 'Completed',
+                        size: 8,
+                        color: HFColors().whiteColor(opacity: 1),
+                      ),
+                      HFHeading(
+                        text: 'trainings',
+                        size: 8,
+                        color: HFColors().whiteColor(opacity: 1),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             const SizedBox(
               height: 120,
