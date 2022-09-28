@@ -58,7 +58,7 @@ class HFApp extends StatelessWidget {
         }
       },
       child: MaterialApp(
-        title: 'Flutter Demo',
+        title: 'Coach 4 you',
         onGenerateRoute: router.genRoute,
         home: const RootPage(),
         theme: ThemeData(
