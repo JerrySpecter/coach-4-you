@@ -170,6 +170,11 @@ class SingleRequest extends StatelessWidget {
                   'email': email,
                   'imageUrl': '',
                   'height': '',
+                  'messages': {
+                    'numberOfUnseen': 0,
+                    'lastSeenDate': '',
+                    'lastRecievedDate': '',
+                  },
                   'accountReady': false,
                 }).then((value) {
                   ScaffoldMessenger.of(context).showSnackBar(getSnackBar(

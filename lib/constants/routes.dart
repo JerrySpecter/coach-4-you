@@ -48,3 +48,4 @@ const String clientAddWaistRoute = '/client-add-waist';
 const String clientAddMidThighRoute = '/client-add-mid-thigh';
 const String clientCompletedTrainingsRoute = '/client-completed-trainings';
 const String completedEventRoute = '/client-completed-event';
+const String chatScreen = '/trainer-chat';

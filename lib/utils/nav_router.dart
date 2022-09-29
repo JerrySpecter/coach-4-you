@@ -30,6 +30,7 @@ import '../screens/admin/add_location.dart';
 import '../screens/admin/exercise.dart';
 import '../screens/admin/locations.dart';
 import '../screens/admin/single_exercise.dart';
+import '../screens/chat_screen.dart';
 import '../screens/client/client_add_measurement.dart';
 import '../screens/client/client_chest.dart';
 import '../screens/client/client_completed_trainings.dart';
@@ -193,6 +194,17 @@ Route<dynamic>? genRoute(RouteSettings settings) {
           available: data['available'],
           education: data['education'],
           profileBackgroundImageUrl: data['profileBackgroundImageUrl'],
+        ),
+      );
+    case chatScreen:
+      var data = settings.arguments as Map;
+
+      return MaterialPageRoute(
+        builder: (_) => ChatScreen(
+          id: data['id'],
+          name: data['name'],
+          imageUrl: data['imageUrl'],
+          email: data['email'],
         ),
       );
     case clientProfileRoute:

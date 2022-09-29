@@ -350,6 +350,12 @@ class AddEventScreenState extends State<AddEventScreen> {
                                         ),
                                         ...data.docs.map(
                                           (client) {
+                                            if (!client['accountReady']) {
+                                              return SizedBox(
+                                                height: 0,
+                                              );
+                                            }
+
                                             return Padding(
                                               padding:
                                                   const EdgeInsets.symmetric(
