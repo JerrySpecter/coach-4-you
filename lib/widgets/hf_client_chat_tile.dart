@@ -15,6 +15,7 @@ class HFClientChatTile extends StatefulWidget {
     this.name = 'John Doe',
     this.text = '',
     this.number = 0,
+    this.date = '',
     this.useSpacerBottom = false,
     this.useImage = true,
     this.imageUrl = '',
@@ -34,6 +35,7 @@ class HFClientChatTile extends StatefulWidget {
 
   final String name;
   final String text;
+  final String date;
   final int number;
   final String imageUrl;
   final double imageSize;
@@ -80,7 +82,7 @@ class _HFClientChatTileState extends State<HFClientChatTile> {
             onTap: widget.available ? widget.onTap : () {},
             child: Flex(
               direction: Axis.horizontal,
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 if (widget.useImage)
@@ -133,32 +135,41 @@ class _HFClientChatTileState extends State<HFClientChatTile> {
                     ],
                   ),
                 ),
-                AnimatedOpacity(
-                  duration: Duration(milliseconds: 100),
-                  curve: Curves.easeInOut,
-                  opacity: widget.number <= 0 ? 0 : 1,
-                  child: Container(
-                    padding: EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: HFColors().redColor(),
-                    ),
-                    child: HFParagrpah(
-                      text: '${widget.number}',
+                SizedBox(
+                  width: 20,
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    HFParagrpah(
+                      text: DateFormat('HH:mm')
+                          .format(DateTime.parse(widget.date)),
                       size: 8,
                       color: HFColors().whiteColor(),
-                      fontWeight: FontWeight.bold,
                     ),
-                  ),
+                    SizedBox(
+                      height: 6,
+                    ),
+                    AnimatedOpacity(
+                      duration: Duration(milliseconds: 100),
+                      curve: Curves.easeInOut,
+                      opacity: widget.number <= 0 ? 0 : 1,
+                      child: Container(
+                        padding: EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: HFColors().redColor(),
+                        ),
+                        child: HFParagrpah(
+                          text: '${widget.number}',
+                          size: 8,
+                          color: HFColors().whiteColor(),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                SizedBox(
-                  width: 5,
-                ),
-                if (widget.available)
-                  Icon(
-                    widget.icon,
-                    color: HFColors().primaryColor(),
-                  )
               ],
             ),
           ),

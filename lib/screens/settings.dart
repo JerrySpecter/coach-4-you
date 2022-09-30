@@ -6,7 +6,9 @@ import 'package:health_factory/constants/global_state.dart';
 import 'package:health_factory/constants/routes.dart';
 import 'package:health_factory/widgets/hf_button.dart';
 import 'package:health_factory/widgets/hf_heading.dart';
+import 'package:health_factory/widgets/hf_snackbar.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -73,6 +75,64 @@ class _SettingsPageState extends State<SettingsPage> {
                         'profileBackgroundImageUrl':
                             context.read<HFGlobalState>().userBackgroundImage,
                       });
+                }
+              }),
+              SizedBox(
+                height: 40,
+              ),
+              HFHeading(
+                text: 'About Coach 4 You',
+                size: 5,
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              SettingsListTile(context, CupertinoIcons.globe, 'Website',
+                  () async {
+                Uri url = Uri(scheme: 'https', host: 'coach4you.hr', path: '/');
+                if (await canLaunchUrl(url)) {
+                  await launchUrl(url);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(getSnackBar(
+                      text: 'Url not working', color: HFColors().redColor()));
+                }
+              }),
+              SettingsListTile(
+                  context, CupertinoIcons.conversation_bubble, 'Contact us',
+                  () async {
+                Uri url = Uri(
+                    scheme: 'https', host: 'coach4you.hr', path: '/contact/');
+                if (await canLaunchUrl(url)) {
+                  await launchUrl(url);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(getSnackBar(
+                      text: 'Url not working', color: HFColors().redColor()));
+                }
+              }),
+              SettingsListTile(context, CupertinoIcons.lock, 'Privacy policy',
+                  () async {
+                Uri url = Uri(
+                    scheme: 'https',
+                    host: 'coach4you.hr',
+                    path: '/politika-privatnosti/');
+                if (await canLaunchUrl(url)) {
+                  await launchUrl(url);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(getSnackBar(
+                      text: 'Url not working', color: HFColors().redColor()));
+                }
+              }),
+              SettingsListTile(
+                  context, CupertinoIcons.doc_append, 'Terms of use', () async {
+                Uri url = Uri(
+                    scheme: 'https',
+                    host: 'coach4you.hr',
+                    path: '/uvjeti-koristenja/');
+                if (await canLaunchUrl(url)) {
+                  await launchUrl(url);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(getSnackBar(
+                      text: 'Url not working', color: HFColors().redColor()));
                 }
               }),
               const SizedBox(

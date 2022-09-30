@@ -58,6 +58,7 @@ Route<dynamic>? genRoute(RouteSettings settings) {
           location: data.location,
           notes: data.notes,
           isDone: data.isDone,
+          color: data.color,
         ),
       );
     case completedEventRoute:
@@ -74,6 +75,7 @@ Route<dynamic>? genRoute(RouteSettings settings) {
           exercises: data['exercises'],
           location: data['location'],
           notes: data['notes'],
+          color: data['notes'],
           isDone: true,
         ),
       );
@@ -82,7 +84,18 @@ Route<dynamic>? genRoute(RouteSettings settings) {
 
       return MaterialPageRoute(
         builder: (_) => AddEventScreen(
+          title: data['title'],
           date: data['date'],
+          startTime: data['startTime'],
+          endTime: data['endTime'],
+          location: data['location'],
+          client: data['client'],
+          exercises: data['exercises'],
+          note: data['note'],
+          color: data['color'],
+          isEdit: data['isEdit'],
+          id: data['id'],
+          isDuplicate: data['isDuplicate'],
         ),
       );
     case addNewsRoute:

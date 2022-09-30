@@ -19,11 +19,36 @@ import '../../widgets/hf_select_list_view_tile.dart';
 import '../../widgets/hf_training_list_view_tile.dart';
 
 class AddEventScreen extends StatefulWidget {
+  final String id;
+  final String title;
   final DateTime date;
+  final String startTime;
+  final String endTime;
+  final String location;
+  final Map client;
+  final List exercises;
+  final String note;
+  final String color;
+  final bool isEdit;
+  final bool isDuplicate;
 
   const AddEventScreen({
     Key? key,
+    this.id = '',
+    this.title = '',
     required this.date,
+    this.startTime = '',
+    this.endTime = '',
+    this.location = '',
+    this.client = const {
+      'name': '',
+      'id': '',
+    },
+    this.exercises = const [],
+    this.note = '',
+    this.color = '',
+    this.isEdit = false,
+    this.isDuplicate = false,
   }) : super(key: key);
 
   @override
@@ -78,10 +103,29 @@ class AddEventScreenState extends State<AddEventScreen> {
 
   @override
   void initState() {
+    exerciseTypeNumberController.text = '0';
+    exerciseRepsNumberController.text = '0';
+    exerciseSeriesNumberController.text = '0';
     selectedEventDate = widget.date;
     eventDateController.text = DateFormat('EEE, d/M/y').format(widget.date);
     stream = getTrainingsStream(searchText);
     clientsStream = getClientsStream(searchText);
+
+    setState(() {
+      eventNameController.text = widget.title;
+      eventStartController.text = widget.startTime;
+      eventEndController.text = widget.endTime;
+      eventNoteController.text = widget.note;
+
+      print(widget.color);
+      selectedClient = widget.client['id'];
+      selectedClientName = widget.client['name'];
+
+      selectedLocationName = widget.location;
+      selectedExercises = widget.exercises;
+      selectedColor = widget.color;
+    });
+
     // TODO: implement initState
     super.initState();
   }
@@ -93,8 +137,12 @@ class AddEventScreenState extends State<AddEventScreen> {
         backgroundColor: HFColors().backgroundColor(),
         foregroundColor: HFColors().primaryColor(),
         shadowColor: Colors.transparent,
-        title: const HFHeading(
-          text: 'Add event',
+        title: HFHeading(
+          text: widget.isEdit
+              ? 'Edit workout'
+              : widget.isDuplicate
+                  ? 'Duplicate workout'
+                  : 'Add workout',
           size: 6,
         ),
         // actions: [
@@ -134,11 +182,11 @@ class AddEventScreenState extends State<AddEventScreen> {
                         children: [
                           HFInput(
                             controller: eventNameController,
-                            hintText: 'Event title',
+                            hintText: 'Title',
                             showCursor: true,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Please enter event name';
+                                return 'Please enter a name';
                               }
                               return null;
                             },
@@ -148,7 +196,7 @@ class AddEventScreenState extends State<AddEventScreen> {
                           ),
                           const HFHeading(
                             size: 5,
-                            text: 'Date and time of the event:',
+                            text: 'Date and time:',
                           ),
                           HFInput(
                             controller: eventDateController,
@@ -210,6 +258,8 @@ class AddEventScreenState extends State<AddEventScreen> {
                                       child: SizedBox(
                                         height: 180,
                                         child: CupertinoDatePicker(
+                                          minimumDate: DateTime.now()
+                                              .subtract(Duration(seconds: 60)),
                                           initialDateTime:
                                               selectedEventStartTime,
                                           mode: CupertinoDatePickerMode.time,
@@ -402,7 +452,7 @@ class AddEventScreenState extends State<AddEventScreen> {
                             height: 20,
                           ),
                           const HFHeading(
-                            text: 'Select a training:',
+                            text: 'Select a set:',
                             size: 5,
                           ),
                           HFInput(
@@ -413,7 +463,7 @@ class AddEventScreenState extends State<AddEventScreen> {
                                 stream = getTrainingsStream(searchText);
                               });
                             },
-                            hintText: 'Filter trainings',
+                            hintText: 'Filter sets',
                             keyboardType: TextInputType.text,
                             verticalContentPadding: 12,
                           ),
@@ -439,7 +489,7 @@ class AddEventScreenState extends State<AddEventScreen> {
                                     if (!snapshot.hasData) {
                                       return const Center(
                                         child: HFParagrpah(
-                                          text: 'No trainings. no data',
+                                          text: 'No sets. no data',
                                           size: 10,
                                           textAlign: TextAlign.center,
                                         ),
@@ -451,7 +501,7 @@ class AddEventScreenState extends State<AddEventScreen> {
                                     if (data.docs.isEmpty) {
                                       return const Center(
                                         child: HFParagrpah(
-                                          text: 'No trainings. empty',
+                                          text: 'No sets. empty',
                                           size: 10,
                                           textAlign: TextAlign.center,
                                         ),
@@ -623,7 +673,7 @@ class AddEventScreenState extends State<AddEventScreen> {
                                         if (selectedTrainingExercises.isEmpty)
                                           const HFParagrpah(
                                             size: 9,
-                                            text: 'No training selected',
+                                            text: 'No sets selected',
                                             textAlign: TextAlign.center,
                                           ),
                                         if (selectedTrainingExercises.isEmpty)
@@ -673,7 +723,7 @@ class AddEventScreenState extends State<AddEventScreen> {
                                         text: (selectedTrainingExercises
                                                     .isEmpty &&
                                                 selectedExercises.isEmpty)
-                                            ? 'Select a training or add a exercise'
+                                            ? 'Select a set or add a exercise'
                                             : 'No additional exercises added',
                                         textAlign: TextAlign.center,
                                       ),
@@ -773,8 +823,9 @@ class AddEventScreenState extends State<AddEventScreen> {
                                                 name: location['name'],
                                                 useImage: false,
                                                 showAvailable: false,
-                                                isSelected: selectedLocation ==
-                                                    location['id'],
+                                                isSelected:
+                                                    selectedLocationName ==
+                                                        location['name'],
                                                 headingMargin: 0,
                                                 imageSize: 48,
                                                 id: location['id'],
@@ -811,7 +862,7 @@ class AddEventScreenState extends State<AddEventScreen> {
                           ),
                           const HFHeading(
                             size: 5,
-                            text: 'Select event color:',
+                            text: 'Select color:',
                           ),
                           const SizedBox(
                             height: 10,
@@ -917,7 +968,7 @@ class AddEventScreenState extends State<AddEventScreen> {
                             height: 30,
                           ),
                           const HFHeading(
-                            text: 'Training notes:',
+                            text: 'Workout notes:',
                             size: 5,
                           ),
                           const SizedBox(
@@ -925,23 +976,24 @@ class AddEventScreenState extends State<AddEventScreen> {
                           ),
                           HFInput(
                             controller: eventNoteController,
-                            hintText: 'Training notes',
+                            hintText: 'Workout notes',
                             maxLines: 8,
                           ),
                           const SizedBox(
                             height: 40,
                           ),
                           HFButton(
-                            text: isLoading ? 'Creating...' : 'Create event',
-                            // ? widget.isEdit && !widget.isDuplicate
-                            //     ? 'Updating...'
-                            //     : 'Creating...'
-                            // : widget.isEdit && !widget.isDuplicate
-                            //     ? 'Update training'
-                            //     : 'Create training',
+                            text: isLoading
+                                ? widget.isEdit
+                                    ? 'Updating...'
+                                    : 'Creating...'
+                                : widget.isEdit
+                                    ? 'Update workout'
+                                    : 'Create workout',
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             onPressed: () {
-                              var newId = const Uuid().v4();
+                              var newId =
+                                  widget.isEdit ? widget.id : const Uuid().v4();
 
                               var exerciseList = [];
 
@@ -970,61 +1022,118 @@ class AddEventScreenState extends State<AddEventScreen> {
                                   isLoading = true;
                                 });
 
-                                HFFirebaseFunctions()
-                                    .getFirebaseAuthUser(context)
-                                    .collection('days')
-                                    .doc('${selectedEventDate}')
-                                    .collection('events')
-                                    .doc(newId)
-                                    .set(eventData)
-                                    .then((value) {
-                                  initDay(selectedEventDate);
-
-                                  var newDate = DateTime.now();
+                                if (widget.isEdit) {
                                   HFFirebaseFunctions()
                                       .getFirebaseAuthUser(context)
-                                      .update({
-                                    'changed': '$newDate',
-                                  }).then((value) {
-                                    FirebaseFirestore.instance
-                                        .collection('clients')
-                                        .doc(selectedClient)
-                                        .collection('days')
-                                        .doc('${selectedEventDate}')
-                                        .collection('events')
-                                        .doc(newId)
-                                        .set(eventData)
-                                        .then((value) {
-                                      initClientDay(
-                                          selectedEventDate, selectedClient);
+                                      .collection('days')
+                                      .doc('${selectedEventDate}')
+                                      .collection('events')
+                                      .doc(newId)
+                                      .update(eventData)
+                                      .then((value) {
+                                    var newDate = DateTime.now();
+                                    HFFirebaseFunctions()
+                                        .getFirebaseAuthUser(context)
+                                        .update({
+                                      'changed': '$newDate',
+                                    }).then((value) {
                                       FirebaseFirestore.instance
                                           .collection('clients')
                                           .doc(selectedClient)
-                                          .update({
-                                        'changed': '$newDate',
+                                          .collection('days')
+                                          .doc('${selectedEventDate}')
+                                          .collection('events')
+                                          .doc(newId)
+                                          .update(eventData)
+                                          .then((value) {
+                                        FirebaseFirestore.instance
+                                            .collection('clients')
+                                            .doc(selectedClient)
+                                            .update({
+                                          'changed': '$newDate',
+                                        });
                                       });
+                                    }).then((value) {
+                                      context
+                                          .read<HFGlobalState>()
+                                          .setCalendarLastUpdated('$newDate');
+
+                                      Navigator.pop(context);
                                     });
-                                  }).then((value) {
-                                    context
-                                        .read<HFGlobalState>()
-                                        .setCalendarLastUpdated('$newDate');
 
-                                    Navigator.pop(context);
-                                  });
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(getSnackBar(
+                                      text: 'Workout updated',
+                                      color:
+                                          HFColors().primaryColor(opacity: 1),
+                                    ));
+                                  }).catchError((error) =>
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            getSnackBar(
+                                              text: 'There was an error',
+                                              color: HFColors().redColor(),
+                                            ),
+                                          ));
+                                } else {
+                                  HFFirebaseFunctions()
+                                      .getFirebaseAuthUser(context)
+                                      .collection('days')
+                                      .doc('${selectedEventDate}')
+                                      .collection('events')
+                                      .doc(newId)
+                                      .set(eventData)
+                                      .then((value) {
+                                    initDay(selectedEventDate);
 
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(getSnackBar(
-                                    text: 'New training added!',
-                                    color: HFColors().primaryColor(opacity: 1),
-                                  ));
-                                }).catchError((error) =>
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          getSnackBar(
-                                            text: 'There was an error',
-                                            color: HFColors().redColor(),
-                                          ),
-                                        ));
+                                    var newDate = DateTime.now();
+                                    HFFirebaseFunctions()
+                                        .getFirebaseAuthUser(context)
+                                        .update({
+                                      'changed': '$newDate',
+                                    }).then((value) {
+                                      FirebaseFirestore.instance
+                                          .collection('clients')
+                                          .doc(selectedClient)
+                                          .collection('days')
+                                          .doc('${selectedEventDate}')
+                                          .collection('events')
+                                          .doc(newId)
+                                          .set(eventData)
+                                          .then((value) {
+                                        initClientDay(
+                                            selectedEventDate, selectedClient);
+                                        FirebaseFirestore.instance
+                                            .collection('clients')
+                                            .doc(selectedClient)
+                                            .update({
+                                          'changed': '$newDate',
+                                        });
+                                      });
+                                    }).then((value) {
+                                      context
+                                          .read<HFGlobalState>()
+                                          .setCalendarLastUpdated('$newDate');
+
+                                      Navigator.pop(context);
+                                      Navigator.pop(context);
+                                    });
+
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(getSnackBar(
+                                      text: 'New set added!',
+                                      color:
+                                          HFColors().primaryColor(opacity: 1),
+                                    ));
+                                  }).catchError((error) =>
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            getSnackBar(
+                                              text: 'There was an error',
+                                              color: HFColors().redColor(),
+                                            ),
+                                          ));
+                                }
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   getSnackBar(
@@ -1306,10 +1415,18 @@ class AddEventScreenState extends State<AddEventScreen> {
                                   'id': newId,
                                   'name': exerciseSelected,
                                   'exerciseId': exerciseIdSelected,
-                                  'amount': exerciseTypeNumberController.text,
+                                  'amount':
+                                      exerciseTypeNumberController.text == ''
+                                          ? '0'
+                                          : exerciseTypeNumberController.text,
                                   'repetitions':
-                                      exerciseRepsNumberController.text,
-                                  'series': exerciseRepsNumberController.text,
+                                      exerciseRepsNumberController.text == ''
+                                          ? '0'
+                                          : exerciseRepsNumberController.text,
+                                  'series':
+                                      exerciseRepsNumberController.text == ''
+                                          ? '0'
+                                          : exerciseRepsNumberController.text,
                                   'repetitionType': exerciseRepetitionType,
                                   'types': exerciseTypes,
                                   'note': exerciseNoteController.text,
@@ -1383,9 +1500,9 @@ class AddEventScreenState extends State<AddEventScreen> {
     exerciseThumbnail = '';
     exerciseSelected = '';
     exerciseIdSelected = '';
-    exerciseTypeNumberController.text = '';
-    exerciseRepsNumberController.text = '';
-    exerciseSeriesNumberController.text = '';
+    exerciseTypeNumberController.text = '0';
+    exerciseRepsNumberController.text = '0';
+    exerciseSeriesNumberController.text = '0';
     exerciseRepetitionType = '';
     exerciseTypes = [];
     exerciseNoteController.text = '';
@@ -1411,7 +1528,7 @@ void showSheet(
           style: GoogleFonts.getFont(
             'Manrope',
             textStyle: TextStyle(
-              color: HFColors().primaryColor(),
+              color: HFColors().secondaryColor(),
             ),
           ),
         ),

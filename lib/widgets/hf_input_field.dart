@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:health_factory/constants/colors.dart';
@@ -19,6 +20,7 @@ class HFInput extends StatelessWidget {
     this.onEditingComplete,
     this.verticalContentPadding = 16,
     this.validator,
+    this.minLines = 1,
     this.maxLines = 1,
     this.textCapitalization = TextCapitalization.sentences,
     this.toolbarOptions = const ToolbarOptions(
@@ -38,6 +40,7 @@ class HFInput extends StatelessWidget {
   final String hintText;
   final String labelText;
   final double verticalContentPadding;
+  final int minLines;
   final int maxLines;
   final ToolbarOptions toolbarOptions;
   final TextCapitalization textCapitalization;
@@ -90,6 +93,7 @@ class HFInput extends StatelessWidget {
           TextFormField(
             toolbarOptions: toolbarOptions,
             maxLines: maxLines,
+            minLines: minLines,
             validator: validator,
             controller: controller,
             decoration: InputDecoration(

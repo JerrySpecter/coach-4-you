@@ -172,7 +172,7 @@ class Home extends StatelessWidget {
                         color: HFColors().whiteColor(opacity: 1),
                       ),
                       HFHeading(
-                        text: 'trainings',
+                        text: 'workouts',
                         size: 8,
                         color: HFColors().whiteColor(opacity: 1),
                       ),

@@ -27,209 +27,188 @@ class _SplashScreenState extends State<SplashScreen> {
     double contentHeight = MediaQuery.of(context).size.height - 420;
     double imageSize = 250;
 
-    return SingleChildScrollView(
+    return ConstrainedBox(
+      constraints:
+          BoxConstraints(maxHeight: MediaQuery.of(context).size.height),
+      // height: MediaQuery.of(context).size.height,
       child: Stack(
         children: [
           SizedBox(
-            height: MediaQuery.of(context).size.height +
-                MediaQuery.of(context).viewInsets.bottom,
+            height: contentHeight,
+            width: MediaQuery.of(context).size.width,
             child: Stack(
+              fit: StackFit.expand,
+              alignment: Alignment.center,
               children: [
-                SizedBox(
-                  height: contentHeight,
-                  width: MediaQuery.of(context).size.width,
-                  child: Stack(
-                    fit: StackFit.expand,
-                    alignment: Alignment.center,
-                    children: [
-                      AnimatedPositioned(
-                        top: context.watch<HFGlobalState>().splashScreenState ==
-                                SplashScreens.findTrainer
-                            ? -10
-                            : (contentHeight / 2) - (imageSize / 2) + 20,
-                        left: 0,
-                        right: 0,
-                        duration: const Duration(milliseconds: 200),
-                        child: AnimatedScale(
-                          scale: context
-                                      .watch<HFGlobalState>()
-                                      .splashScreenState ==
-                                  SplashScreens.findTrainer
-                              ? 0.4
-                              : 1,
-                          duration: const Duration(milliseconds: 200),
-                          curve: Curves.easeInOut,
-                          child: Image(
-                            image: const AssetImage('assets/c4y-logo.png'),
-                            width: imageSize,
-                            height: imageSize,
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
                 AnimatedPositioned(
                   top: context.watch<HFGlobalState>().splashScreenState ==
                           SplashScreens.findTrainer
-                      ? 180
-                      : contentHeight,
+                      ? -10
+                      : (contentHeight / 2) - (imageSize / 2) + 20,
                   left: 0,
                   right: 0,
                   duration: const Duration(milliseconds: 200),
-                  curve: Curves.easeInOut,
-                  child: SizedBox(
-                    height: MediaQuery.of(context).size.height - 120,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                      decoration: BoxDecoration(
-                        color: HFColors().secondaryLightColor(),
-                        borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(24),
-                            topRight: Radius.circular(24)),
-                      ),
-                      child: Stack(
-                        children: [
-                          AnimatedPositioned(
-                            top: context
-                                        .watch<HFGlobalState>()
-                                        .splashScreenState ==
-                                    SplashScreens.findTrainer
-                                ? 0
-                                : 100,
-                            left: 0,
-                            right: 0,
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeInOut,
-                            child: AnimatedOpacity(
-                              duration: const Duration(milliseconds: 150),
-                              curve: Curves.easeInOut,
-                              opacity: context
-                                          .watch<HFGlobalState>()
-                                          .splashScreenState ==
-                                      SplashScreens.findTrainer
-                                  ? 1
-                                  : 0,
-                              child: IgnorePointer(
-                                  ignoring: context
-                                          .watch<HFGlobalState>()
-                                          .splashScreenState !=
-                                      SplashScreens.findTrainer,
-                                  child: const FindTrainerSection()),
-                            ),
-                          ),
-                          AnimatedPositioned(
-                            top: context
-                                        .watch<HFGlobalState>()
-                                        .splashScreenState ==
-                                    SplashScreens.splash
-                                ? 0
-                                : -100,
-                            left: 0,
-                            right: 0,
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeInOut,
-                            child: AnimatedOpacity(
-                              duration: const Duration(milliseconds: 150),
-                              curve: Curves.easeInOut,
-                              opacity: context
-                                          .watch<HFGlobalState>()
-                                          .splashScreenState ==
-                                      SplashScreens.splash
-                                  ? 1
-                                  : 0,
-                              child: IgnorePointer(
-                                  ignoring: context
-                                          .watch<HFGlobalState>()
-                                          .splashScreenState !=
-                                      SplashScreens.splash,
-                                  child: const SplashSection()),
-                            ),
-                          ),
-                          AnimatedPositioned(
-                            top: context
-                                        .watch<HFGlobalState>()
-                                        .splashScreenState ==
-                                    SplashScreens.login
-                                ? 0
-                                : context
-                                            .watch<HFGlobalState>()
-                                            .splashScreenState ==
-                                        SplashScreens.reset
-                                    ? -100
-                                    : 10,
-                            left: 0,
-                            right: 0,
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeInOut,
-                            child: AnimatedOpacity(
-                              duration: const Duration(milliseconds: 150),
-                              curve: Curves.easeInOut,
-                              opacity: context
-                                          .watch<HFGlobalState>()
-                                          .splashScreenState ==
-                                      SplashScreens.login
-                                  ? 1
-                                  : 0,
-                              child: IgnorePointer(
-                                ignoring: context
-                                        .watch<HFGlobalState>()
-                                        .splashScreenState !=
-                                    SplashScreens.login,
-                                child: LoginSection(
-                                  emailController: _emailController,
-                                  passwordController: _passwordController,
-                                  authInstance: _authInstance,
-                                ),
-                              ),
-                            ),
-                          ),
-                          AnimatedPositioned(
-                            top: context
-                                        .watch<HFGlobalState>()
-                                        .splashScreenState ==
-                                    SplashScreens.reset
-                                ? 0
-                                : context
-                                            .watch<HFGlobalState>()
-                                            .splashScreenState ==
-                                        SplashScreens.login
-                                    ? 100
-                                    : 10,
-                            left: 0,
-                            right: 0,
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeInOut,
-                            child: AnimatedOpacity(
-                              duration: const Duration(milliseconds: 150),
-                              curve: Curves.easeInOut,
-                              opacity: context
-                                          .watch<HFGlobalState>()
-                                          .splashScreenState ==
-                                      SplashScreens.reset
-                                  ? 1
-                                  : 0,
-                              child: IgnorePointer(
-                                ignoring: context
-                                        .watch<HFGlobalState>()
-                                        .splashScreenState !=
-                                    SplashScreens.reset,
-                                child: ResetPasswordSection(
-                                  emailResetController: _emailResetController,
-                                  authInstance: _authInstance,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                  child: AnimatedScale(
+                    scale: context.watch<HFGlobalState>().splashScreenState ==
+                            SplashScreens.findTrainer
+                        ? 0.4
+                        : 1,
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.easeInOut,
+                    child: Image(
+                      image: const AssetImage(
+                          'assets/icon/transparentandroidlogo.png'),
+                      width: imageSize,
+                      height: imageSize,
+                      fit: BoxFit.contain,
                     ),
                   ),
                 )
               ],
             ),
           ),
+          AnimatedPositioned(
+            bottom: context.watch<HFGlobalState>().splashScreenState ==
+                    SplashScreens.findTrainer
+                ? -70
+                : -250 +
+                    (MediaQuery.of(context).viewInsets.bottom >= 80
+                        ? MediaQuery.of(context).viewInsets.bottom - 80
+                        : 0),
+            left: 0,
+            right: 0,
+            duration: const Duration(milliseconds: 100),
+            curve: Curves.linear,
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height - 120,
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                decoration: BoxDecoration(
+                  color: HFColors().secondaryLightColor(),
+                  borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(24),
+                      topRight: Radius.circular(24)),
+                ),
+                child: Stack(
+                  children: [
+                    AnimatedPositioned(
+                      top: context.watch<HFGlobalState>().splashScreenState ==
+                              SplashScreens.findTrainer
+                          ? 0
+                          : 100,
+                      left: 0,
+                      right: 0,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                      child: AnimatedOpacity(
+                        duration: const Duration(milliseconds: 150),
+                        curve: Curves.easeInOut,
+                        opacity:
+                            context.watch<HFGlobalState>().splashScreenState ==
+                                    SplashScreens.findTrainer
+                                ? 1
+                                : 0,
+                        child: IgnorePointer(
+                            ignoring: context
+                                    .watch<HFGlobalState>()
+                                    .splashScreenState !=
+                                SplashScreens.findTrainer,
+                            child: const FindTrainerSection()),
+                      ),
+                    ),
+                    AnimatedPositioned(
+                      top: context.watch<HFGlobalState>().splashScreenState ==
+                              SplashScreens.splash
+                          ? 0
+                          : -100,
+                      left: 0,
+                      right: 0,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                      child: AnimatedOpacity(
+                        duration: const Duration(milliseconds: 150),
+                        curve: Curves.easeInOut,
+                        opacity:
+                            context.watch<HFGlobalState>().splashScreenState ==
+                                    SplashScreens.splash
+                                ? 1
+                                : 0,
+                        child: IgnorePointer(
+                            ignoring: context
+                                    .watch<HFGlobalState>()
+                                    .splashScreenState !=
+                                SplashScreens.splash,
+                            child: const SplashSection()),
+                      ),
+                    ),
+                    AnimatedPositioned(
+                      top: context.watch<HFGlobalState>().splashScreenState ==
+                              SplashScreens.login
+                          ? 0
+                          : context.watch<HFGlobalState>().splashScreenState ==
+                                  SplashScreens.reset
+                              ? -100
+                              : 10,
+                      left: 0,
+                      right: 0,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                      child: AnimatedOpacity(
+                        duration: const Duration(milliseconds: 150),
+                        curve: Curves.easeInOut,
+                        opacity:
+                            context.watch<HFGlobalState>().splashScreenState ==
+                                    SplashScreens.login
+                                ? 1
+                                : 0,
+                        child: IgnorePointer(
+                          ignoring: context
+                                  .watch<HFGlobalState>()
+                                  .splashScreenState !=
+                              SplashScreens.login,
+                          child: LoginSection(
+                            authInstance: _authInstance,
+                          ),
+                        ),
+                      ),
+                    ),
+                    AnimatedPositioned(
+                      top: context.watch<HFGlobalState>().splashScreenState ==
+                              SplashScreens.reset
+                          ? 0
+                          : context.watch<HFGlobalState>().splashScreenState ==
+                                  SplashScreens.login
+                              ? 100
+                              : 10,
+                      left: 0,
+                      right: 0,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                      child: AnimatedOpacity(
+                        duration: const Duration(milliseconds: 150),
+                        curve: Curves.easeInOut,
+                        opacity:
+                            context.watch<HFGlobalState>().splashScreenState ==
+                                    SplashScreens.reset
+                                ? 1
+                                : 0,
+                        child: IgnorePointer(
+                          ignoring: context
+                                  .watch<HFGlobalState>()
+                                  .splashScreenState !=
+                              SplashScreens.reset,
+                          child: ResetPasswordSection(
+                            emailResetController: _emailResetController,
+                            authInstance: _authInstance,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          )
         ],
       ),
     );

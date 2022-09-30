@@ -27,14 +27,14 @@ class HFChatList extends StatelessWidget {
       padding:
           const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16, top: 10),
       child: Container(
-        height: MediaQuery.of(context).size.height - 200,
+        height: MediaQuery.of(context).size.height - 129,
         child: StreamBuilder(
           stream: context.watch<HFGlobalState>().userId != ''
               ? FirebaseFirestore.instance
                   .collection('trainers')
                   .doc(context.read<HFGlobalState>().userId)
                   .collection('clients')
-                  .orderBy('name', descending: true)
+                  .orderBy('messages.lastMessageDate', descending: true)
                   .snapshots()
               : Stream.empty(),
           builder: ((context, snapshot) {
@@ -71,7 +71,8 @@ class HFChatList extends StatelessWidget {
                     return HFClientChatTile(
                       name: client['name'],
                       text: client['messages']['lastMessageText'],
-                      number: client['messages']['numberOfUnseen'],
+                      number: client['messages']['numberOfUnseenTrainer'],
+                      date: client['messages']['lastMessageDate'],
                       imageUrl: client['imageUrl'],
                       available: client['accountReady'],
                       imageSize: 52,
@@ -94,7 +95,7 @@ class HFChatList extends StatelessWidget {
                         color: HFColors().whiteColor(opacity: 0.7),
                       ),
                     );
-                  })
+                  }),
                 ],
               ),
             );

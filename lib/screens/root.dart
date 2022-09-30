@@ -151,55 +151,7 @@ class RootPageState extends State<RootPage> {
             child: Stack(
               children: [
                 // Login screen
-                AnimatedPositioned(
-                  curve: Curves.easeInOut,
-                  left: 0,
-                  top: context.watch<HFGlobalState>().splashScreenState ==
-                          SplashScreens.loggedIn
-                      ? -20
-                      : 0,
-                  height: MediaQuery.of(context).size.height,
-                  width: MediaQuery.of(context).size.width,
-                  duration: const Duration(milliseconds: 200),
-                  child: AnimatedOpacity(
-                    opacity: context.watch<HFGlobalState>().rootScreenState ==
-                            RootScreens.login
-                        ? 1
-                        : 0,
-                    duration: const Duration(milliseconds: 100),
-                    child: IgnorePointer(
-                      ignoring:
-                          context.watch<HFGlobalState>().splashScreenState ==
-                              SplashScreens.loggedIn,
-                      child: const SplashScreen(),
-                    ),
-                  ),
-                ),
-                // Welcome screen
-                AnimatedPositioned(
-                  curve: Curves.easeInOut,
-                  left: 0,
-                  top: context.watch<HFGlobalState>().rootScreenState !=
-                          RootScreens.welcome
-                      ? -20
-                      : 0,
-                  height: MediaQuery.of(context).size.height,
-                  width: MediaQuery.of(context).size.width,
-                  duration: const Duration(milliseconds: 200),
-                  child: AnimatedOpacity(
-                    opacity: context.watch<HFGlobalState>().rootScreenState ==
-                            RootScreens.welcome
-                        ? 1
-                        : 0,
-                    duration: const Duration(milliseconds: 100),
-                    child: IgnorePointer(
-                      ignoring:
-                          context.watch<HFGlobalState>().rootScreenState !=
-                              RootScreens.welcome,
-                      child: const WelcomePage(),
-                    ),
-                  ),
-                ),
+
                 // Home screen
                 AnimatedPositioned(
                   curve: Curves.easeInOut,
@@ -306,6 +258,57 @@ class RootPageState extends State<RootPage> {
                     ),
                   ),
                 ),
+
+                // Welcome screen
+                AnimatedPositioned(
+                  curve: Curves.easeInOut,
+                  left: 0,
+                  top: context.watch<HFGlobalState>().rootScreenState !=
+                          RootScreens.welcome
+                      ? -20
+                      : 0,
+                  height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
+                  duration: const Duration(milliseconds: 200),
+                  child: AnimatedOpacity(
+                    opacity: context.watch<HFGlobalState>().rootScreenState ==
+                            RootScreens.welcome
+                        ? 1
+                        : 0,
+                    duration: const Duration(milliseconds: 100),
+                    child: IgnorePointer(
+                      ignoring:
+                          context.watch<HFGlobalState>().rootScreenState !=
+                              RootScreens.welcome,
+                      child: const WelcomePage(),
+                    ),
+                  ),
+                ),
+                // Login screen
+                AnimatedPositioned(
+                  curve: Curves.easeInOut,
+                  left: 0,
+                  top: context.watch<HFGlobalState>().rootScreenState ==
+                          SplashScreens.login
+                      ? -20
+                      : 0,
+                  height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
+                  duration: const Duration(milliseconds: 200),
+                  child: AnimatedOpacity(
+                    opacity: context.watch<HFGlobalState>().rootScreenState ==
+                            RootScreens.login
+                        ? 1
+                        : 0,
+                    duration: const Duration(milliseconds: 100),
+                    child: IgnorePointer(
+                      ignoring:
+                          context.watch<HFGlobalState>().rootScreenState !=
+                              RootScreens.login,
+                      child: const SplashScreen(),
+                    ),
+                  ),
+                ),
                 // Floating event button
                 AnimatedPositioned(
                   curve: floatingButtonShowEvent
@@ -336,7 +339,7 @@ class RootPageState extends State<RootPage> {
                             color: HFColors().secondaryColor(),
                           ),
                           padding: const EdgeInsets.all(10),
-                          text: 'Event',
+                          text: 'Workout',
                           onPressed: () {
                             hideFloatingButtonOptions();
 
@@ -344,6 +347,20 @@ class RootPageState extends State<RootPage> {
                                 arguments: {
                                   'date': DateTime.parse(
                                       '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 00:00:00.000Z'),
+                                  'title': '',
+                                  'id': '',
+                                  'startTime': '',
+                                  'endTime': '',
+                                  'location': '',
+                                  'client': {
+                                    'name': '',
+                                    'id': '',
+                                  },
+                                  'exercises': [],
+                                  'note': '',
+                                  'color': '',
+                                  'isEdit': false,
+                                  'isDuplicate': false,
                                 });
                           },
                           backgroundColor: HFColors().primaryColor(),
@@ -495,6 +512,17 @@ class RootPageState extends State<RootPage> {
                                 'date': context
                                     .read<HFGlobalState>()
                                     .calendarSelectedDay,
+                                'title': '',
+                                'id': '',
+                                'startTime': '',
+                                'endTime': '',
+                                'location': '',
+                                'client': {'name': '', 'id': ''},
+                                'exercises': [],
+                                'note': '',
+                                'color': '',
+                                'isEdit': false,
+                                'isDuplicate': false,
                               },
                             );
                           }

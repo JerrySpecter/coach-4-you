@@ -29,29 +29,33 @@ class HFChatMessage extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onLongPress: () {
-        showAlertDialog(
-          context,
-          'Are you sure you want to delete this message?',
-          () {
-            FirebaseFirestore.instance
-                .collection('clients')
-                .doc(context.read<HFGlobalState>().userId)
-                .collection('chat')
-                .doc(id)
-                .delete()
-                .then((value) {
-              Navigator.pop(context);
+        print(id);
+        print(context.read<HFGlobalState>().userId);
+        if (id == context.read<HFGlobalState>().userId) {
+          showAlertDialog(
+            context,
+            'Are you sure you want to delete this message?',
+            () {
+              FirebaseFirestore.instance
+                  .collection('clients')
+                  .doc(context.read<HFGlobalState>().userId)
+                  .collection('chat')
+                  .doc(id)
+                  .delete()
+                  .then((value) {
+                Navigator.pop(context);
 
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(getSnackBar(text: 'Message deleted'));
-            });
-          },
-          'Yes',
-          () {
-            Navigator.pop(context);
-          },
-          'No',
-        );
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(getSnackBar(text: 'Message deleted'));
+              });
+            },
+            'Yes',
+            () {
+              Navigator.pop(context);
+            },
+            'No',
+          );
+        }
       },
       child: Column(
         crossAxisAlignment: alignment == MainAxisAlignment.start

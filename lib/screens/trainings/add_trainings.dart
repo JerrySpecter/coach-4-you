@@ -81,6 +81,9 @@ class _AddTrainingState extends State<AddTraining> {
 
   @override
   void initState() {
+    _exerciseTypeNumberController.text = '0';
+    _exerciseRepsNumberController.text = '0';
+    _exerciseSeriesNumberController.text = '0';
     _trainingNameController.text = widget.name;
     _trainingNoteController.text = widget.note;
 
@@ -107,7 +110,7 @@ class _AddTrainingState extends State<AddTraining> {
         shadowColor: Colors.transparent,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         title: HFHeading(
-          text: widget.isEdit ? 'Edit ${_initialName}' : 'Add new training',
+          text: widget.isEdit ? 'Edit ${_initialName}' : 'Add new Set',
         ),
       ),
       backgroundColor: HFColors().backgroundColor(),
@@ -135,11 +138,11 @@ class _AddTrainingState extends State<AddTraining> {
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
                               HFInput(
-                                hintText: 'Training name',
+                                hintText: 'Set name',
                                 controller: _trainingNameController,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
-                                    return 'Please enter training name.';
+                                    return 'Please enter set name.';
                                   }
                                   return null;
                                 },
@@ -271,7 +274,7 @@ class _AddTrainingState extends State<AddTraining> {
                                 height: 30,
                               ),
                               const HFHeading(
-                                text: 'Training notes:',
+                                text: 'Set notes:',
                                 size: 5,
                               ),
                               const SizedBox(
@@ -279,7 +282,7 @@ class _AddTrainingState extends State<AddTraining> {
                               ),
                               HFInput(
                                 controller: _trainingNoteController,
-                                hintText: 'Training notes',
+                                hintText: 'Set notes',
                                 maxLines: 8,
                               ),
                               const SizedBox(
@@ -291,8 +294,8 @@ class _AddTrainingState extends State<AddTraining> {
                                         ? 'Updating...'
                                         : 'Creating...'
                                     : widget.isEdit && !widget.isDuplicate
-                                        ? 'Update training'
-                                        : 'Create training',
+                                        ? 'Update set'
+                                        : 'Create set',
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 16),
                                 onPressed: () {
@@ -341,7 +344,7 @@ class _AddTrainingState extends State<AddTraining> {
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(
                                             getSnackBar(
-                                              text: 'Training updated',
+                                              text: 'Set updated',
                                             ),
                                           );
                                         },
@@ -367,7 +370,7 @@ class _AddTrainingState extends State<AddTraining> {
 
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(getSnackBar(
-                                                text: 'Training added'));
+                                                text: 'Set created'));
                                       });
                                     }
                                   } else {

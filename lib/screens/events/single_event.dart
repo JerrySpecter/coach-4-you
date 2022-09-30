@@ -28,6 +28,7 @@ class EventScreen extends StatefulWidget {
     required this.exercises,
     required this.location,
     required this.notes,
+    required this.color,
     required this.isDone,
   }) : super(key: key);
 
@@ -40,6 +41,7 @@ class EventScreen extends StatefulWidget {
   final List<dynamic> exercises;
   final String location;
   final String notes;
+  final String color;
   final bool isDone;
 
   @override
@@ -88,7 +90,7 @@ class _EventScreenState extends State<EventScreen> {
                     });
                   }).then((value) {
                     ScaffoldMessenger.of(context).showSnackBar(getSnackBar(
-                      text: 'Training removed!',
+                      text: 'Set removed!',
                       color: HFColors().primaryColor(opacity: 1),
                     ));
 
@@ -101,46 +103,56 @@ class _EventScreenState extends State<EventScreen> {
                 color: HFColors().redColor(),
               ),
             ),
-          // if (context.read<HFGlobalState>().userAccessLevel ==
-          //     accessLevels.trainer)
-          //   IconButton(
-          //     onPressed: () {
-          // Navigator.pushNamed(
-          //   context,
-          //   editTrainingRoute,
-          //   arguments: {
-          //     'parentContext': context,
-          //     'id': widget.id,
-          //     'name': _nameState,
-          //     'note': _noteState,
-          //     'exercises': _exercisesState,
-          //     'isEdit': false,
-          //     'isDuplicate': true
-          //   },
-          // );
-          // },
-          //   icon: const Icon(CupertinoIcons.doc_on_clipboard),
-          // ),
-          // if (context.read<HFGlobalState>().userAccessLevel ==
-          //     accessLevels.trainer)
-          // IconButton(
-          //   onPressed: () {
-          // Navigator.pushNamed(
-          //   context,
-          //   editTrainingRoute,
-          //   arguments: {
-          //     'parentContext': context,
-          //     'id': widget.id,
-          //     'name': _nameState,
-          //     'note': _noteState,
-          //     'exercises': _exercisesState,
-          //     'isEdit': true,
-          //     'isDuplicate': false
-          //   },
-          // );
-          //   },
-          //   icon: const Icon(CupertinoIcons.pen),
-          // )
+          if (context.read<HFGlobalState>().userAccessLevel ==
+              accessLevels.trainer)
+            IconButton(
+              onPressed: () {
+                Navigator.pushNamed(
+                  context,
+                  addEventRoute,
+                  arguments: {
+                    'id': widget.id,
+                    'date': widget.date,
+                    'title': widget.title,
+                    'startTime': widget.startTime,
+                    'endTime': widget.endTime,
+                    'location': widget.location,
+                    'client': widget.client,
+                    'exercises': widget.exercises,
+                    'note': widget.notes,
+                    'color': widget.color,
+                    'isEdit': false,
+                    'isDuplicate': true,
+                  },
+                );
+              },
+              icon: const Icon(CupertinoIcons.doc_on_clipboard),
+            ),
+          if (context.read<HFGlobalState>().userAccessLevel ==
+              accessLevels.trainer)
+            IconButton(
+              onPressed: () {
+                Navigator.pushNamed(
+                  context,
+                  addEventRoute,
+                  arguments: {
+                    'id': widget.id,
+                    'date': widget.date,
+                    'title': widget.title,
+                    'startTime': widget.startTime,
+                    'endTime': widget.endTime,
+                    'location': widget.location,
+                    'client': widget.client,
+                    'exercises': widget.exercises,
+                    'note': widget.notes,
+                    'color': widget.color,
+                    'isEdit': true,
+                    'isDuplicate': false,
+                  },
+                );
+              },
+              icon: const Icon(CupertinoIcons.pen),
+            )
         ],
         systemOverlayStyle: SystemUiOverlayStyle.light,
       ),
@@ -172,7 +184,7 @@ class _EventScreenState extends State<EventScreen> {
                       width: 10,
                     ),
                     HFParagrpah(
-                      text: 'Event completed',
+                      text: 'Workout completed',
                       size: 6,
                     )
                   ],

@@ -30,7 +30,7 @@ class _TrainingsState extends State<Trainings> {
         shadowColor: Colors.transparent,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         title: const HFHeading(
-          text: 'Trainings',
+          text: 'Sets',
         ),
       ),
       floatingActionButton: Container(
@@ -68,7 +68,7 @@ class _TrainingsState extends State<Trainings> {
                     if (!snapshot.hasData) {
                       return const Center(
                         child: HFParagrpah(
-                          text: 'No trainings.',
+                          text: 'No sets.',
                           size: 10,
                           textAlign: TextAlign.center,
                         ),
@@ -80,7 +80,7 @@ class _TrainingsState extends State<Trainings> {
                     if (data.docs.isEmpty) {
                       return const Center(
                         child: HFParagrpah(
-                          text: 'No trainings.',
+                          text: 'No sets.',
                           size: 10,
                           textAlign: TextAlign.center,
                         ),

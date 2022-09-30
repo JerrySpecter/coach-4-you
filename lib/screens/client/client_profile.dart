@@ -172,6 +172,50 @@ class _ClientProfileState extends State<ClientProfile> {
                             ),
                           ),
                         ),
+                      if (widget.asTrainer)
+                        Positioned(
+                          top: topOffset + 50,
+                          right: 16,
+                          child: Container(
+                            height: 40,
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            decoration: BoxDecoration(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(12)),
+                              color: HFColors().primaryColor(),
+                              boxShadow: getShadow(),
+                            ),
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  addEventRoute,
+                                  arguments: {
+                                    'id': '',
+                                    'date': DateTime.now(),
+                                    'title': '',
+                                    'startTime': '',
+                                    'endTime': '',
+                                    'location': '',
+                                    'client': {
+                                      'name': widget.name,
+                                      'id': widget.id,
+                                    },
+                                    'exercises': [],
+                                    'note': '',
+                                    'color': '',
+                                    'isEdit': false,
+                                    'isDuplicate': false,
+                                  },
+                                );
+                              },
+                              child: Icon(
+                                CupertinoIcons.calendar_badge_plus,
+                                color: HFColors().secondaryColor(),
+                              ),
+                            ),
+                          ),
+                        ),
                       Positioned(
                         bottom: -40,
                         left: (MediaQuery.of(context).size.width / 2) - 75,
@@ -358,7 +402,7 @@ class _ClientProfileState extends State<ClientProfile> {
                           color: HFColors().whiteColor(opacity: 1),
                         ),
                         HFHeading(
-                          text: 'trainings',
+                          text: 'workouts',
                           size: 8,
                           color: HFColors().whiteColor(opacity: 1),
                         ),

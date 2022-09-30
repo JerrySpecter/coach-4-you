@@ -29,7 +29,7 @@ class HFCalendarSection extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: const [
             HFHeading(
-              text: 'Upcoming trainings',
+              text: 'Upcoming workouts',
               size: 8,
             )
           ],
@@ -73,7 +73,7 @@ class HFCalendarSection extends StatelessWidget {
                 ? const SizedBox(
                     height: 150,
                     child: HFParagrpah(
-                      text: 'No events today',
+                      text: 'No workouts today',
                       size: 10,
                       textAlign: TextAlign.center,
                     ),

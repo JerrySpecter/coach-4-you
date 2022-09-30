@@ -44,6 +44,9 @@ class HFGlobalState with ChangeNotifier, DiagnosticableTreeMixin {
       case 3:
         _userAccessLevel = accessLevels.client;
         break;
+      case null:
+        _userAccessLevel = accessLevels.trainer;
+        break;
       default:
         _userAccessLevel = accessLevels.trainer;
     }

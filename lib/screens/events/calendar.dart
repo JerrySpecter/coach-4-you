@@ -228,7 +228,7 @@ class CalendarPageState extends State<CalendarPage> {
                 null ||
             events[context.watch<HFGlobalState>().calendarSelectedDay]!.isEmpty)
           const HFParagrpah(
-            text: 'No events for this day.',
+            text: 'No workouts for this day.',
             size: 10,
           )
         else

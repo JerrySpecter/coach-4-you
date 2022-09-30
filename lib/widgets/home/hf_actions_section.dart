@@ -18,7 +18,7 @@ class ActionsSection extends StatelessWidget {
         ),
         HFArchiveTile(
           image: 'assets/trainings.svg',
-          title: 'Trainings',
+          title: 'Sets',
           primaryColor: HFColors().blueColor(opacity: 0.1),
           secondaryColor: HFColors().blueColor(opacity: 0.6),
           onTap: () {

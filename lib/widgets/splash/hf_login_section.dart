@@ -1,6 +1,3 @@
-import 'dart:developer';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,8 +5,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:health_factory/constants/firebase_functions.dart';
-import 'package:health_factory/screens/root.dart';
-import 'package:health_factory/widgets/hf_paragraph.dart';
 import 'package:health_factory/widgets/hf_snackbar.dart';
 import 'package:provider/provider.dart';
 
@@ -19,17 +14,12 @@ import '../hf_button.dart';
 import '../hf_heading.dart';
 import '../hf_input_field.dart';
 import '../hf_text_button.dart';
-import 'dart:async';
 
 class LoginSection extends StatefulWidget {
-  final TextEditingController emailController;
-  final TextEditingController passwordController;
   final FirebaseAuth authInstance;
 
   LoginSection({
     Key? key,
-    required this.emailController,
-    required this.passwordController,
     required this.authInstance,
   }) : super(key: key);
 
@@ -39,6 +29,9 @@ class LoginSection extends StatefulWidget {
 
 class _LoginSectionState extends State<LoginSection> {
   final _formKey = GlobalKey<FormState>();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -93,7 +86,7 @@ class _LoginSectionState extends State<LoginSection> {
               height: 10,
             ),
             HFInput(
-              controller: widget.emailController,
+              controller: emailController,
               textCapitalization: TextCapitalization.none,
               hintText: 'Email',
               showCursor: true,
@@ -109,15 +102,9 @@ class _LoginSectionState extends State<LoginSection> {
               },
             ),
             HFInput(
-              controller: widget.passwordController,
+              controller: passwordController,
               obscureText: true,
               showCursor: true,
-              onTap: (() {
-                context.read<HFGlobalState>().setInputFieldFocused(true);
-              }),
-              onEditingComplete: (() {
-                context.read<HFGlobalState>().setInputFieldFocused(true);
-              }),
               hintText: 'Password',
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -130,7 +117,7 @@ class _LoginSectionState extends State<LoginSection> {
               height: 10,
             ),
             HFButton(
-              text: 'Login',
+              text: 'Log in',
               padding: const EdgeInsets.symmetric(vertical: 20),
               onPressed: () async {
                 FocusScope.of(context).requestFocus(FocusNode());
@@ -139,13 +126,14 @@ class _LoginSectionState extends State<LoginSection> {
                   try {
                     await widget.authInstance
                         .signInWithEmailAndPassword(
-                      email: widget.emailController.text,
-                      password: widget.passwordController.text,
+                      email: emailController.text,
+                      password: passwordController.text,
                     )
                         .then((value) {
                       final idTokenResult =
                           value.user!.getIdTokenResult(true).then((result) {
                         var accessLevel = result.claims?['accessLevel'];
+
                         context
                             .read<HFGlobalState>()
                             .setUserAccessLevel(accessLevel);

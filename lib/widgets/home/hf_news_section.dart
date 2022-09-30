@@ -38,15 +38,17 @@ class HFNewsSection extends StatelessWidget {
         Column(
           children: [
             StreamBuilder(
-              stream: HFFirebaseFunctions()
-                  .getTrainersUser(
-                    context.read<HFGlobalState>().userAccessLevel ==
-                            accessLevels.client
-                        ? context.read<HFGlobalState>().userTrainerId
-                        : context.read<HFGlobalState>().userId,
-                  )
-                  .collection("news")
-                  .snapshots(),
+              stream: context.watch<HFGlobalState>().userId != ''
+                  ? FirebaseFirestore.instance
+                      .collection('trainers')
+                      .doc(
+                        isClient
+                            ? context.read<HFGlobalState>().userTrainerId
+                            : context.read<HFGlobalState>().userId,
+                      )
+                      .collection("news")
+                      .snapshots()
+                  : Stream.empty(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
                   return const Center(

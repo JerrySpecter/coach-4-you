@@ -10,7 +10,7 @@ class HFEventTile extends StatelessWidget {
   const HFEventTile(
       {Key? key,
       this.offset = 0,
-      this.title = 'Event title',
+      this.title = 'Workout title',
       this.startTime = '',
       this.endTime = '',
       this.client = const {'name': 'John Doe'},

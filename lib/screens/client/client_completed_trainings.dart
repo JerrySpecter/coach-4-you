@@ -38,7 +38,7 @@ class ClientsCompletedTrainings extends StatelessWidget {
                 height: 20,
               ),
               HFHeading(
-                text: 'Completed tranings',
+                text: 'Completed workouts',
                 size: 6,
               ),
               const SizedBox(
@@ -56,7 +56,7 @@ class ClientsCompletedTrainings extends StatelessWidget {
                   if (!snapshot.hasData) {
                     return const Center(
                       child: HFParagrpah(
-                        text: 'No completed tranings.',
+                        text: 'No completed workouts.',
                         size: 10,
                         textAlign: TextAlign.center,
                       ),
@@ -68,7 +68,7 @@ class ClientsCompletedTrainings extends StatelessWidget {
                   if (data.docs.isEmpty) {
                     return const Center(
                       child: HFParagrpah(
-                        text: 'No completed tranings.',
+                        text: 'No completed workouts.',
                         size: 10,
                         textAlign: TextAlign.center,
                       ),

@@ -43,12 +43,12 @@ class _FindTrainerSectionState extends State<FindTrainerSection> {
               .setSplashScreenState(SplashScreens.splash);
         }
       },
-      child: Padding(
-        padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 16, right: 16),
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const HFHeading(
@@ -74,7 +74,10 @@ class _FindTrainerSectionState extends State<FindTrainerSection> {
                 )
               ],
             ),
-            Flex(
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 16, right: 16),
+            child: Flex(
               direction: Axis.horizontal,
               children: [
                 Expanded(
@@ -86,7 +89,7 @@ class _FindTrainerSectionState extends State<FindTrainerSection> {
                         searchText = value;
                       });
                     },
-                    hintText: 'Search',
+                    hintText: 'Type in trainers name',
                     keyboardType: TextInputType.text,
                     verticalContentPadding: 12,
                   ),
@@ -116,190 +119,219 @@ class _FindTrainerSectionState extends State<FindTrainerSection> {
                 )
               ],
             ),
-            if (showLocationsFilter) SizedBox(height: 10),
-            if (showLocationsFilter)
-              StreamBuilder<Object>(
-                stream: FirebaseFirestore.instance
-                    .collection('locations')
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                    return Center(
-                        child: HFParagrpah(
-                      text: 'No locations',
-                    ));
-                  }
-
-                  var data = snapshot.data as QuerySnapshot;
-
-                  if (data.docs.isEmpty) {
-                    return const Center(
+          ),
+          if (showLocationsFilter) SizedBox(height: 10),
+          if (showLocationsFilter)
+            StreamBuilder<Object>(
+              stream: FirebaseFirestore.instance
+                  .collection('locations')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return Center(
                       child: HFParagrpah(
-                        text: 'No Locations.',
-                        size: 10,
-                        textAlign: TextAlign.center,
-                      ),
-                    );
-                  }
+                    text: 'No locations',
+                  ));
+                }
 
-                  return SizedBox(
-                    width: MediaQuery.of(context).size.width - 32,
-                    height: 40,
-                    child: ListView(
-                      scrollDirection: Axis.horizontal,
-                      children: [
-                        ...data.docs.map(
-                          (location) {
-                            return Row(
-                              children: [
-                                Center(
-                                  child: InkWell(
-                                    splashColor: Colors.transparent,
-                                    onTap: () {
-                                      setState(() {
-                                        if (selectedLocations ==
-                                            location['name']) {
-                                          selectedLocations = '';
-                                        } else {
-                                          selectedLocations = location['name'];
-                                        }
-                                      });
-                                    },
-                                    child: Container(
-                                      padding: EdgeInsets.only(
-                                          right: 10, bottom: 10),
-                                      child: AnimatedContainer(
-                                        duration: Duration(milliseconds: 100),
-                                        curve: Curves.easeInOut,
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: 12,
-                                          vertical: 6,
+                var data = snapshot.data as QuerySnapshot;
+
+                if (data.docs.isEmpty) {
+                  return const Center(
+                    child: HFParagrpah(
+                      text: 'No Locations.',
+                      size: 10,
+                      textAlign: TextAlign.center,
+                    ),
+                  );
+                }
+
+                return SizedBox(
+                  width: MediaQuery.of(context).size.width - 32,
+                  height: 40,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    children: [
+                      SizedBox(
+                        width: 16,
+                      ),
+                      ...data.docs.map(
+                        (location) {
+                          return Row(
+                            children: [
+                              Center(
+                                child: InkWell(
+                                  splashColor: Colors.transparent,
+                                  onTap: () {
+                                    setState(() {
+                                      if (selectedLocations ==
+                                          location['name']) {
+                                        selectedLocations = '';
+                                      } else {
+                                        selectedLocations = location['name'];
+                                      }
+                                    });
+                                  },
+                                  child: Container(
+                                    padding:
+                                        EdgeInsets.only(right: 10, bottom: 10),
+                                    child: AnimatedContainer(
+                                      duration: Duration(milliseconds: 100),
+                                      curve: Curves.easeInOut,
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 12,
+                                        vertical: 6,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: selectedLocations ==
+                                                location['name']
+                                            ? HFColors().primaryColor()
+                                            : HFColors().secondaryLightColor(),
+                                        border: Border.all(
+                                          color: HFColors().primaryColor(),
                                         ),
-                                        decoration: BoxDecoration(
-                                          color: selectedLocations ==
-                                                  location['name']
-                                              ? HFColors().primaryColor()
-                                              : HFColors()
-                                                  .secondaryLightColor(),
-                                          border: Border.all(
-                                            color: HFColors().primaryColor(),
-                                          ),
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                        ),
-                                        child: HFParagrpah(
-                                          text: location['name'],
-                                          size: 8,
-                                          color: selectedLocations ==
-                                                  location['name']
-                                              ? HFColors().secondaryLightColor()
-                                              : HFColors().primaryColor(),
-                                        ),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: HFParagrpah(
+                                        text: location['name'],
+                                        size: 8,
+                                        color: selectedLocations ==
+                                                location['name']
+                                            ? HFColors().secondaryLightColor()
+                                            : HFColors().primaryColor(),
                                       ),
                                     ),
                                   ),
-                                )
-                              ],
-                            );
-                          },
-                        )
-                      ],
-                    ),
-                  );
-                },
-              ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height - 310,
-              child: StreamBuilder(
-                stream: FirebaseFirestore.instance
-                    .collection('trainers')
-                    .where('firstName', isGreaterThanOrEqualTo: searchText)
-                    .where('firstName', isLessThan: '${searchText}z')
-                    .orderBy("firstName", descending: false)
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                    return const Center(
-                      child: HFParagrpah(
-                        text: 'No trainers. no data',
-                        size: 10,
-                        textAlign: TextAlign.center,
-                      ),
-                    );
-                  }
-
-                  var data = snapshot.data as QuerySnapshot;
-
-                  if (data.docs.isEmpty) {
-                    return const Center(
-                      child: HFParagrpah(
-                        text: 'No trainers. empty',
-                        size: 10,
-                        textAlign: TextAlign.center,
-                      ),
-                    );
-                  }
-
-                  return ListView(
-                    children: [
-                      ...data.docs.map(
-                        (trainer) {
-                          List<dynamic> locations = trainer['locations'];
-
-                          if (trainer['newAccount']) {
-                            return SizedBox(height: 0);
-                          }
-
-                          if (selectedLocations != '' &&
-                              !locations.contains(selectedLocations)) {
-                            return SizedBox(height: 0);
-                          }
-
-                          return HFListViewTile(
-                            name:
-                                "${trainer['firstName']} ${trainer['lastName']}",
-                            email: trainer['email'],
-                            imageUrl: trainer['imageUrl'],
-                            available: trainer['available'],
-                            onTap: () {
-                              Navigator.pushNamed(
-                                context,
-                                trainerProfileRoute,
-                                arguments: trainerProfileData(trainer),
-                              );
-                            },
-                            useSpacerBottom: true,
-                            child: !locations.isEmpty
-                                ? Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      HFParagrpah(
-                                        text: 'Locations:',
-                                        size: 7,
-                                        color: HFColors().whiteColor(),
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                      HFParagrpah(
-                                        text: locations.join(', '),
-                                        size: 7,
-                                        color: HFColors().whiteColor(),
-                                      ),
-                                    ],
-                                  )
-                                : SizedBox(
-                                    width: 0,
-                                  ),
+                                ),
+                              )
+                            ],
                           );
                         },
+                      ),
+                      SizedBox(
+                        width: 16,
                       )
                     ],
-                  );
-                },
+                  ),
+                );
+              },
+            ),
+          SizedBox(
+            height: 10,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 16, right: 16),
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(
+                  width: 1,
+                  color: HFColors().primaryColor(opacity: 0.2),
+                ),
+                borderRadius: BorderRadius.circular(22),
               ),
-            )
-          ],
-        ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(22),
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height - 400,
+                  child: StreamBuilder(
+                    stream: FirebaseFirestore.instance
+                        .collection('trainers')
+                        .where('firstName', isGreaterThanOrEqualTo: searchText)
+                        .where('firstName', isLessThan: '${searchText}z')
+                        .orderBy("firstName", descending: false)
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
+                        return const Center(
+                          child: HFParagrpah(
+                            text: 'No trainers. no data',
+                            size: 10,
+                            textAlign: TextAlign.center,
+                          ),
+                        );
+                      }
+
+                      var data = snapshot.data as QuerySnapshot;
+
+                      if (data.docs.isEmpty) {
+                        return const Center(
+                          child: HFParagrpah(
+                            text: 'No trainers. empty',
+                            size: 10,
+                            textAlign: TextAlign.center,
+                          ),
+                        );
+                      }
+
+                      return ListView(
+                        shrinkWrap: true,
+                        padding: EdgeInsets.symmetric(vertical: 8),
+                        children: [
+                          ...data.docs.map(
+                            (trainer) {
+                              List<dynamic> locations = trainer['locations'];
+
+                              if (trainer['newAccount']) {
+                                return SizedBox(height: 0);
+                              }
+
+                              if (selectedLocations != '' &&
+                                  !locations.contains(selectedLocations)) {
+                                return SizedBox(height: 0);
+                              }
+
+                              return Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
+                                child: HFListViewTile(
+                                  name:
+                                      "${trainer['firstName']} ${trainer['lastName']}",
+                                  email: trainer['email'],
+                                  imageUrl: trainer['imageUrl'],
+                                  available: trainer['available'],
+                                  backgroundColor: HFColors().secondaryColor(),
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      trainerProfileRoute,
+                                      arguments: trainerProfileData(trainer),
+                                    );
+                                  },
+                                  useSpacerBottom: true,
+                                  child: !locations.isEmpty
+                                      ? Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            HFParagrpah(
+                                              text: 'Locations:',
+                                              size: 7,
+                                              color: HFColors().whiteColor(),
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                            HFParagrpah(
+                                              text: locations.join(', '),
+                                              size: 7,
+                                              color: HFColors().whiteColor(),
+                                            ),
+                                          ],
+                                        )
+                                      : SizedBox(
+                                          width: 0,
+                                        ),
+                                ),
+                              );
+                            },
+                          )
+                        ],
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ),
+          )
+        ],
       ),
     );
   }
