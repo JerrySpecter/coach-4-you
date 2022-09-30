@@ -57,6 +57,7 @@ class HFInput extends StatelessWidget {
         child: TextFormField(
           validator: validator,
           controller: controller,
+          style: TextStyle(color: Colors.transparent),
           decoration: InputDecoration(
             border: InputBorder.none,
             focusedBorder: InputBorder.none,

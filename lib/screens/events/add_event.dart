@@ -117,7 +117,6 @@ class AddEventScreenState extends State<AddEventScreen> {
       eventEndController.text = widget.endTime;
       eventNoteController.text = widget.note;
 
-      print(widget.color);
       selectedClient = widget.client['id'];
       selectedClientName = widget.client['name'];
 
@@ -126,7 +125,6 @@ class AddEventScreenState extends State<AddEventScreen> {
       selectedColor = widget.color;
     });
 
-    // TODO: implement initState
     super.initState();
   }
 
@@ -1115,7 +1113,6 @@ class AddEventScreenState extends State<AddEventScreen> {
                                           .read<HFGlobalState>()
                                           .setCalendarLastUpdated('$newDate');
 
-                                      Navigator.pop(context);
                                       Navigator.pop(context);
                                     });
 

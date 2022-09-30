@@ -95,6 +95,7 @@ class _VideosState extends State<Videos> {
                           (video) {
                             return HFListViewTile(
                               name: video['name'],
+                              simpleImage: true,
                               imageUrl: video['thumbnail'],
                               showAvailable: false,
                               headingMargin: 0,

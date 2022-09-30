@@ -9,7 +9,7 @@ import 'package:intl/intl.dart';
 
 import 'hf_image.dart';
 
-class HFClientListViewTile extends StatefulWidget {
+class HFClientListViewTile extends StatelessWidget {
   const HFClientListViewTile({
     Key? key,
     this.name = 'John Doe',
@@ -45,20 +45,6 @@ class HFClientListViewTile extends StatefulWidget {
   final Widget child;
 
   @override
-  State<HFClientListViewTile> createState() => _HFClientListViewTileState();
-}
-
-class _HFClientListViewTileState extends State<HFClientListViewTile> {
-  String _imageUrl = '';
-
-  @override
-  void initState() {
-    _imageUrl = widget.imageUrl;
-
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Column(
       children: [
@@ -69,26 +55,31 @@ class _HFClientListViewTileState extends State<HFClientListViewTile> {
           ),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(16)),
-            color: widget.backgroundColor,
+            color: backgroundColor,
             boxShadow: getShadow(),
           ),
           child: InkWell(
-            onTap: widget.available ? widget.onTap : () {},
+            onTap: available ? onTap : () {},
             child: Flex(
               direction: Axis.horizontal,
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                if (widget.useImage)
+                if (useImage)
                   SizedBox(
-                    height: widget.imageSize,
-                    width: widget.imageSize,
+                    height: imageSize,
+                    width: imageSize,
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(widget.imageSize / 6),
-                      child: HFImage(imageUrl: _imageUrl),
+                      borderRadius: BorderRadius.circular(imageSize / 6),
+                      child: imageUrl == ''
+                          ? HFImage(imageUrl: imageUrl)
+                          : Image.network(
+                              imageUrl,
+                              fit: BoxFit.cover,
+                            ),
                     ),
                   ),
-                if (widget.useImage)
+                if (useImage)
                   const SizedBox(
                     width: 12,
                   ),
@@ -99,11 +90,11 @@ class _HFClientListViewTileState extends State<HFClientListViewTile> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       HFHeading(
-                        text: widget.name,
+                        text: name,
                         size: 4,
                         color: HFColors().whiteColor(),
                       ),
-                      if (!widget.available)
+                      if (!available)
                         Row(
                           children: [
                             Icon(
@@ -121,17 +112,17 @@ class _HFClientListViewTileState extends State<HFClientListViewTile> {
                             )
                           ],
                         ),
-                      if (widget.useImage)
+                      if (useImage)
                         SizedBox(
-                          height: widget.headingMargin,
+                          height: headingMargin,
                         ),
-                      widget.child,
+                      child,
                     ],
                   ),
                 ),
-                if (widget.available)
+                if (available)
                   Icon(
-                    widget.icon,
+                    icon,
                     color: HFColors().primaryColor(),
                   )
               ],

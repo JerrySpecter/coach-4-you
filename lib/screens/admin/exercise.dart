@@ -96,6 +96,7 @@ class _ExerciseState extends State<Exercise> {
                             return HFListViewTile(
                               name: exercise['name'],
                               showAvailable: false,
+                              simpleImage: true,
                               imageUrl: exercise['videoThumbnail'],
                               headingMargin: 0,
                               tags: exercise['types'],
@@ -115,7 +116,8 @@ class _ExerciseState extends State<Exercise> {
                                   adminExerciseSingle,
                                   arguments: {
                                     ...exerciseData(exercise),
-                                    'note': ''
+                                    'note': '',
+                                    'isFromEvent': false,
                                   },
                                 );
                               },

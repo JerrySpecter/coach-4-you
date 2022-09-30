@@ -29,8 +29,6 @@ class HFChatMessage extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onLongPress: () {
-        print(id);
-        print(context.read<HFGlobalState>().userId);
         if (id == context.read<HFGlobalState>().userId) {
           showAlertDialog(
             context,

@@ -3,9 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:health_factory/constants/colors.dart';
 import 'package:health_factory/constants/global_state.dart';
 import 'package:health_factory/constants/routes.dart';
-import 'package:health_factory/widgets/hf_client_tile.dart';
 import 'package:health_factory/widgets/hf_heading.dart';
-import 'package:health_factory/widgets/hf_list_view_tile.dart';
 import 'package:health_factory/widgets/hf_paragraph.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -65,41 +63,54 @@ class ClientsPageState extends State<ClientsPage> {
           Padding(
             padding: const EdgeInsets.all(20.0),
             child: StreamBuilder<Object>(
-                stream: FirebaseFirestore.instance
-                    .collection('trainers')
-                    .doc(context.read<HFGlobalState>().userId)
-                    .collection('requests')
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData || snapshot.hasError) {
-                    return InkWell(
-                      onTap: () {
-                        Navigator.pushNamed(context, requestsRoute);
-                      },
-                      child: HFParagrpah(
-                        text: 'Requests',
-                        size: 10,
-                        color: HFColors().primaryColor(),
-                      ),
-                    );
-                  }
-
-                  var data = snapshot.data as QuerySnapshot;
-
+              stream: FirebaseFirestore.instance
+                  .collection('trainers')
+                  .doc(context.read<HFGlobalState>().userId)
+                  .collection('requests')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData || snapshot.hasError) {
                   return InkWell(
                     onTap: () {
                       Navigator.pushNamed(context, requestsRoute);
                     },
                     child: HFParagrpah(
+                      text: 'Requests',
                       size: 10,
                       color: HFColors().primaryColor(),
-                      text: 'Requests (${data.docs.length})',
                     ),
                   );
-                }),
+                }
+
+                var data = snapshot.data as QuerySnapshot;
+
+                return InkWell(
+                  onTap: () {
+                    Navigator.pushNamed(context, requestsRoute);
+                  },
+                  child: HFParagrpah(
+                    size: 10,
+                    color: HFColors().primaryColor(),
+                    text: 'Requests (${data.docs.length})',
+                  ),
+                );
+              },
+            ),
           )
         ],
         systemOverlayStyle: SystemUiOverlayStyle.light,
+      ),
+      floatingActionButton: Container(
+        decoration: BoxDecoration(
+          color: HFColors().primaryColor(),
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: IconButton(
+          onPressed: () {
+            Navigator.pushNamed(context, addClient);
+          },
+          icon: const Icon(CupertinoIcons.add),
+        ),
       ),
       backgroundColor: HFColors().backgroundColor(),
       body: SingleChildScrollView(

@@ -9,7 +9,7 @@ import 'package:intl/intl.dart';
 
 import 'hf_image.dart';
 
-class HFListViewTile extends StatefulWidget {
+class HFListViewTile extends StatelessWidget {
   const HFListViewTile({
     Key? key,
     this.name = 'John Doe',
@@ -19,6 +19,7 @@ class HFListViewTile extends StatefulWidget {
     this.imageSize = 72,
     this.headingMargin = 8,
     this.showAvailable = true,
+    this.simpleImage = false,
     this.available = false,
     this.onTap,
     this.onLongPress,
@@ -43,6 +44,7 @@ class HFListViewTile extends StatefulWidget {
   final bool useSpacerBottom;
   final bool useImage;
   final bool showAvailable;
+  final bool simpleImage;
   final bool available;
   final bool showTags;
   final List<dynamic> tags;
@@ -52,20 +54,6 @@ class HFListViewTile extends StatefulWidget {
   final Color backgroundColor;
   final Color longPressColor;
   final Widget child;
-
-  @override
-  State<HFListViewTile> createState() => _HFListViewTileState();
-}
-
-class _HFListViewTileState extends State<HFListViewTile> {
-  String _imageUrl = '';
-
-  @override
-  void initState() {
-    _imageUrl = widget.imageUrl;
-
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,26 +66,33 @@ class _HFListViewTileState extends State<HFListViewTile> {
           ),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(16)),
-            color: widget.backgroundColor,
+            color: backgroundColor,
             boxShadow: getShadow(),
           ),
           child: InkWell(
-            onTap: widget.onTap,
+            onTap: onTap,
             child: Flex(
               direction: Axis.horizontal,
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                if (widget.useImage)
+                if (useImage)
                   SizedBox(
-                    height: widget.imageSize,
-                    width: widget.imageSize,
+                    height: imageSize,
+                    width: imageSize,
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(widget.imageSize / 6),
-                      child: HFImage(imageUrl: _imageUrl),
+                      borderRadius: BorderRadius.circular(imageSize / 6),
+                      child: imageUrl == ''
+                          ? HFImage(imageUrl: imageUrl)
+                          : simpleImage
+                              ? Image.network(
+                                  imageUrl,
+                                  fit: BoxFit.cover,
+                                )
+                              : HFImage(imageUrl: imageUrl),
                     ),
                   ),
-                if (widget.useImage)
+                if (useImage)
                   const SizedBox(
                     width: 12,
                   ),
@@ -108,16 +103,16 @@ class _HFListViewTileState extends State<HFListViewTile> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       HFHeading(
-                        text: widget.name,
+                        text: name,
                         size: 4,
                         color: HFColors().whiteColor(),
                       ),
-                      if (widget.showAvailable)
+                      if (showAvailable)
                         Row(
                           children: [
                             Icon(
                               CupertinoIcons.circle_filled,
-                              color: widget.available
+                              color: available
                                   ? HFColors().greenColor()
                                   : HFColors().redColor(),
                               size: 8,
@@ -128,26 +123,26 @@ class _HFListViewTileState extends State<HFListViewTile> {
                             HFParagrpah(
                               size: 5,
                               color: HFColors().whiteColor(),
-                              text: widget.available
+                              text: available
                                   ? 'Available'
                                   : 'Currently not available',
                             )
                           ],
                         ),
-                      if (widget.useImage)
+                      if (useImage)
                         SizedBox(
-                          height: widget.headingMargin,
+                          height: headingMargin,
                         ),
-                      widget.child,
-                      if (widget.tags.isNotEmpty)
+                      child,
+                      if (tags.isNotEmpty)
                         SizedBox(
                           height: 20,
                         ),
-                      if (widget.tags.isNotEmpty)
+                      if (tags.isNotEmpty)
                         Wrap(
                           spacing: 4,
                           children: [
-                            ...widget.tags.map((tag) {
+                            ...tags.map((tag) {
                               return HFTag(
                                 text: tag,
                                 size: 6,
@@ -161,7 +156,7 @@ class _HFListViewTileState extends State<HFListViewTile> {
                   ),
                 ),
                 Icon(
-                  widget.icon,
+                  icon,
                   color: HFColors().primaryColor(),
                 )
               ],

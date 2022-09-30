@@ -30,6 +30,7 @@ class EventScreen extends StatefulWidget {
     required this.notes,
     required this.color,
     required this.isDone,
+    required this.completedEventRoute,
   }) : super(key: key);
 
   final String title;
@@ -43,6 +44,7 @@ class EventScreen extends StatefulWidget {
   final String notes;
   final String color;
   final bool isDone;
+  final bool completedEventRoute;
 
   @override
   State<EventScreen> createState() => _EventScreenState();
@@ -60,43 +62,55 @@ class _EventScreenState extends State<EventScreen> {
         shadowColor: Colors.transparent,
         actions: [
           if (context.read<HFGlobalState>().userAccessLevel ==
-              accessLevels.trainer)
+                  accessLevels.trainer &&
+              !widget.completedEventRoute)
             IconButton(
               onPressed: () {
-                HFFirebaseFunctions()
-                    .getFirebaseAuthUser(context)
-                    .collection('days')
-                    .doc('${widget.date}')
-                    .collection('events')
-                    .doc(widget.id)
-                    .delete()
-                    .then((value) {
-                  HFFirebaseFunctions().updateUserChangedDate(context);
+                showAlertDialog(
+                  context,
+                  'Are you sure you want to delete workout: ${widget.title}',
+                  () {
+                    HFFirebaseFunctions()
+                        .getFirebaseAuthUser(context)
+                        .collection('days')
+                        .doc('${widget.date}')
+                        .collection('events')
+                        .doc(widget.id)
+                        .delete()
+                        .then((value) {
+                      HFFirebaseFunctions().updateUserChangedDate(context);
 
-                  FirebaseFirestore.instance
-                      .collection('clients')
-                      .doc(widget.client['id'])
-                      .collection('days')
-                      .doc('${widget.date}')
-                      .collection('events')
-                      .doc(widget.id)
-                      .delete()
-                      .then((value) {
-                    FirebaseFirestore.instance
-                        .collection('clients')
-                        .doc(widget.client['id'])
-                        .update({
-                      'changed': '${DateTime.now()}',
+                      FirebaseFirestore.instance
+                          .collection('clients')
+                          .doc(widget.client['id'])
+                          .collection('days')
+                          .doc('${widget.date}')
+                          .collection('events')
+                          .doc(widget.id)
+                          .delete()
+                          .then((value) {
+                        FirebaseFirestore.instance
+                            .collection('clients')
+                            .doc(widget.client['id'])
+                            .update({
+                          'changed': '${DateTime.now()}',
+                        });
+                      }).then((value) {
+                        ScaffoldMessenger.of(context).showSnackBar(getSnackBar(
+                          text: 'Set removed!',
+                          color: HFColors().primaryColor(opacity: 1),
+                        ));
+
+                        Navigator.pop(context);
+                      });
                     });
-                  }).then((value) {
-                    ScaffoldMessenger.of(context).showSnackBar(getSnackBar(
-                      text: 'Set removed!',
-                      color: HFColors().primaryColor(opacity: 1),
-                    ));
-
+                  },
+                  'Yes',
+                  () {
                     Navigator.pop(context);
-                  });
-                });
+                  },
+                  'No',
+                );
               },
               icon: Icon(
                 CupertinoIcons.trash,
@@ -104,7 +118,8 @@ class _EventScreenState extends State<EventScreen> {
               ),
             ),
           if (context.read<HFGlobalState>().userAccessLevel ==
-              accessLevels.trainer)
+                  accessLevels.trainer &&
+              !widget.completedEventRoute)
             IconButton(
               onPressed: () {
                 Navigator.pushNamed(
@@ -129,7 +144,8 @@ class _EventScreenState extends State<EventScreen> {
               icon: const Icon(CupertinoIcons.doc_on_clipboard),
             ),
           if (context.read<HFGlobalState>().userAccessLevel ==
-              accessLevels.trainer)
+                  accessLevels.trainer &&
+              !widget.isDone)
             IconButton(
               onPressed: () {
                 Navigator.pushNamed(
@@ -346,7 +362,8 @@ class _EventScreenState extends State<EventScreen> {
                                   arguments: {
                                     ...exerciseData(exercise),
                                     'note': exercise['note'],
-                                    'author': ''
+                                    'author': '',
+                                    'isFromEvent': true,
                                   });
                             },
                           );
@@ -402,6 +419,9 @@ class _EventScreenState extends State<EventScreen> {
                     ),
                 ],
               ),
+              const SizedBox(
+                height: 60,
+              ),
             ],
           ),
         ),
@@ -417,11 +437,9 @@ class _EventScreenState extends State<EventScreen> {
         .collection('events')
         .doc(widget.id)
         .update({'isDone': true}).then((value) {
-      print('updated is done');
       HFFirebaseFunctions().getFirebaseAuthUser(context).update({
         'changed': '${DateTime.now()}',
       }).then((value) {
-        print('updated is client changed');
         FirebaseFirestore.instance
             .collection('trainers')
             .doc(context.read<HFGlobalState>().userTrainerId)
@@ -430,14 +448,12 @@ class _EventScreenState extends State<EventScreen> {
             .collection('events')
             .doc(widget.id)
             .update({'isDone': true}).then((value) {
-          print('updated trainer is done');
           FirebaseFirestore.instance
               .collection('trainers')
               .doc(context.read<HFGlobalState>().userTrainerId)
               .update({
             'changed': '${DateTime.now()}',
           }).then((value) {
-            print('updated trainer changed');
             HFFirebaseFunctions()
                 .getFirebaseAuthUser(context)
                 .collection('completed')
@@ -454,8 +470,6 @@ class _EventScreenState extends State<EventScreen> {
               'notes': widget.notes,
               'isDone': widget.isDone,
             }).then((value) {
-              print('added completed item');
-
               ScaffoldMessenger.of(context)
                   .showSnackBar(getSnackBar(text: 'Event marked as completed'));
 

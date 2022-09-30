@@ -12,6 +12,7 @@ import 'package:health_factory/widgets/hf_button.dart';
 import 'package:health_factory/widgets/hf_heading.dart';
 import 'package:health_factory/widgets/hf_input_field.dart';
 import 'package:health_factory/widgets/hf_select_list_view_tile.dart';
+import 'package:health_factory/widgets/hf_snackbar.dart';
 import 'package:multi_select_flutter/chip_field/multi_select_chip_field.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:provider/provider.dart';
@@ -137,6 +138,7 @@ class _AddExerciseFormState extends State<AddExerciseForm> {
   final _exerciseThumbnailController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
+  String _videoLoading = '';
   var _selectedTypes = [];
   var _selectedRepetition = [];
   final cloudinary =
@@ -166,10 +168,39 @@ class _AddExerciseFormState extends State<AddExerciseForm> {
     super.dispose();
   }
 
-  Future<void> initializePlayer(videoUrl) async {
+  Future<void> initializePlayer(videoUrl, videoId) async {
+    _videoLoading = videoId;
     _videoPlayerController = VideoPlayerController.network(videoUrl);
 
-    await Future.wait([_videoPlayerController.initialize()]);
+    await Future.wait([_videoPlayerController.initialize()]).then((value) {
+      setState(() {
+        _videoLoading = '';
+        _videoSelected = videoId;
+      });
+    }).onError((error, stackTrace) {
+      setState(() {
+        _videoLoading = '';
+        _videoSelected = '';
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        getSnackBar(
+          text: 'There was an error, try again',
+          color: HFColors().redColor(),
+        ),
+      );
+    }).catchError((onError) {
+      setState(() {
+        _videoLoading = '';
+        _videoSelected = '';
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        getSnackBar(
+          text: 'There was an error, try again',
+          color: HFColors().redColor(),
+        ),
+      );
+    });
 
     _createChewieController();
     _chewieController?.setVolume(0.0);
@@ -205,7 +236,7 @@ class _AddExerciseFormState extends State<AddExerciseForm> {
 
       getVideoById(widget.video).get().then((value) {
         _exerciseUrl = value['url'];
-        initializePlayer(value['url']);
+        initializePlayer(value['url'], value['id']);
       });
     }
 
@@ -311,6 +342,7 @@ class _AddExerciseFormState extends State<AddExerciseForm> {
                                 imageUrl: video['thumbnail'],
                                 showAvailable: false,
                                 isSelected: _videoSelected == video['id'],
+                                isLoading: _videoLoading,
                                 headingMargin: 0,
                                 imageSize: 48,
                                 id: video['id'],
@@ -339,9 +371,10 @@ class _AddExerciseFormState extends State<AddExerciseForm> {
                                     _exerciseUrlController.text = video['id'];
                                     _exerciseThumbnailController.text =
                                         video['thumbnail'];
-                                    _videoSelected = video['id'];
                                     _exerciseUrl = video['url'];
-                                    initializePlayer(video['url']);
+
+                                    _videoLoading = video['id'];
+                                    initializePlayer(video['url'], video['id']);
                                   });
                                 },
                               ),

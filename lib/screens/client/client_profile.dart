@@ -70,7 +70,6 @@ class _ClientProfileState extends State<ClientProfile> {
           .doc(widget.id)
           .get()
           .then((value) {
-        print(value.data());
         var data = value.data();
 
         if (data != null) {
@@ -84,7 +83,6 @@ class _ClientProfileState extends State<ClientProfile> {
       });
     }
 
-    // TODO: implement initState
     super.initState();
   }
 

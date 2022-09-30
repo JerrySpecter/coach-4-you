@@ -142,8 +142,10 @@ class _HFClientChatTileState extends State<HFClientChatTile> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     HFParagrpah(
-                      text: DateFormat('HH:mm')
-                          .format(DateTime.parse(widget.date)),
+                      text: widget.date == ''
+                          ? ''
+                          : DateFormat('HH:mm')
+                              .format(DateTime.parse(widget.date)),
                       size: 8,
                       color: HFColors().whiteColor(),
                     ),

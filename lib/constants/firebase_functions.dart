@@ -11,8 +11,8 @@ class HFFirebaseFunctions {
     var newDate = DateTime.now();
     FirebaseFirestore.instance
         .collection('trainers')
-        .doc(FirebaseAuth.instance.currentUser?.email)
-        .set({
+        .doc(context.read<HFGlobalState>().userId)
+        .update({
       'changed': '$newDate',
     }).then((value) {
       context.read<HFGlobalState>().setCalendarLastUpdated('$newDate');

@@ -1,18 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:health_factory/constants/colors.dart';
 import 'package:health_factory/constants/global_state.dart';
-import 'package:health_factory/screens/chat_list.dart';
-import 'package:health_factory/utils/chat_message.dart';
 import 'package:health_factory/widgets/hf_heading.dart';
 import 'package:health_factory/widgets/hf_input_field.dart';
-import 'package:health_factory/widgets/hf_list_view_tile.dart';
 import 'package:health_factory/widgets/hf_paragraph.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
-
 import '../widgets/hf_chat_message.dart';
 import '../widgets/hf_image.dart';
 

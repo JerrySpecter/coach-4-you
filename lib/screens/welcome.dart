@@ -158,28 +158,17 @@ class _WelcomePageState extends State<WelcomePage> {
                         );
                       },
                     ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Row(
-                    children: [
-                      Flexible(
-                        child: HFInput(
-                          controller: _trainerHeightController,
-                          labelText: 'Height (cm)',
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      Flexible(
-                        child: HFInput(
-                          controller: _trainerWeightController,
-                          labelText: 'Weight (kg)',
-                        ),
-                      ),
-                    ],
-                  ),
+                  if (context.read<HFGlobalState>().userAccessLevel ==
+                      accessLevels.client)
+                    const SizedBox(
+                      height: 20,
+                    ),
+                  if (context.read<HFGlobalState>().userAccessLevel ==
+                      accessLevels.client)
+                    HFInput(
+                      controller: _trainerHeightController,
+                      labelText: 'Height (cm)',
+                    ),
                   const SizedBox(
                     height: 20,
                   ),
@@ -419,7 +408,6 @@ class _WelcomePageState extends State<WelcomePage> {
                           'name':
                               '${_trainerFirstNameController.text} ${_trainerLastNameController.text}',
                           'height': _trainerHeightController.text,
-                          'weight': _trainerWeightController.text,
                         }).then((res) {
                           context.read<HFGlobalState>().setUserFirstName(
                               _trainerFirstNameController.text);
@@ -431,9 +419,6 @@ class _WelcomePageState extends State<WelcomePage> {
                           context
                               .read<HFGlobalState>()
                               .setUserHeight(_trainerHeightController.text);
-                          context
-                              .read<HFGlobalState>()
-                              .setUserWeight(_trainerWeightController.text);
                         }).then((value) {
                           FirebaseFirestore.instance
                               .collection('trainers')
@@ -460,8 +445,6 @@ class _WelcomePageState extends State<WelcomePage> {
                           'birthday': '$dateTime',
                           'firstName': _trainerFirstNameController.text,
                           'lastName': _trainerLastNameController.text,
-                          'height': _trainerHeightController.text,
-                          'weight': _trainerWeightController.text,
                           'intro': _trainerIntroController.text,
                           'education': _trainerEducationController.text,
                           'locations': _selectedLocations,

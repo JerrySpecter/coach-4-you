@@ -161,8 +161,9 @@ class SingleRequest extends StatelessWidget {
               text: 'Accept request',
               padding: const EdgeInsets.all(16),
               onPressed: () {
-                HFFirebaseFunctions()
-                    .getFirebaseAuthUser(context)
+                FirebaseFirestore.instance
+                    .collection('trainers')
+                    .doc(context.read<HFGlobalState>().userId)
                     .collection('clients')
                     .doc(email)
                     .set({
@@ -171,9 +172,10 @@ class SingleRequest extends StatelessWidget {
                   'imageUrl': '',
                   'height': '',
                   'messages': {
-                    'numberOfUnseen': 0,
-                    'lastSeenDate': '',
-                    'lastRecievedDate': '',
+                    'numberOfUnseenClient': 0,
+                    'numberOfUnseenTrainer': 0,
+                    'lastMessageDate': '',
+                    'lastMessageText': '',
                   },
                   'accountReady': false,
                 }).then((value) {

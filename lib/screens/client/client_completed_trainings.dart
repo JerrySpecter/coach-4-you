@@ -50,7 +50,7 @@ class ClientsCompletedTrainings extends StatelessWidget {
                     .doc(id)
                     .collection('completed')
                     .limit(30)
-                    .orderBy('date', descending: false)
+                    .orderBy('date', descending: true)
                     .snapshots(),
                 builder: ((context, snapshot) {
                   if (!snapshot.hasData) {
@@ -105,6 +105,7 @@ class ClientsCompletedTrainings extends StatelessWidget {
                                     'location': event['location'],
                                     'notes': event['notes'],
                                     'isDone': event['isDone'],
+                                    'inCompleted': true,
                                   });
                             },
                             child: Column(

@@ -27,6 +27,7 @@ class SingleExercise extends StatefulWidget {
     required this.thumbnail,
     required this.types,
     required this.repetitionType,
+    required this.isFromEvent,
     this.note = '',
   }) : super(key: key);
 
@@ -39,6 +40,7 @@ class SingleExercise extends StatefulWidget {
   final List<dynamic> types;
   final String repetitionType;
   final String note;
+  final bool isFromEvent;
 
   @override
   State<SingleExercise> createState() => _SingleExerciseState();
@@ -105,8 +107,9 @@ class _SingleExerciseState extends State<SingleExercise> {
         foregroundColor: HFColors().primaryColor(),
         shadowColor: Colors.transparent,
         actions: [
-          if (widget.author == context.read<HFGlobalState>().userDisplayName ||
-              context.read<HFGlobalState>().userIsAdmin)
+          if ((widget.author == context.read<HFGlobalState>().userDisplayName ||
+                  context.read<HFGlobalState>().userIsAdmin) &&
+              !widget.isFromEvent)
             IconButton(
               onPressed: () {
                 showAlertDialog(
@@ -135,8 +138,9 @@ class _SingleExerciseState extends State<SingleExercise> {
                 color: HFColors().redColor(),
               ),
             ),
-          if (widget.author == context.read<HFGlobalState>().userDisplayName ||
-              context.read<HFGlobalState>().userIsAdmin)
+          if ((widget.author == context.read<HFGlobalState>().userDisplayName ||
+                  context.read<HFGlobalState>().userIsAdmin) &&
+              !widget.isFromEvent)
             IconButton(
               onPressed: () {
                 _navigateAndDisplayEditScreen(

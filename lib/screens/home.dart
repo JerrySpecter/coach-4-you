@@ -85,11 +85,17 @@ class Home extends StatelessWidget {
                         ),
                       ),
                       child: ClipRRect(
-                        borderRadius: BorderRadius.all(Radius.circular(15)),
+                        borderRadius: BorderRadius.all(Radius.circular(14)),
                         clipBehavior: Clip.hardEdge,
-                        child: HFImage(
-                          imageUrl: context.watch<HFGlobalState>().userImage,
-                        ),
+                        child: context.watch<HFGlobalState>().userImage != ''
+                            ? Image.network(
+                                context.watch<HFGlobalState>().userImage,
+                                fit: BoxFit.cover,
+                              )
+                            : HFImage(
+                                imageUrl: '',
+                                network: false,
+                              ),
                       ),
                     ),
                   ),

@@ -10,12 +10,14 @@ import 'hf_heading.dart';
 class HFUploadPhoto extends StatefulWidget {
   Function(String imageUrl)? onImageSelect;
   bool startUpload;
+  String placeholder;
   double uploadingPercentage;
   String tooltipText;
 
   HFUploadPhoto({
     Key? key,
     this.onImageSelect,
+    this.placeholder = '',
     this.startUpload = false,
     this.uploadingPercentage = 0,
     this.tooltipText = 'Add a photo',
@@ -38,17 +40,27 @@ class _HFUploadPhotoState extends State<HFUploadPhoto> {
         child: Stack(
           fit: StackFit.passthrough,
           children: [
-            HFImage(
-              imageUrl: _imageUrl,
-              network: false,
-            ),
+            _imageUrl == ''
+                ? widget.placeholder != ''
+                    ? Image.network(
+                        widget.placeholder,
+                        fit: BoxFit.cover,
+                      )
+                    : const HFImage(
+                        imageUrl: '',
+                        network: false,
+                      )
+                : HFImage(
+                    imageUrl: _imageUrl,
+                    network: false,
+                  ),
             AnimatedPositioned(
-              duration: Duration(milliseconds: 200),
+              duration: const Duration(milliseconds: 200),
               curve: Curves.easeInOut,
               bottom: 10,
               right: 10,
               child: AnimatedOpacity(
-                duration: Duration(milliseconds: 200),
+                duration: const Duration(milliseconds: 200),
                 opacity: _imageUrl == '' ? 0 : 1,
                 child: InkWell(
                   onTap: () => setState(() {
@@ -76,7 +88,7 @@ class _HFUploadPhotoState extends State<HFUploadPhoto> {
               ),
             ),
             AnimatedPositioned(
-              duration: Duration(milliseconds: 200),
+              duration: const Duration(milliseconds: 200),
               curve: Curves.easeInOut,
               bottom: _imageUrl == '' ? 10 : 50,
               right: 10,
@@ -89,7 +101,7 @@ class _HFUploadPhotoState extends State<HFUploadPhoto> {
                       }
                       setState(
                         () {
-                          _imageUrl = value!.path;
+                          _imageUrl = value.path;
 
                           widget.onImageSelect!(value.path);
                         },
@@ -101,12 +113,12 @@ class _HFUploadPhotoState extends State<HFUploadPhoto> {
                   children: [
                     AnimatedOpacity(
                       opacity: _imageUrl == '' ? 1 : 0,
-                      duration: Duration(milliseconds: 200),
+                      duration: const Duration(milliseconds: 200),
                       child: Row(
                         textDirection: TextDirection.rtl,
                         children: [
                           Transform.translate(
-                            offset: Offset(-18, 0),
+                            offset: const Offset(-18, 0),
                             child: Transform.rotate(
                               angle: 0.8,
                               alignment: Alignment.center,
@@ -114,7 +126,7 @@ class _HFUploadPhotoState extends State<HFUploadPhoto> {
                                 width: 24,
                                 height: 23,
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.all(
+                                  borderRadius: const BorderRadius.all(
                                     Radius.circular(4),
                                   ),
                                   color: HFColors().primaryColor(),
@@ -123,9 +135,9 @@ class _HFUploadPhotoState extends State<HFUploadPhoto> {
                             ),
                           ),
                           Container(
-                            padding: EdgeInsets.all(8),
+                            padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.all(
+                              borderRadius: const BorderRadius.all(
                                 Radius.circular(9),
                               ),
                               color: HFColors().primaryColor(),
@@ -141,7 +153,8 @@ class _HFUploadPhotoState extends State<HFUploadPhoto> {
                     Container(
                       padding: const EdgeInsets.all(6),
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(8)),
                         color: HFColors().primaryColor(),
                       ),
                       child: Icon(
@@ -167,7 +180,7 @@ class _HFUploadPhotoState extends State<HFUploadPhoto> {
                 child: Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(8)),
+                    borderRadius: const BorderRadius.all(Radius.circular(8)),
                     color: HFColors().secondaryColor(),
                   ),
                   child: Column(
@@ -179,7 +192,7 @@ class _HFUploadPhotoState extends State<HFUploadPhoto> {
                             : 'Uploading...',
                         color: HFColors().whiteColor(),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       LinearProgressIndicator(

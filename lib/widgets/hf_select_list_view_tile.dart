@@ -21,6 +21,7 @@ class HFSelectListViewTile extends StatefulWidget {
     this.headingMargin = 4,
     this.showAvailable = true,
     this.available = false,
+    this.isLoading = '',
     this.onTap,
     this.tags = const [],
     this.showTags = false,
@@ -53,6 +54,7 @@ class HFSelectListViewTile extends StatefulWidget {
   final VoidCallback? onTap;
   final Color backgroundColor;
   final Widget child;
+  final String isLoading;
 
   @override
   State<HFSelectListViewTile> createState() => _HFSelectListViewTileState();
@@ -177,11 +179,25 @@ class _HFSelectListViewTileState extends State<HFSelectListViewTile> {
                       ),
                     ],
                   ),
-                  Icon(
-                    widget.isSelected
-                        ? CupertinoIcons.check_mark_circled_solid
-                        : CupertinoIcons.check_mark_circled,
-                    color: HFColors().primaryColor(),
+                  SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: Center(
+                      child: widget.isLoading == widget.id
+                          ? SizedBox(
+                              height: 18,
+                              width: 18,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: HFColors().primaryColor(),
+                              ))
+                          : Icon(
+                              widget.isSelected
+                                  ? CupertinoIcons.check_mark_circled_solid
+                                  : CupertinoIcons.check_mark_circled,
+                              color: HFColors().primaryColor(),
+                            ),
+                    ),
                   )
                 ],
               ),

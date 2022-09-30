@@ -12,6 +12,7 @@ import 'package:health_factory/screens/client/client_shoulders.dart';
 import 'package:health_factory/screens/client/client_thigh.dart';
 import 'package:health_factory/screens/client/client_waist.dart';
 import 'package:health_factory/screens/client/client_weight.dart';
+import 'package:health_factory/screens/clients/add_client.dart';
 import 'package:health_factory/screens/news/add_news.dart';
 import 'package:health_factory/screens/events/single_event.dart';
 import 'package:health_factory/screens/news/news.dart';
@@ -36,6 +37,7 @@ import '../screens/client/client_chest.dart';
 import '../screens/client/client_completed_trainings.dart';
 import '../screens/clients/clients.dart';
 import '../screens/clients/single_client.dart';
+import '../screens/edit_profile.dart';
 import '../screens/events/add_event.dart';
 import '../screens/trainings/add_trainings.dart';
 
@@ -59,6 +61,7 @@ Route<dynamic>? genRoute(RouteSettings settings) {
           notes: data.notes,
           isDone: data.isDone,
           color: data.color,
+          completedEventRoute: false,
         ),
       );
     case completedEventRoute:
@@ -77,6 +80,7 @@ Route<dynamic>? genRoute(RouteSettings settings) {
           notes: data['notes'],
           color: data['notes'],
           isDone: true,
+          completedEventRoute: true,
         ),
       );
     case addEventRoute:
@@ -209,6 +213,24 @@ Route<dynamic>? genRoute(RouteSettings settings) {
           profileBackgroundImageUrl: data['profileBackgroundImageUrl'],
         ),
       );
+    case editProfile:
+      var data = settings.arguments as Map;
+
+      return MaterialPageRoute(
+        builder: (_) => EditProfile(
+          id: data['id'],
+          email: data['email'],
+          firstName: data['firstName'],
+          lastName: data['lastName'],
+          imageUrl: data['imageUrl'],
+          profileBackgroundImageUrl: data['profileBackgroundImageUrl'],
+          height: data['height'],
+          birthday: data['birthday'],
+          locations: data['locations'],
+          intro: data['intro'],
+          education: data['education'],
+        ),
+      );
     case chatScreen:
       var data = settings.arguments as Map;
 
@@ -337,6 +359,7 @@ Route<dynamic>? genRoute(RouteSettings settings) {
           thumbnail: data['videoThumbnail'],
           types: data['types'],
           repetitionType: data['repetitionType'],
+          isFromEvent: data['isFromEvent'],
         ),
       );
     case adminExerciseEdit:
@@ -421,6 +444,10 @@ Route<dynamic>? genRoute(RouteSettings settings) {
           collection: 'thigh',
           hintText: 'Mid thigh circumference',
         ),
+      );
+    case addClient:
+      return MaterialPageRoute(
+        builder: (_) => AddClientScreen(),
       );
     default:
       return MaterialPageRoute(
