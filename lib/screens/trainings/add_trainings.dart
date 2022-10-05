@@ -651,7 +651,7 @@ class _AddTrainingState extends State<AddTraining> {
                                 'amount': _exerciseTypeNumberController.text,
                                 'repetitions':
                                     _exerciseRepsNumberController.text,
-                                'series': _exerciseRepsNumberController.text,
+                                'series': _exerciseSeriesNumberController.text,
                                 'repetitionType': _exerciseRepetitionType,
                                 'types': _exerciseTypes,
                                 'note': _exerciseNoteController.text

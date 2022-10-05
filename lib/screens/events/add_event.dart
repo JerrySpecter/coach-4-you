@@ -1421,9 +1421,9 @@ class AddEventScreenState extends State<AddEventScreen> {
                                           ? '0'
                                           : exerciseRepsNumberController.text,
                                   'series':
-                                      exerciseRepsNumberController.text == ''
+                                      exerciseSeriesNumberController.text == ''
                                           ? '0'
-                                          : exerciseRepsNumberController.text,
+                                          : exerciseSeriesNumberController.text,
                                   'repetitionType': exerciseRepetitionType,
                                   'types': exerciseTypes,
                                   'note': exerciseNoteController.text,
