@@ -123,7 +123,10 @@ class _ExerciseState extends State<Exercise> {
                               },
                             );
                           },
-                        )
+                        ),
+                        const SizedBox(
+                          height: 60,
+                        ),
                       ],
                     );
                   },

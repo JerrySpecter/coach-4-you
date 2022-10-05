@@ -190,7 +190,8 @@ class _ClientProfileState extends State<ClientProfile> {
                                   addEventRoute,
                                   arguments: {
                                     'id': '',
-                                    'date': DateTime.now(),
+                                    'date': DateTime.parse(
+                                        '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 00:00:00.000Z'),
                                     'title': '',
                                     'startTime': '',
                                     'endTime': '',
@@ -238,7 +239,12 @@ class _ClientProfileState extends State<ClientProfile> {
                             ),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(24.0),
-                              child: HFImage(imageUrl: initialImageUrl),
+                              child: initialImageUrl == ''
+                                  ? const HFImage(imageUrl: '')
+                                  : Image.network(
+                                      initialImageUrl,
+                                      fit: BoxFit.cover,
+                                    ),
                             ),
                           ),
                         ),
@@ -297,7 +303,6 @@ class _ClientProfileState extends State<ClientProfile> {
                           .collection('clients')
                           .doc(widget.id)
                           .collection('weight')
-                          .orderBy('date', descending: true)
                           .snapshots(),
                       'Weight',
                       'kg',
@@ -410,7 +415,7 @@ class _ClientProfileState extends State<ClientProfile> {
                 ),
                 if (context.read<HFGlobalState>().userAccessLevel ==
                     accessLevels.client)
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
                 if (context.read<HFGlobalState>().userAccessLevel ==
@@ -455,7 +460,7 @@ class _ClientProfileState extends State<ClientProfile> {
                       },
                     ),
                   ),
-                SizedBox(
+                const SizedBox(
                   height: 60,
                 ),
               ],
@@ -552,10 +557,11 @@ Widget SliderBox(BuildContext context, data, title, measure, route, isTrainer) {
       stream: data,
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return HFParagrpah(
+          return const HFParagrpah(
             text: '',
           );
         }
+
         var data = snapshot.data as QuerySnapshot;
 
         return InkWell(
@@ -578,7 +584,7 @@ Widget SliderBox(BuildContext context, data, title, measure, route, isTrainer) {
                   width: 250,
                   child: Builder(builder: (context) {
                     if (!snapshot.hasData || snapshot.hasError) {
-                      return SizedBox(
+                      return const SizedBox(
                         height: 0,
                       );
                     }

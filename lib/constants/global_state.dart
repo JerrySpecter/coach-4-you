@@ -62,7 +62,7 @@ class HFGlobalState with ChangeNotifier, DiagnosticableTreeMixin {
     notifyListeners();
   }
 
-  var _userFirstName = 'Name';
+  var _userFirstName = '';
   get userFirstName => _userFirstName;
 
   void setUserFirstName(name) {
@@ -70,7 +70,7 @@ class HFGlobalState with ChangeNotifier, DiagnosticableTreeMixin {
     notifyListeners();
   }
 
-  var _userLastName = 'Lastname';
+  var _userLastName = '';
   get userLastName => _userLastName;
 
   void setUserLastName(name) {

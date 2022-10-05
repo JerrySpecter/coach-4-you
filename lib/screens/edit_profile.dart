@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudinary_public/cloudinary_public.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:health_factory/constants/colors.dart';
@@ -10,10 +9,8 @@ import 'package:health_factory/widgets/hf_button.dart';
 import 'package:health_factory/widgets/hf_heading.dart';
 import 'package:health_factory/widgets/hf_paragraph.dart';
 import 'package:health_factory/widgets/hf_snackbar.dart';
-import 'package:health_factory/widgets/hf_text_button.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:uuid/uuid.dart';
 import 'package:intl/intl.dart';
 
 import '../constants/firebase_functions.dart';
@@ -453,7 +450,9 @@ class _EditProfileState extends State<EditProfile> {
                                     context.read<HFGlobalState>().userTrainerId)
                                 .collection('clients')
                                 .doc(widget.email)
-                                .update({'imageUrl': value.secureUrl});
+                                .update({
+                              'profileBackgroundImageUrl': value.secureUrl
+                            });
                           }
                         }).catchError((error) {
                           ScaffoldMessenger.of(context)

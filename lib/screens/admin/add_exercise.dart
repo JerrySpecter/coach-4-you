@@ -368,6 +368,8 @@ class _AddExerciseFormState extends State<AddExerciseForm> {
                                 ),
                                 onTap: () {
                                   setState(() {
+                                    _exerciseNameController.text =
+                                        video['name'];
                                     _exerciseUrlController.text = video['id'];
                                     _exerciseThumbnailController.text =
                                         video['thumbnail'];

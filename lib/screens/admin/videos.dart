@@ -127,7 +127,10 @@ class _VideosState extends State<Videos> {
                               },
                             );
                           },
-                        )
+                        ),
+                        const SizedBox(
+                          height: 60,
+                        ),
                       ],
                     );
                   },

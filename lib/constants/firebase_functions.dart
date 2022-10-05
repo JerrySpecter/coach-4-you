@@ -104,19 +104,17 @@ class HFFirebaseFunctions {
         .doc(userId)
         .get()
         .then((client) {
-      if (!client['newAccount']) {
-        context.read<HFGlobalState>().setUserFirstName(client['firstName']);
-        context.read<HFGlobalState>().setUserLastName(client['lastName']);
-        context.read<HFGlobalState>().setUserImage(client['imageUrl']);
-        context
-            .read<HFGlobalState>()
-            .setUserBackgroundImage(client['profileBackgroundImageUrl']);
-        context.read<HFGlobalState>().setUserHeight(client['height']);
-        context.read<HFGlobalState>().setUserWeight(client['weight']);
-      }
+      context.read<HFGlobalState>().setUserFirstName(client['firstName']);
+      context.read<HFGlobalState>().setUserLastName(client['lastName']);
+      context.read<HFGlobalState>().setUserImage(client['imageUrl']);
+      context
+          .read<HFGlobalState>()
+          .setUserBackgroundImage(client['profileBackgroundImageUrl']);
+      context.read<HFGlobalState>().setUserHeight(client['height']);
+
       context.read<HFGlobalState>().setUserEmail(client['email']);
       context.read<HFGlobalState>().setUserName(client['name']);
-      context.read<HFGlobalState>().setUserId(client['id']);
+      context.read<HFGlobalState>().setUserId(userId);
       context.read<HFGlobalState>().setUserTrainerId(client['trainerId']);
       context.read<HFGlobalState>().setUserNewAccount(client['newAccount']);
 
