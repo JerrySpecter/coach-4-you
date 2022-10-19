@@ -61,6 +61,9 @@ class HFNewsSection extends StatelessWidget {
                 }
 
                 var data = snapshot.data as QuerySnapshot;
+
+                // print(data);
+
                 if (data.docs.isEmpty) {
                   return const SizedBox(
                     height: 100,
@@ -87,6 +90,10 @@ class HFNewsSection extends StatelessWidget {
                             width: 16,
                           ),
                           ...data.docs.map((news) {
+                            // var obj = news.data() as dynamic;
+
+                            // print(obj!.containsKey('test'));
+
                             return HFNewsTile(
                               title: news['title'],
                               excerpt: news['excerpt'],

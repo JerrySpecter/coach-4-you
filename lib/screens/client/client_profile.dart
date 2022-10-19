@@ -628,9 +628,14 @@ Widget SliderBox(BuildContext context, data, title, measure, route, isTrainer) {
                                   .entries
                                   .map((entry) {
                                 double idx = entry.key.toDouble();
-                                var val = entry.value;
 
-                                return FlSpot(idx, double.parse(val['value']));
+                                String val = entry.value['value'];
+
+                                if (val.contains(',')) {
+                                  val = val.split(',').join('.');
+                                }
+
+                                return FlSpot(idx, double.parse(val));
                               }),
                             ],
                           )

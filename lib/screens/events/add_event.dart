@@ -57,6 +57,22 @@ class AddEventScreen extends StatefulWidget {
 
 class AddEventScreenState extends State<AddEventScreen> {
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController editexerciseamountcontroller =
+      TextEditingController();
+  final TextEditingController editexerciserepetitionscontroller =
+      TextEditingController();
+  final TextEditingController editexerciseseriescontroller =
+      TextEditingController();
+  final TextEditingController editexercisenotecontroller =
+      TextEditingController();
+  final TextEditingController editadditionalexerciseamountcontroller =
+      TextEditingController();
+  final TextEditingController editadditionalexerciserepetitionscontroller =
+      TextEditingController();
+  final TextEditingController editadditionalexerciseseriescontroller =
+      TextEditingController();
+  final TextEditingController editadditionalexercisenotecontroller =
+      TextEditingController();
   final TextEditingController eventNameController = TextEditingController();
   final TextEditingController eventDateController = TextEditingController();
   final TextEditingController eventStartController = TextEditingController();
@@ -94,6 +110,8 @@ class AddEventScreenState extends State<AddEventScreen> {
   List<dynamic> selectedExercises = [];
   List<dynamic> selectedTrainingExercises = [];
   late DateTime selectedEventDate;
+  late DateTime startTimeInitialDate;
+  late DateTime initialDate;
   DateTime selectedEventStartTime = DateTime.now();
   DateTime selectedEventEndTime = DateTime.now();
   String trainingSelected = '';
@@ -103,6 +121,13 @@ class AddEventScreenState extends State<AddEventScreen> {
 
   @override
   void initState() {
+    if (widget.date.day == DateTime.now().day &&
+        widget.date.month == DateTime.now().month) {
+      startTimeInitialDate = DateTime.now();
+    } else {
+      startTimeInitialDate = widget.date;
+    }
+
     exerciseTypeNumberController.text = '0';
     exerciseRepsNumberController.text = '0';
     exerciseSeriesNumberController.text = '0';
@@ -212,7 +237,7 @@ class AddEventScreenState extends State<AddEventScreen> {
                                 child: SizedBox(
                                   height: 180,
                                   child: CupertinoDatePicker(
-                                    initialDateTime: widget.date,
+                                    initialDateTime: selectedEventDate,
                                     mode: CupertinoDatePickerMode.date,
                                     use24hFormat: true,
                                     minuteInterval: 1,
@@ -220,8 +245,20 @@ class AddEventScreenState extends State<AddEventScreen> {
                                         .subtract(const Duration(days: 1)),
                                     //use24hFormat: true,
                                     onDateTimeChanged: (dateTime) => setState(
-                                        () => selectedEventDate =
-                                            DateTime.parse('${dateTime}Z')),
+                                      () {
+                                        if (dateTime.day ==
+                                                DateTime.now().day &&
+                                            dateTime.month ==
+                                                DateTime.now().month) {
+                                          startTimeInitialDate = DateTime.now();
+                                        } else {
+                                          startTimeInitialDate = dateTime;
+                                        }
+
+                                        selectedEventDate =
+                                            DateTime.parse('${dateTime}Z');
+                                      },
+                                    ),
                                   ),
                                 ),
                                 onClicked: () {
@@ -258,8 +295,7 @@ class AddEventScreenState extends State<AddEventScreen> {
                                         child: CupertinoDatePicker(
                                           minimumDate: DateTime.now()
                                               .subtract(Duration(seconds: 60)),
-                                          initialDateTime:
-                                              selectedEventStartTime,
+                                          initialDateTime: startTimeInitialDate,
                                           mode: CupertinoDatePickerMode.time,
                                           use24hFormat: true,
                                           minuteInterval: 1,
@@ -644,6 +680,172 @@ class AddEventScreenState extends State<AddEventScreen> {
                                                     .removeAt(index);
                                               });
                                             },
+                                            onTap: () {
+                                              editexerciseamountcontroller
+                                                      .text =
+                                                  '${double.parse(selectedTrainingExercises[index]['amount'])}';
+                                              editexerciserepetitionscontroller
+                                                      .text =
+                                                  '${double.parse(selectedTrainingExercises[index]['repetitions'])}';
+                                              editexerciseseriescontroller
+                                                      .text =
+                                                  '${double.parse(selectedTrainingExercises[index]['series'])}';
+
+                                              editexercisenotecontroller.text =
+                                                  selectedTrainingExercises[
+                                                      index]['note'];
+                                              showModalBottomSheet(
+                                                backgroundColor:
+                                                    Colors.transparent,
+                                                context: context,
+                                                builder: (context) {
+                                                  return Container(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                      horizontal: 16,
+                                                      vertical: 32,
+                                                    ),
+                                                    decoration: BoxDecoration(
+                                                      color: HFColors()
+                                                          .secondaryColor(),
+                                                      borderRadius:
+                                                          BorderRadius.only(
+                                                        topLeft:
+                                                            Radius.circular(16),
+                                                        topRight:
+                                                            Radius.circular(16),
+                                                      ),
+                                                    ),
+                                                    child: SizedBox(
+                                                      height: 400,
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .stretch,
+                                                        children: [
+                                                          HFHeading(
+                                                            size: 6,
+                                                            text:
+                                                                'Edit ${selectedTrainingExercises[index]['name']}',
+                                                          ),
+                                                          SizedBox(
+                                                            height: 10,
+                                                          ),
+                                                          Flex(
+                                                            direction:
+                                                                Axis.horizontal,
+                                                            children: [
+                                                              Expanded(
+                                                                flex: 1,
+                                                                child: HFInput(
+                                                                  keyboardType:
+                                                                      TextInputType
+                                                                          .number,
+                                                                  labelText: selectedTrainingExercises[index]
+                                                                              [
+                                                                              'repetitionType'] ==
+                                                                          'weight'
+                                                                      ? 'kg'
+                                                                      : selectedTrainingExercises[index]['repetitionType'] ==
+                                                                              'time'
+                                                                          ? 'Minutes'
+                                                                          : '',
+                                                                  controller:
+                                                                      editexerciseamountcontroller,
+                                                                ),
+                                                              ),
+                                                              const SizedBox(
+                                                                width: 20,
+                                                              ),
+                                                              Expanded(
+                                                                flex: 1,
+                                                                child: HFInput(
+                                                                  keyboardType:
+                                                                      TextInputType
+                                                                          .number,
+                                                                  labelText:
+                                                                      'Reps',
+                                                                  controller:
+                                                                      editexerciserepetitionscontroller,
+                                                                ),
+                                                              ),
+                                                              const SizedBox(
+                                                                width: 20,
+                                                              ),
+                                                              Expanded(
+                                                                flex: 1,
+                                                                child: HFInput(
+                                                                  keyboardType:
+                                                                      TextInputType
+                                                                          .number,
+                                                                  labelText:
+                                                                      'Series',
+                                                                  controller:
+                                                                      editexerciseseriescontroller,
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          const SizedBox(
+                                                            height: 20,
+                                                          ),
+                                                          HFInput(
+                                                            controller:
+                                                                editexercisenotecontroller,
+                                                            labelText: 'Note',
+                                                            hintText:
+                                                                'Exercise notes',
+                                                            minLines: 3,
+                                                            maxLines: 3,
+                                                          ),
+                                                          const SizedBox(
+                                                            height: 40,
+                                                          ),
+                                                          HFButton(
+                                                            onPressed: () {
+                                                              setState(() {
+                                                                selectedTrainingExercises[
+                                                                            index]
+                                                                        [
+                                                                        'amount'] =
+                                                                    editexerciseamountcontroller
+                                                                        .text;
+                                                                selectedTrainingExercises[
+                                                                            index]
+                                                                        [
+                                                                        'repetitions'] =
+                                                                    editexerciserepetitionscontroller
+                                                                        .text;
+                                                                selectedTrainingExercises[
+                                                                            index]
+                                                                        [
+                                                                        'series'] =
+                                                                    editexerciseseriescontroller
+                                                                        .text;
+                                                                selectedTrainingExercises[
+                                                                            index]
+                                                                        [
+                                                                        'note'] =
+                                                                    editexercisenotecontroller
+                                                                        .text;
+                                                              });
+
+                                                              Navigator.pop(
+                                                                  context);
+                                                            },
+                                                            padding:
+                                                                EdgeInsets.all(
+                                                                    16),
+                                                            text:
+                                                                'Update ${selectedTrainingExercises[index]['name']}',
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                              );
+                                            },
                                             name:
                                                 '${selectedTrainingExercises[index]['name']}',
                                             amount: double.parse(
@@ -695,6 +897,167 @@ class AddEventScreenState extends State<AddEventScreen> {
                                           setState(() {
                                             selectedExercises.removeAt(index);
                                           });
+                                        },
+                                        onTap: () {
+                                          editadditionalexerciseamountcontroller
+                                                  .text =
+                                              '${double.parse(selectedExercises[index]['amount'])}';
+                                          editadditionalexerciserepetitionscontroller
+                                                  .text =
+                                              '${double.parse(selectedExercises[index]['repetitions'])}';
+                                          editadditionalexerciseseriescontroller
+                                                  .text =
+                                              '${double.parse(selectedExercises[index]['series'])}';
+
+                                          editadditionalexercisenotecontroller
+                                                  .text =
+                                              selectedExercises[index]['note'];
+                                          showModalBottomSheet(
+                                            backgroundColor: Colors.transparent,
+                                            context: context,
+                                            builder: (context) {
+                                              return Container(
+                                                padding: EdgeInsets.symmetric(
+                                                  horizontal: 16,
+                                                  vertical: 32,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  color: HFColors()
+                                                      .secondaryColor(),
+                                                  borderRadius:
+                                                      BorderRadius.only(
+                                                    topLeft:
+                                                        Radius.circular(16),
+                                                    topRight:
+                                                        Radius.circular(16),
+                                                  ),
+                                                ),
+                                                child: SizedBox(
+                                                  height: 400,
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .stretch,
+                                                    children: [
+                                                      HFHeading(
+                                                        size: 6,
+                                                        text:
+                                                            'Edit ${selectedExercises[index]['name']}',
+                                                      ),
+                                                      SizedBox(
+                                                        height: 10,
+                                                      ),
+                                                      Flex(
+                                                        direction:
+                                                            Axis.horizontal,
+                                                        children: [
+                                                          Expanded(
+                                                            flex: 1,
+                                                            child: HFInput(
+                                                              keyboardType:
+                                                                  TextInputType
+                                                                      .number,
+                                                              labelText: selectedExercises[
+                                                                              index]
+                                                                          [
+                                                                          'repetitionType'] ==
+                                                                      'weight'
+                                                                  ? 'kg'
+                                                                  : selectedExercises[index]
+                                                                              [
+                                                                              'repetitionType'] ==
+                                                                          'time'
+                                                                      ? 'Minutes'
+                                                                      : '',
+                                                              controller:
+                                                                  editadditionalexerciseamountcontroller,
+                                                            ),
+                                                          ),
+                                                          const SizedBox(
+                                                            width: 20,
+                                                          ),
+                                                          Expanded(
+                                                            flex: 1,
+                                                            child: HFInput(
+                                                              keyboardType:
+                                                                  TextInputType
+                                                                      .number,
+                                                              labelText: 'Reps',
+                                                              controller:
+                                                                  editadditionalexerciserepetitionscontroller,
+                                                            ),
+                                                          ),
+                                                          const SizedBox(
+                                                            width: 20,
+                                                          ),
+                                                          Expanded(
+                                                            flex: 1,
+                                                            child: HFInput(
+                                                              keyboardType:
+                                                                  TextInputType
+                                                                      .number,
+                                                              labelText:
+                                                                  'Series',
+                                                              controller:
+                                                                  editadditionalexerciseseriescontroller,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      const SizedBox(
+                                                        height: 20,
+                                                      ),
+                                                      HFInput(
+                                                        controller:
+                                                            editadditionalexercisenotecontroller,
+                                                        labelText: 'Note',
+                                                        hintText:
+                                                            'Exercise notes',
+                                                        minLines: 3,
+                                                        maxLines: 3,
+                                                      ),
+                                                      const SizedBox(
+                                                        height: 40,
+                                                      ),
+                                                      HFButton(
+                                                        onPressed: () {
+                                                          setState(() {
+                                                            selectedExercises[
+                                                                        index]
+                                                                    ['amount'] =
+                                                                editadditionalexerciseamountcontroller
+                                                                    .text;
+                                                            selectedExercises[
+                                                                        index][
+                                                                    'repetitions'] =
+                                                                editadditionalexerciserepetitionscontroller
+                                                                    .text;
+                                                            selectedExercises[
+                                                                        index]
+                                                                    ['series'] =
+                                                                editadditionalexerciseseriescontroller
+                                                                    .text;
+                                                            selectedExercises[
+                                                                        index]
+                                                                    ['note'] =
+                                                                editadditionalexercisenotecontroller
+                                                                    .text;
+                                                          });
+
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        padding:
+                                                            EdgeInsets.all(16),
+                                                        text:
+                                                            'Update ${selectedExercises[index]['name']}',
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          );
                                         },
                                         name:
                                             '${selectedExercises[index]['name']}',
@@ -760,6 +1123,9 @@ class AddEventScreenState extends State<AddEventScreen> {
                           const HFHeading(
                             size: 5,
                             text: 'Select a location:',
+                          ),
+                          const SizedBox(
+                            height: 10,
                           ),
                           Container(
                             padding: const EdgeInsets.all(0),

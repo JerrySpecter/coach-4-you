@@ -91,7 +91,12 @@ class _HFClientChatTileState extends State<HFClientChatTile> {
                     width: widget.imageSize,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(widget.imageSize / 6),
-                      child: HFImage(imageUrl: _imageUrl),
+                      child: _imageUrl == ''
+                          ? HFImage(imageUrl: _imageUrl)
+                          : Image.network(
+                              _imageUrl,
+                              fit: BoxFit.cover,
+                            ),
                     ),
                   ),
                 if (widget.useImage)

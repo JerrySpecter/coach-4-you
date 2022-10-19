@@ -32,14 +32,14 @@ class SplashSection extends StatelessWidget {
             height: 30,
           ),
           const HFParagrpah(
-            text: 'Need a trainer? You can find one here:',
+            text: 'Need a coach? You can find one here:',
             size: 9,
           ),
           const SizedBox(
             height: 10,
           ),
           HFButton(
-            text: 'Find a trainer',
+            text: 'Find a coach',
             padding: const EdgeInsets.symmetric(vertical: 20),
             onPressed: () {
               context

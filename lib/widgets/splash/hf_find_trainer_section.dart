@@ -52,7 +52,7 @@ class _FindTrainerSectionState extends State<FindTrainerSection> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const HFHeading(
-                  text: 'Find a trainer',
+                  text: 'Find a coach',
                   size: 8,
                 ),
                 IconButton(
@@ -89,7 +89,7 @@ class _FindTrainerSectionState extends State<FindTrainerSection> {
                         searchText = value;
                       });
                     },
-                    hintText: 'Type in trainers name',
+                    hintText: 'Type in coach\'s name',
                     keyboardType: TextInputType.text,
                     verticalContentPadding: 12,
                   ),

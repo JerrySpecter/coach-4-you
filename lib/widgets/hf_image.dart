@@ -15,8 +15,8 @@ class HFImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (imageUrl == '') {
-      return const Image(
-        image: AssetImage('assets/placeholder.jpg'),
+      return Image.asset(
+        'assets/placeholder.jpg',
         fit: BoxFit.cover,
       );
     }

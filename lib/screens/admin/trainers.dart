@@ -92,6 +92,7 @@ class Trainers extends StatelessWidget {
                               email: trainer['email'],
                               imageUrl: trainer['imageUrl'],
                               imageSize: 36,
+                              simpleImage: true,
                               headingMargin: 0,
                               showAvailable: false,
                               useSpacerBottom: true,
