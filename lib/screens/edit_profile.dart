@@ -83,12 +83,15 @@ class _EditProfileState extends State<EditProfile> {
 
     if (context.read<HFGlobalState>().userAccessLevel == accessLevels.trainer) {
       _selectedLocations = widget.locations;
-      initialDate = DateTime.parse(widget.birthday);
-      dateTime = DateTime.parse(widget.birthday);
-      _trainerBirthdayController.text =
-          DateFormat('dd. MM. yyyy.').format(DateTime.parse(widget.birthday));
       _trainerIntroController.text = widget.intro;
       _trainerEducationController.text = widget.education;
+
+      if (widget.birthday.isNotEmpty) {
+        initialDate = DateTime.parse(widget.birthday);
+        dateTime = DateTime.parse(widget.birthday);
+        _trainerBirthdayController.text =
+            DateFormat('dd. MM. yyyy.').format(DateTime.parse(widget.birthday));
+      }
     }
 
     super.initState();
