@@ -51,3 +51,5 @@ const String completedEventRoute = '/client-completed-event';
 const String chatScreen = '/trainer-chat';
 const String addClient = '/add-client';
 const String editProfile = '/edit-profile';
+const String reportBug = '/report-bug';
+const String requestFeature = '/request-feature';

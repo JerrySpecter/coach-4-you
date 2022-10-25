@@ -16,6 +16,8 @@ import 'package:health_factory/screens/clients/add_client.dart';
 import 'package:health_factory/screens/news/add_news.dart';
 import 'package:health_factory/screens/events/single_event.dart';
 import 'package:health_factory/screens/news/news.dart';
+import 'package:health_factory/screens/report_a_bug.dart';
+import 'package:health_factory/screens/request_a_feature.dart';
 import 'package:health_factory/screens/requests/requests.dart';
 import 'package:health_factory/screens/requests/single_request.dart';
 import 'package:health_factory/screens/root.dart';
@@ -380,8 +382,12 @@ Route<dynamic>? genRoute(RouteSettings settings) {
         ),
       );
     case clientWeightRoute:
+      var data = settings.arguments as Map;
+
       return MaterialPageRoute(
-        builder: (_) => ClientWeight(),
+        builder: (_) => ClientWeight(
+          clientId: data['clientId'],
+        ),
       );
     case clientAddWeightRoute:
       return MaterialPageRoute(
@@ -391,8 +397,11 @@ Route<dynamic>? genRoute(RouteSettings settings) {
         ),
       );
     case clientChestRoute:
+      var data = settings.arguments as Map;
       return MaterialPageRoute(
-        builder: (_) => ClientChest(),
+        builder: (_) => ClientChest(
+          clientId: data['clientId'],
+        ),
       );
     case clientAddChestRoute:
       return MaterialPageRoute(
@@ -402,8 +411,11 @@ Route<dynamic>? genRoute(RouteSettings settings) {
         ),
       );
     case clientShouldersRoute:
+      var data = settings.arguments as Map;
       return MaterialPageRoute(
-        builder: (_) => const ClientShoulders(),
+        builder: (_) => ClientShoulders(
+          clientId: data['clientId'],
+        ),
       );
     case clientAddShouldersRoute:
       return MaterialPageRoute(
@@ -413,8 +425,19 @@ Route<dynamic>? genRoute(RouteSettings settings) {
         ),
       );
     case clientUpperArmRoute:
+      var data = settings.arguments as Map;
       return MaterialPageRoute(
-        builder: (_) => ClientArm(),
+        builder: (_) => ClientArm(
+          clientId: data['clientId'],
+        ),
+      );
+    case reportBug:
+      return MaterialPageRoute(
+        builder: (_) => ReportABug(),
+      );
+    case requestFeature:
+      return MaterialPageRoute(
+        builder: (_) => RequestAFeature(),
       );
     case clientAddUpperArmRoute:
       return MaterialPageRoute(
@@ -424,8 +447,11 @@ Route<dynamic>? genRoute(RouteSettings settings) {
         ),
       );
     case clientWaistRoute:
+      var data = settings.arguments as Map;
       return MaterialPageRoute(
-        builder: (_) => ClientWaist(),
+        builder: (_) => ClientWaist(
+          clientId: data['clientId'],
+        ),
       );
     case clientAddWaistRoute:
       return MaterialPageRoute(
@@ -435,8 +461,11 @@ Route<dynamic>? genRoute(RouteSettings settings) {
         ),
       );
     case clientMidThighRoute:
+      var data = settings.arguments as Map;
       return MaterialPageRoute(
-        builder: (_) => ClientThigh(),
+        builder: (_) => ClientThigh(
+          clientId: data['clientId'],
+        ),
       );
     case clientAddMidThighRoute:
       return MaterialPageRoute(

@@ -1,11 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:health_factory/constants/colors.dart';
 import 'package:health_factory/constants/global_state.dart';
 import 'package:health_factory/constants/routes.dart';
 import 'package:health_factory/widgets/hf_button.dart';
 import 'package:health_factory/widgets/hf_heading.dart';
+import 'package:health_factory/widgets/hf_paragraph.dart';
 import 'package:health_factory/widgets/hf_snackbar.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -137,6 +139,39 @@ class _SettingsPageState extends State<SettingsPage> {
                       text: 'Url not working', color: HFColors().redColor()));
                 }
               }),
+              SizedBox(
+                height: 40,
+              ),
+              HFHeading(
+                text: 'Feedback',
+                size: 5,
+              ),
+              SizedBox(
+                height: 5,
+              ),
+              HFParagrpah(
+                text:
+                    'If you have any problems or new ideas about how to improve the application, contact us so that we can resolve any problems and update the application.',
+                size: 8,
+                color: HFColors().whiteColor(opacity: 0.7),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              SettingsListTile(
+                  context, FontAwesomeIcons.bug, 'Report a problem', () {
+                Navigator.pushNamed(
+                  context,
+                  reportBug,
+                );
+              }),
+              SettingsListTile(
+                  context, CupertinoIcons.star, 'Request a new feature', () {
+                Navigator.pushNamed(
+                  context,
+                  requestFeature,
+                );
+              }),
               const SizedBox(
                 height: 80,
               ),
@@ -187,10 +222,12 @@ Widget SettingsListTile(context, icon, text, onTap) {
                     borderRadius: BorderRadius.circular(12),
                     color: HFColors().primaryColor(opacity: 1),
                   ),
-                  child: Icon(
-                    icon,
-                    color: HFColors().whiteColor(),
-                    size: 24,
+                  child: Center(
+                    child: Icon(
+                      icon,
+                      color: HFColors().whiteColor(),
+                      size: 24,
+                    ),
                   ),
                 ),
                 const SizedBox(

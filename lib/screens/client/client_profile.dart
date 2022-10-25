@@ -303,11 +303,13 @@ class _ClientProfileState extends State<ClientProfile> {
                           .collection('clients')
                           .doc(widget.id)
                           .collection('weight')
+                          .limit(10)
+                          .orderBy('date', descending: true)
                           .snapshots(),
                       'Weight',
                       'kg',
                       clientWeightRoute,
-                      widget.asTrainer,
+                      widget.id,
                     ),
                     SliderBox(
                       context,
@@ -315,12 +317,13 @@ class _ClientProfileState extends State<ClientProfile> {
                           .collection('clients')
                           .doc(widget.id)
                           .collection('chest')
+                          .limit(10)
                           .orderBy('date', descending: true)
                           .snapshots(),
                       'Chest circumference',
                       'cm',
                       clientChestRoute,
-                      widget.asTrainer,
+                      widget.id,
                     ),
                     SliderBox(
                       context,
@@ -328,12 +331,13 @@ class _ClientProfileState extends State<ClientProfile> {
                           .collection('clients')
                           .doc(widget.id)
                           .collection('shoulders')
+                          .limit(10)
                           .orderBy('date', descending: true)
                           .snapshots(),
                       'Shoulder circ.',
                       'cm',
                       clientShouldersRoute,
-                      widget.asTrainer,
+                      widget.id,
                     ),
                     SliderBox(
                       context,
@@ -341,12 +345,13 @@ class _ClientProfileState extends State<ClientProfile> {
                           .collection('clients')
                           .doc(widget.id)
                           .collection('arm')
+                          .limit(10)
                           .orderBy('date', descending: true)
                           .snapshots(),
                       'Arm circumference',
                       'cm',
                       clientUpperArmRoute,
-                      widget.asTrainer,
+                      widget.id,
                     ),
                     SliderBox(
                       context,
@@ -354,12 +359,13 @@ class _ClientProfileState extends State<ClientProfile> {
                           .collection('clients')
                           .doc(widget.id)
                           .collection('waist')
+                          .limit(10)
                           .orderBy('date', descending: true)
                           .snapshots(),
                       'Waist circumference',
                       'cm',
                       clientWaistRoute,
-                      widget.asTrainer,
+                      widget.id,
                     ),
                     SliderBox(
                       context,
@@ -367,6 +373,7 @@ class _ClientProfileState extends State<ClientProfile> {
                           .collection('clients')
                           .doc(widget.id)
                           .collection('thigh')
+                          .limit(10)
                           .orderBy('date', descending: true)
                           .snapshots(),
                       'Thigh circumference',
@@ -552,7 +559,7 @@ Widget ClientInformation(context, height) {
   );
 }
 
-Widget SliderBox(BuildContext context, data, title, measure, route, isTrainer) {
+Widget SliderBox(BuildContext context, data, title, measure, route, clientId) {
   return StreamBuilder<Object>(
       stream: data,
       builder: (context, snapshot) {
@@ -566,9 +573,8 @@ Widget SliderBox(BuildContext context, data, title, measure, route, isTrainer) {
 
         return InkWell(
           onTap: (() {
-            if (!isTrainer) {
-              Navigator.pushNamed(context, route, arguments: {});
-            }
+            Navigator.pushNamed(context, route,
+                arguments: {'clientId': clientId});
           }),
           child: Stack(
             children: [

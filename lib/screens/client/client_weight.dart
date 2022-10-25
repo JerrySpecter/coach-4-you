@@ -3,8 +3,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:health_factory/constants/firebase_functions.dart';
+import 'package:health_factory/constants/global_state.dart';
 import 'package:health_factory/widgets/hf_heading.dart';
 import 'package:health_factory/widgets/hf_paragraph.dart';
+import 'package:provider/provider.dart';
 import '../../../constants/colors.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
@@ -12,6 +14,10 @@ import 'package:intl/intl.dart';
 import '../../constants/routes.dart';
 
 class ClientWeight extends StatelessWidget {
+  ClientWeight({super.key, required this.clientId});
+
+  String clientId = '';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,18 +32,21 @@ class ClientWeight extends StatelessWidget {
           size: 5,
         ),
       ),
-      floatingActionButton: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(24),
-          color: HFColors().primaryColor(),
-        ),
-        child: IconButton(
-          icon: const Icon(CupertinoIcons.add),
-          onPressed: () {
-            Navigator.pushNamed(context, clientAddWeightRoute);
-          },
-        ),
-      ),
+      floatingActionButton:
+          context.watch<HFGlobalState>().userAccessLevel == accessLevels.client
+              ? Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(24),
+                    color: HFColors().primaryColor(),
+                  ),
+                  child: IconButton(
+                    icon: const Icon(CupertinoIcons.add),
+                    onPressed: () {
+                      Navigator.pushNamed(context, clientAddWeightRoute);
+                    },
+                  ),
+                )
+              : null,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -49,8 +58,9 @@ class ClientWeight extends StatelessWidget {
                   height: 10,
                 ),
                 StreamBuilder(
-                  stream: HFFirebaseFunctions()
-                      .getFirebaseAuthUser(context)
+                  stream: FirebaseFirestore.instance
+                      .collection('clients')
+                      .doc(clientId)
                       .collection('weight')
                       .limit(30)
                       .orderBy('date', descending: true)

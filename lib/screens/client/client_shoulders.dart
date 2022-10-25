@@ -5,14 +5,18 @@ import 'package:flutter/services.dart';
 import 'package:health_factory/constants/firebase_functions.dart';
 import 'package:health_factory/widgets/hf_heading.dart';
 import 'package:health_factory/widgets/hf_paragraph.dart';
+import 'package:provider/provider.dart';
 import '../../../constants/colors.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 
+import '../../constants/global_state.dart';
 import '../../constants/routes.dart';
 
 class ClientShoulders extends StatelessWidget {
-  const ClientShoulders({super.key});
+  ClientShoulders({super.key, required this.clientId});
+
+  String clientId = '';
 
   @override
   Widget build(BuildContext context) {
@@ -28,18 +32,21 @@ class ClientShoulders extends StatelessWidget {
           size: 5,
         ),
       ),
-      floatingActionButton: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(24),
-          color: HFColors().primaryColor(),
-        ),
-        child: IconButton(
-          icon: const Icon(CupertinoIcons.add),
-          onPressed: () {
-            Navigator.pushNamed(context, clientAddShouldersRoute);
-          },
-        ),
-      ),
+      floatingActionButton:
+          context.watch<HFGlobalState>().userAccessLevel == accessLevels.client
+              ? Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(24),
+                    color: HFColors().primaryColor(),
+                  ),
+                  child: IconButton(
+                    icon: const Icon(CupertinoIcons.add),
+                    onPressed: () {
+                      Navigator.pushNamed(context, clientAddShouldersRoute);
+                    },
+                  ),
+                )
+              : null,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -51,8 +58,9 @@ class ClientShoulders extends StatelessWidget {
                   height: 10,
                 ),
                 StreamBuilder(
-                  stream: HFFirebaseFunctions()
-                      .getFirebaseAuthUser(context)
+                  stream: FirebaseFirestore.instance
+                      .collection('clients')
+                      .doc(clientId)
                       .collection('shoulders')
                       .limit(30)
                       .orderBy('date', descending: true)
