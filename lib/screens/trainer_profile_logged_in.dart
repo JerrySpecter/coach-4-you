@@ -78,7 +78,8 @@ class _TrainerProfileLoggedInState extends State<TrainerProfileLoggedIn> {
                         height: 300,
                         child: ClipRRect(
                           child: HFImage(
-                              imageUrl: widget.profileBackgroundImageUrl),
+                            imageUrl: widget.profileBackgroundImageUrl,
+                          ),
                         ),
                       ),
                       Positioned(

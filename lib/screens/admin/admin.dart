@@ -4,11 +4,8 @@ import 'package:flutter/services.dart';
 import 'package:health_factory/constants/colors.dart';
 import 'package:health_factory/constants/global_state.dart';
 import 'package:health_factory/constants/routes.dart';
-import 'package:health_factory/widgets/hf_image.dart';
 import 'package:health_factory/widgets/hf_heading.dart';
 import 'package:health_factory/widgets/hf_paragraph.dart';
-import 'package:health_factory/widgets/home/hf_actions_section.dart';
-import 'package:health_factory/widgets/home/hf_archive_tile.dart';
 import 'package:health_factory/widgets/home/hf_archive_tile_small.dart';
 import 'package:provider/provider.dart';
 
@@ -40,14 +37,10 @@ class Admin extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        HFHeading(
-                          text: context.watch<HFGlobalState>().userDisplayName,
-                          size: 10,
-                          color: HFColors().whiteColor(opacity: 1),
-                        ),
-                      ],
+                    HFHeading(
+                      text: context.watch<HFGlobalState>().userDisplayName,
+                      size: 10,
+                      color: HFColors().whiteColor(opacity: 1),
                     ),
                     HFParagrpah(
                       text: 'Welcome to your administration',

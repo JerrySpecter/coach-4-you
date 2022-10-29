@@ -4,18 +4,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:health_factory/constants/global_state.dart';
-import 'package:health_factory/constants/routes.dart';
 import 'package:health_factory/screens/admin/add_videos.dart';
 import 'package:health_factory/widgets/hf_dialog.dart';
 import 'package:health_factory/widgets/hf_heading.dart';
 import 'package:health_factory/widgets/hf_image.dart';
 import 'package:health_factory/widgets/hf_paragraph.dart';
-import 'package:health_factory/widgets/hf_snackbar.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../constants/colors.dart';
-import '../../constants/firebase_functions.dart';
 
 class SingleVideos extends StatefulWidget {
   const SingleVideos({
@@ -154,14 +151,14 @@ class _SingleVideosState extends State<SingleVideos> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               HFHeading(
                 text: _nameState,
                 size: 7,
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               HFParagrpah(
@@ -169,7 +166,7 @@ class _SingleVideosState extends State<SingleVideos> {
                 size: 7,
                 maxLines: 999,
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               SizedBox(
@@ -193,7 +190,7 @@ class _SingleVideosState extends State<SingleVideos> {
                   ),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 30,
               ),
               HFParagrpah(

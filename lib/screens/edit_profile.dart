@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cloudinary_public/cloudinary_public.dart';
+import 'package:cloudinary_sdk/cloudinary_sdk.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:health_factory/constants/colors.dart';
@@ -57,8 +57,12 @@ class _EditProfileState extends State<EditProfile> {
   String _imageUrlBackground = '';
   bool _startUploadBackground = false;
   double _uploadingPercentageBackground = 0;
-  final cloudinary =
-      CloudinaryPublic('jerryspecter', 'hf_upload', cache: false);
+
+  final cloudinarySdk = Cloudinary.full(
+    apiKey: '735651249342712',
+    apiSecret: '-bHnS3Hz7ValwMez15sJRBMH2po',
+    cloudName: 'jerryspecter',
+  );
 
   final TextEditingController _trainerBirthdayController =
       TextEditingController();
@@ -204,7 +208,7 @@ class _EditProfileState extends State<EditProfile> {
               ),
               if (context.read<HFGlobalState>().userAccessLevel ==
                   accessLevels.trainer)
-                HFHeading(
+                const HFHeading(
                   text: 'Select your locations:',
                   size: 3,
                 ),
@@ -245,7 +249,7 @@ class _EditProfileState extends State<EditProfile> {
                     return MultiSelectChipField(
                       chipColor: HFColors().primaryColor(),
                       selectedChipColor: HFColors().greenColor(),
-                      decoration: BoxDecoration(),
+                      decoration: const BoxDecoration(),
                       showHeader: false,
                       scroll: false,
                       items: [
@@ -271,11 +275,12 @@ class _EditProfileState extends State<EditProfile> {
                             });
                           },
                           child: Container(
-                            padding: EdgeInsets.only(right: 10, bottom: 10),
+                            padding:
+                                const EdgeInsets.only(right: 10, bottom: 10),
                             child: AnimatedContainer(
-                              duration: Duration(milliseconds: 100),
+                              duration: const Duration(milliseconds: 100),
                               curve: Curves.easeInOut,
-                              padding: EdgeInsets.symmetric(
+                              padding: const EdgeInsets.symmetric(
                                 horizontal: 12,
                                 vertical: 6,
                               ),
@@ -307,7 +312,7 @@ class _EditProfileState extends State<EditProfile> {
               ),
               if (context.read<HFGlobalState>().userAccessLevel ==
                   accessLevels.trainer)
-                HFHeading(
+                const HFHeading(
                   text: 'Write about yourself:',
                   size: 5,
                 ),
@@ -331,7 +336,7 @@ class _EditProfileState extends State<EditProfile> {
                 ),
               if (context.read<HFGlobalState>().userAccessLevel ==
                   accessLevels.trainer)
-                HFHeading(
+                const HFHeading(
                   text: 'Write about your education:',
                   size: 5,
                 ),
@@ -356,6 +361,8 @@ class _EditProfileState extends State<EditProfile> {
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 onPressed: () async {
                   var userType = context.read<HFGlobalState>().userAccessLevel;
+                  var parentFolder =
+                      userType == accessLevels.client ? 'clients' : 'trainers';
 
                   var editedDataClient = {
                     'firstName': _trainerFirstNameController.text,
@@ -381,43 +388,45 @@ class _EditProfileState extends State<EditProfile> {
                       _startUpload = true;
                     });
 
-                    try {
-                      await cloudinary.uploadFile(
-                        CloudinaryFile.fromFile(
-                          _imageUrl,
-                          resourceType: CloudinaryResourceType.Image,
-                        ),
-                        onProgress: (count, total) {
+                    await cloudinarySdk
+                        .uploadResource(
+                      CloudinaryUploadResource(
+                        filePath: _imageUrl,
+                        resourceType: CloudinaryResourceType.image,
+                        folder:
+                            '$parentFolder/${context.read<HFGlobalState>().userId}',
+                        optParams: {
+                          'transformation': 'c_scale,w_300',
+                        },
+                        fileName:
+                            '${context.read<HFGlobalState>().userId}_profile_image',
+                        progressCallback: (count, total) {
                           setState(() {
                             _uploadingPercentage = (count / total);
                           });
                         },
-                      ).then((value) {
-                        HFFirebaseFunctions()
-                            .getFirebaseAuthUser(context)
-                            .update({
-                          'imageUrl': value.secureUrl,
-                        }).then((res) {
-                          context
-                              .read<HFGlobalState>()
-                              .setUserImage(value.secureUrl);
+                      ),
+                    )
+                        .then((value) {
+                      HFFirebaseFunctions()
+                          .getFirebaseAuthUser(context)
+                          .update({
+                        'imageUrl': value.secureUrl,
+                      }).then((res) {
+                        context
+                            .read<HFGlobalState>()
+                            .setUserImage(value.secureUrl);
 
-                          if (userType == accessLevels.client) {
-                            FirebaseFirestore.instance
-                                .collection('trainers')
-                                .doc(
-                                    context.read<HFGlobalState>().userTrainerId)
-                                .collection('clients')
-                                .doc(widget.email)
-                                .update({'imageUrl': value.secureUrl});
-                          }
-                        }).catchError((error) => print('Add failed: $error'));
-                      });
-                    } on CloudinaryException catch (e) {
-                      _startUpload = false;
-                      print(e.message);
-                      print(e.request);
-                    }
+                        if (userType == accessLevels.client) {
+                          FirebaseFirestore.instance
+                              .collection('trainers')
+                              .doc(context.read<HFGlobalState>().userTrainerId)
+                              .collection('clients')
+                              .doc(widget.email)
+                              .update({'imageUrl': value.secureUrl});
+                        }
+                      }).catchError((error) => print('Add failed: $error'));
+                    });
                   }
 
                   if (_imageUrlBackground != '') {
@@ -425,53 +434,52 @@ class _EditProfileState extends State<EditProfile> {
                       _startUploadBackground = true;
                     });
 
-                    try {
-                      await cloudinary.uploadFile(
-                        CloudinaryFile.fromFile(
-                          _imageUrlBackground,
-                          resourceType: CloudinaryResourceType.Image,
-                        ),
-                        onProgress: (count, total) {
+                    await cloudinarySdk
+                        .uploadResource(
+                      CloudinaryUploadResource(
+                        filePath: _imageUrlBackground,
+                        resourceType: CloudinaryResourceType.image,
+                        folder:
+                            '$parentFolder/${context.read<HFGlobalState>().userId}',
+                        optParams: {
+                          'transformation': 'c_scale,w_800',
+                        },
+                        fileName:
+                            '${context.read<HFGlobalState>().userId}_profile_background_image',
+                        progressCallback: (count, total) {
                           setState(() {
                             _uploadingPercentageBackground = (count / total);
                           });
                         },
-                      ).then((value) {
-                        HFFirebaseFunctions()
-                            .getFirebaseAuthUser(context)
-                            .update({
-                          'profileBackgroundImageUrl': value.secureUrl,
-                        }).then((res) {
-                          context
-                              .read<HFGlobalState>()
-                              .setUserBackgroundImage(value.secureUrl);
+                      ),
+                    )
+                        .then((value) {
+                      HFFirebaseFunctions()
+                          .getFirebaseAuthUser(context)
+                          .update({
+                        'profileBackgroundImageUrl': value.secureUrl,
+                      }).then((res) {
+                        context
+                            .read<HFGlobalState>()
+                            .setUserBackgroundImage(value.secureUrl);
 
-                          if (userType == accessLevels.client) {
-                            FirebaseFirestore.instance
-                                .collection('trainers')
-                                .doc(
-                                    context.read<HFGlobalState>().userTrainerId)
-                                .collection('clients')
-                                .doc(widget.email)
-                                .update({
-                              'profileBackgroundImageUrl': value.secureUrl
-                            });
-                          }
-                        }).catchError((error) {
-                          ScaffoldMessenger.of(context)
-                              .showSnackBar(getSnackBar(
-                            text: 'Upload failed',
-                            color: HFColors().redColor(opacity: 1),
-                          ));
-                        });
+                        if (userType == accessLevels.client) {
+                          FirebaseFirestore.instance
+                              .collection('trainers')
+                              .doc(context.read<HFGlobalState>().userTrainerId)
+                              .collection('clients')
+                              .doc(widget.email)
+                              .update({
+                            'profileBackgroundImageUrl': value.secureUrl
+                          });
+                        }
+                      }).catchError((error) {
+                        ScaffoldMessenger.of(context).showSnackBar(getSnackBar(
+                          text: 'Upload failed',
+                          color: HFColors().redColor(opacity: 1),
+                        ));
                       });
-                    } on CloudinaryException catch (e) {
-                      _startUploadBackground = false;
-                      ScaffoldMessenger.of(context).showSnackBar(getSnackBar(
-                        text: 'Upload failed ${e.message}',
-                        color: HFColors().redColor(opacity: 1),
-                      ));
-                    }
+                    });
                   }
 
                   if (userType == accessLevels.client) {

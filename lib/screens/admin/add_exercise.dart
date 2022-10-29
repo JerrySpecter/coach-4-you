@@ -1,8 +1,5 @@
-import 'dart:io';
-
 import 'package:chewie/chewie.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cloudinary_public/cloudinary_public.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:health_factory/constants/colors.dart';
@@ -141,16 +138,12 @@ class _AddExerciseFormState extends State<AddExerciseForm> {
   String _videoLoading = '';
   var _selectedTypes = [];
   var _selectedRepetition = [];
-  final cloudinary =
-      CloudinaryPublic('jerryspecter', 'hf_upload', cache: false);
 
   String _exerciseUrl = '';
-  double _uploadingPercentage = 0;
   String _initialVideoId = '';
   String _initialName = '';
   String _initialDescription = '';
-  String _initialThumbnail = '';
-  List<dynamic> _initialTypes = [];
+  final String _initialThumbnail = '';
   String _initialRepetition = '';
   String _videoSelected = '';
 
@@ -229,7 +222,6 @@ class _AddExerciseFormState extends State<AddExerciseForm> {
 
       _initialName = widget.name;
       _initialDescription = widget.description;
-      _initialTypes = widget.types;
       _initialRepetition = widget.repetitionType;
       _videoSelected = widget.video;
       _initialVideoId = widget.video;
@@ -329,7 +321,7 @@ class _AddExerciseFormState extends State<AddExerciseForm> {
                     return ListView(
                       shrinkWrap: true,
                       children: [
-                        SizedBox(
+                        const SizedBox(
                           height: 8,
                         ),
                         ...data.docs.map(
@@ -678,7 +670,7 @@ class _AddExerciseFormState extends State<AddExerciseForm> {
                       .doc(widget.id)
                       .update(editedData);
                 } else {
-                  var newId = Uuid().v4();
+                  var newId = const Uuid().v4();
 
                   await FirebaseFirestore.instance
                       .collection('exercises')

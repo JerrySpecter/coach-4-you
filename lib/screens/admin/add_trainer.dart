@@ -67,6 +67,7 @@ class _AddTrainersFormState extends State<AddTrainersForm> {
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
   bool _isAdmin = false;
+  bool _isTestAccount = false;
 
   @override
   Widget build(BuildContext context) {
@@ -169,6 +170,58 @@ class _AddTrainersFormState extends State<AddTrainersForm> {
             ),
           ),
           SizedBox(
+            height: 10,
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(14),
+              color: HFColors().secondaryLightColor(),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+              child: Row(
+                children: [
+                  Flexible(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Flexible(
+                            flex: 3,
+                            child: HFHeading(
+                              text: 'Test account',
+                              size: 4,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          SizedBox(
+                            width: 20,
+                          ),
+                          Flexible(
+                            flex: 1,
+                            child: CupertinoSwitch(
+                              value: _isTestAccount,
+                              onChanged: (value) {
+                                setState(() {
+                                  _isTestAccount = value;
+                                });
+                              },
+                              thumbColor: HFColors().primaryColor(),
+                              trackColor: HFColors().redColor(opacity: 0.4),
+                              activeColor: HFColors().greenColor(opacity: 0.4),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+          SizedBox(
             height: 40,
           ),
           HFButton(
@@ -192,7 +245,8 @@ class _AddTrainersFormState extends State<AddTrainersForm> {
                           'trainerLastName': _trainerLastNameController.text,
                           'trainerEmail': _trainerEmailController.text,
                           'trainerChanged': '${DateTime.now()}',
-                          'trainerIsAdmin': _isAdmin
+                          'trainerIsAdmin': _isAdmin,
+                          'trainerIsTestAccount': _isTestAccount
                         }))
                     .then((value) {
                   var responseBody = jsonDecode(value.body);

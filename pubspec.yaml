@@ -41,7 +41,7 @@ dependencies:
   uuid: ^3.0.6
   google_fonts: ^3.0.1
   provider: ^6.0.3
-  cloudinary_public: ^0.11.0
+  cloudinary_sdk: ^4.0.2+10
   image_picker: ^0.8.5+3
   permission_handler: ^9.2.0
   carousel_slider: ^4.1.1

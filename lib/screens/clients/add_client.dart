@@ -1,19 +1,14 @@
-import 'package:cloudinary_public/cloudinary_public.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:health_factory/constants/colors.dart';
 import 'package:health_factory/constants/firebase_functions.dart';
-import 'package:health_factory/constants/global_state.dart';
-import 'package:health_factory/screens/root.dart';
 import 'package:health_factory/widgets/hf_button.dart';
 import 'package:health_factory/widgets/hf_heading.dart';
 import 'package:health_factory/widgets/hf_input_field.dart';
 import 'package:health_factory/widgets/hf_snackbar.dart';
-import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
-import '../../widgets/hf_upload_photo.dart';
 
 class AddClientScreen extends StatefulWidget {
   const AddClientScreen({
@@ -28,11 +23,7 @@ class AddClientScreenState extends State<AddClientScreen> {
   final TextEditingController clientNameController = TextEditingController();
   final TextEditingController clientEmailController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  String _imageUrl = '';
-  bool _startUpload = false;
-  double _uploadingPercentage = 0;
-  final cloudinary =
-      CloudinaryPublic('jerryspecter', 'hf_upload', cache: false);
+  final bool _startUpload = false;
 
   String eventName = '';
   DateTime dateTime = DateTime.now();

@@ -1,10 +1,6 @@
-import 'dart:convert';
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cloudinary_public/cloudinary_public.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:cloudinary_sdk/cloudinary_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:health_factory/constants/colors.dart';
@@ -13,10 +9,7 @@ import 'package:health_factory/widgets/hf_button.dart';
 import 'package:health_factory/widgets/hf_heading.dart';
 import 'package:health_factory/widgets/hf_input_field.dart';
 import 'package:health_factory/widgets/hf_snackbar.dart';
-import 'package:email_validator/email_validator.dart';
-import 'package:health_factory/widgets/hf_upload_photo.dart';
 import 'package:health_factory/widgets/hf_upload_video.dart';
-import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
@@ -121,8 +114,12 @@ class _AddVideosFormState extends State<AddVideosForm> {
   final _videoUrlController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
-  final cloudinary =
-      CloudinaryPublic('jerryspecter', 'hf_upload', cache: false);
+
+  final cloudinarySdk = Cloudinary.full(
+    apiKey: '735651249342712',
+    apiSecret: '-bHnS3Hz7ValwMez15sJRBMH2po',
+    cloudName: 'jerryspecter',
+  );
 
   File _video = File('');
   String _videoUrl = '';
@@ -219,6 +216,9 @@ class _AddVideosFormState extends State<AddVideosForm> {
             padding: const EdgeInsets.all(16),
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
+                var newId = const Uuid().v4();
+                var videoId = widget.isEdit ? widget.id : newId;
+
                 setState(() {
                   _isLoading = true;
                 });
@@ -231,53 +231,56 @@ class _AddVideosFormState extends State<AddVideosForm> {
                 };
 
                 if (_initialVideoUrl != _videoUrlController.text) {
-                  try {
-                    setState(() {
-                      _startUpload = true;
-                    });
-                    await cloudinary.uploadFile(
-                      CloudinaryFile.fromFile(
-                        _videoUrlController.text,
-                        resourceType: CloudinaryResourceType.Video,
-                      ),
-                      onProgress: (count, total) {
+                  setState(() {
+                    _startUpload = true;
+                  });
+
+                  await cloudinarySdk
+                      .uploadResource(
+                    CloudinaryUploadResource(
+                      filePath: _videoUrlController.text,
+                      resourceType: CloudinaryResourceType.video,
+                      folder: 'videos/$videoId',
+                      optParams: {
+                        'transformation': 'c_scale,w_1200',
+                      },
+                      fileName: '${videoId}_video',
+                      progressCallback: (count, total) {
                         setState(() {
                           _uploadingPercentage = (count / total);
                         });
                       },
-                    ).then((value) {
-                      if (widget.isEdit) {
-                        editedData.update('video', (v) => value.secureUrl);
-                        editedData.update(
-                            'thumbnail',
-                            (v) =>
-                                '${value.secureUrl.split(value.secureUrl.split(value.publicId)[1])[0]}.jpg');
-                      } else {
-                        var newId = const Uuid().v4();
+                    ),
+                  )
+                      .then((value) {
+                    var imageUrl = value.secureUrl as String;
+                    var imageFormat = value.format;
+                    var imageThumbnailUrl =
+                        '${imageUrl.split('.$imageFormat')[0]}.jpg';
 
-                        FirebaseFirestore.instance
-                            .collection('videos')
-                            .doc(newId)
-                            .set({
-                          'name': _videoNameController.text,
-                          'description': _videoDescriptionController.text,
-                          'id': newId,
-                          'url': value.secureUrl,
-                          'thumbnail':
-                              '${value.secureUrl.split(value.secureUrl.split(value.publicId)[1])[0]}.jpg',
-                          'author': widget.isCoach
-                              ? context.read<HFGlobalState>().userDisplayName
-                              : 'C4Y',
-                        }).then((value) {
-                          setState(() {
-                            _isLoading = false;
-                          });
+                    if (widget.isEdit) {
+                      editedData.update('video', (v) => imageUrl);
+                      editedData.update('thumbnail', (v) => imageThumbnailUrl);
+                    } else {
+                      FirebaseFirestore.instance
+                          .collection('videos')
+                          .doc(newId)
+                          .set({
+                        'name': _videoNameController.text,
+                        'description': _videoDescriptionController.text,
+                        'id': newId,
+                        'url': imageUrl,
+                        'thumbnail': imageThumbnailUrl,
+                        'author': widget.isCoach
+                            ? context.read<HFGlobalState>().userDisplayName
+                            : 'C4Y',
+                      }).then((value) {
+                        setState(() {
+                          _isLoading = false;
                         });
-                      }
-                    });
-                  } on CloudinaryException catch (e) {
-                    _startUpload = false;
-                  }
+                      });
+                    }
+                  });
                 }
 
                 if (widget.isEdit) {

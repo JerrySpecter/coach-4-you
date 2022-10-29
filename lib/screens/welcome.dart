@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cloudinary_public/cloudinary_public.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloudinary_sdk/cloudinary_sdk.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:health_factory/constants/colors.dart';
@@ -12,7 +11,6 @@ import 'package:health_factory/widgets/hf_snackbar.dart';
 import 'package:health_factory/widgets/hf_text_button.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:uuid/uuid.dart';
 import 'package:intl/intl.dart';
 
 import '../constants/firebase_functions.dart';
@@ -34,8 +32,13 @@ class _WelcomePageState extends State<WelcomePage> {
   String _imageUrlBackground = '';
   bool _startUploadBackground = false;
   double _uploadingPercentageBackground = 0;
-  final cloudinary =
-      CloudinaryPublic('jerryspecter', 'hf_upload', cache: false);
+  // final cloudinary =
+  //     CloudinaryPublic('jerryspecter', 'hf_upload', cache: false);
+  final cloudinarySdk = Cloudinary.full(
+    apiKey: '735651249342712',
+    apiSecret: '-bHnS3Hz7ValwMez15sJRBMH2po',
+    cloudName: 'jerryspecter',
+  );
 
   final _trainerBirthdayController = TextEditingController();
   final _trainerFirstNameController = TextEditingController();
@@ -174,7 +177,7 @@ class _WelcomePageState extends State<WelcomePage> {
                   ),
                   if (context.read<HFGlobalState>().userAccessLevel ==
                       accessLevels.trainer)
-                    HFHeading(
+                    const HFHeading(
                       text: 'Select your locations:',
                       size: 3,
                     ),
@@ -215,7 +218,7 @@ class _WelcomePageState extends State<WelcomePage> {
                         return MultiSelectChipField(
                           chipColor: HFColors().primaryColor(),
                           selectedChipColor: HFColors().greenColor(),
-                          decoration: BoxDecoration(),
+                          decoration: const BoxDecoration(),
                           showHeader: false,
                           scroll: false,
                           items: [
@@ -241,11 +244,12 @@ class _WelcomePageState extends State<WelcomePage> {
                                 });
                               },
                               child: Container(
-                                padding: EdgeInsets.only(right: 10, bottom: 10),
+                                padding: const EdgeInsets.only(
+                                    right: 10, bottom: 10),
                                 child: AnimatedContainer(
-                                  duration: Duration(milliseconds: 100),
+                                  duration: const Duration(milliseconds: 100),
                                   curve: Curves.easeInOut,
-                                  padding: EdgeInsets.symmetric(
+                                  padding: const EdgeInsets.symmetric(
                                     horizontal: 12,
                                     vertical: 6,
                                   ),
@@ -279,7 +283,7 @@ class _WelcomePageState extends State<WelcomePage> {
                   ),
                   if (context.read<HFGlobalState>().userAccessLevel ==
                       accessLevels.trainer)
-                    HFHeading(
+                    const HFHeading(
                       text: 'Write about yourself:',
                       size: 3,
                     ),
@@ -302,7 +306,7 @@ class _WelcomePageState extends State<WelcomePage> {
                     ),
                   if (context.read<HFGlobalState>().userAccessLevel ==
                       accessLevels.trainer)
-                    HFHeading(
+                    const HFHeading(
                       text: 'Write about your education:',
                       size: 3,
                     ),
@@ -333,34 +337,35 @@ class _WelcomePageState extends State<WelcomePage> {
                           _startUpload = true;
                         });
 
-                        try {
-                          await cloudinary.uploadFile(
-                            CloudinaryFile.fromFile(
-                              _imageUrl,
-                              resourceType: CloudinaryResourceType.Image,
-                            ),
-                            onProgress: (count, total) {
+                        await cloudinarySdk
+                            .uploadResource(
+                          CloudinaryUploadResource(
+                            filePath: _imageUrl,
+                            resourceType: CloudinaryResourceType.image,
+                            folder: context.read<HFGlobalState>().userId,
+                            optParams: {
+                              'transformation': 'c_scale,w_300',
+                            },
+                            fileName:
+                                '${context.read<HFGlobalState>().userId}_profile_image',
+                            progressCallback: (count, total) {
                               setState(() {
                                 _uploadingPercentage = (count / total);
                               });
                             },
-                          ).then((value) {
-                            HFFirebaseFunctions()
-                                .getFirebaseAuthUser(context)
-                                .update({
-                              'imageUrl': value.secureUrl,
-                            }).then((res) {
-                              context
-                                  .read<HFGlobalState>()
-                                  .setUserImage(value.secureUrl);
-                            }).catchError(
-                                    (error) => print('Add failed: $error'));
-                          });
-                        } on CloudinaryException catch (e) {
-                          _startUpload = false;
-                          print(e.message);
-                          print(e.request);
-                        }
+                          ),
+                        )
+                            .then((value) {
+                          HFFirebaseFunctions()
+                              .getFirebaseAuthUser(context)
+                              .update({
+                            'imageUrl': value.secureUrl,
+                          }).then((res) {
+                            context
+                                .read<HFGlobalState>()
+                                .setUserImage(value.secureUrl);
+                          }).catchError((error) => print('Add failed: $error'));
+                        });
                       }
 
                       if (_imageUrlBackground != '') {
@@ -368,35 +373,36 @@ class _WelcomePageState extends State<WelcomePage> {
                           _startUploadBackground = true;
                         });
 
-                        try {
-                          await cloudinary.uploadFile(
-                            CloudinaryFile.fromFile(
-                              _imageUrlBackground,
-                              resourceType: CloudinaryResourceType.Image,
-                            ),
-                            onProgress: (count, total) {
+                        await cloudinarySdk
+                            .uploadResource(
+                          CloudinaryUploadResource(
+                            filePath: _imageUrlBackground,
+                            resourceType: CloudinaryResourceType.image,
+                            folder: context.read<HFGlobalState>().userId,
+                            optParams: {
+                              'transformation': 'c_scale,w_800',
+                            },
+                            fileName:
+                                '${context.read<HFGlobalState>().userId}_profile_background_image',
+                            progressCallback: (count, total) {
                               setState(() {
                                 _uploadingPercentageBackground =
                                     (count / total);
                               });
                             },
-                          ).then((value) {
-                            HFFirebaseFunctions()
-                                .getFirebaseAuthUser(context)
-                                .update({
-                              'profileBackgroundImageUrl': value.secureUrl,
-                            }).then((res) {
-                              context
-                                  .read<HFGlobalState>()
-                                  .setUserBackgroundImage(value.secureUrl);
-                            }).catchError(
-                                    (error) => print('Add failed: $error'));
-                          });
-                        } on CloudinaryException catch (e) {
-                          _startUploadBackground = false;
-                          print(e.message);
-                          print(e.request);
-                        }
+                          ),
+                        )
+                            .then((value) {
+                          HFFirebaseFunctions()
+                              .getFirebaseAuthUser(context)
+                              .update({
+                            'profileBackgroundImageUrl': value.secureUrl,
+                          }).then((res) {
+                            context
+                                .read<HFGlobalState>()
+                                .setUserBackgroundImage(value.secureUrl);
+                          }).catchError((error) => print('Add failed: $error'));
+                        });
                       }
 
                       if (userType == accessLevels.client) {
