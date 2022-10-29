@@ -81,9 +81,9 @@ class _AddTrainingState extends State<AddTraining> {
 
   @override
   void initState() {
-    _exerciseTypeNumberController.text = '0';
-    _exerciseRepsNumberController.text = '0';
-    _exerciseSeriesNumberController.text = '0';
+    // _exerciseTypeNumberController.text = '0';
+    // _exerciseRepsNumberController.text = '0';
+    // _exerciseSeriesNumberController.text = '0';
     _trainingNameController.text = widget.name;
     _trainingNoteController.text = widget.note;
 
@@ -282,8 +282,10 @@ class _AddTrainingState extends State<AddTraining> {
                               ),
                               HFInput(
                                 controller: _trainingNoteController,
+                                keyboardType: TextInputType.multiline,
                                 hintText: 'Set notes',
-                                maxLines: 8,
+                                minLines: 3,
+                                maxLines: 9,
                               ),
                               const SizedBox(
                                 height: 40,
@@ -587,7 +589,8 @@ class _AddTrainingState extends State<AddTraining> {
                             children: [
                               Expanded(
                                 child: HFInput(
-                                  keyboardType: TextInputType.number,
+                                  keyboardType: TextInputType.numberWithOptions(
+                                      decimal: true),
                                   labelText: _exerciseRepetitionType == 'weight'
                                       ? 'kg'
                                       : _exerciseRepetitionType == 'time'
@@ -602,7 +605,8 @@ class _AddTrainingState extends State<AddTraining> {
                               ),
                               Expanded(
                                 child: HFInput(
-                                  keyboardType: TextInputType.number,
+                                  keyboardType: TextInputType.numberWithOptions(
+                                      decimal: true),
                                   labelText: 'Reps',
                                   controller: _exerciseRepsNumberController,
                                 ),
@@ -613,7 +617,8 @@ class _AddTrainingState extends State<AddTraining> {
                               ),
                               Expanded(
                                 child: HFInput(
-                                  keyboardType: TextInputType.number,
+                                  keyboardType: TextInputType.numberWithOptions(
+                                      decimal: true),
                                   labelText: 'Series',
                                   controller: _exerciseSeriesNumberController,
                                 ),
@@ -627,6 +632,7 @@ class _AddTrainingState extends State<AddTraining> {
                           ),
                         HFInput(
                           controller: _exerciseNoteController,
+                          keyboardType: TextInputType.multiline,
                           hintText: 'Exercise notes',
                           maxLines: 8,
                         ),
@@ -648,10 +654,18 @@ class _AddTrainingState extends State<AddTraining> {
                                 'description': _exerciseDescription,
                                 'video': _exerciseVideo,
                                 'videoThumbnail': _exerciseThumbnail,
-                                'amount': _exerciseTypeNumberController.text,
+                                'amount':
+                                    _exerciseTypeNumberController.text == ''
+                                        ? '0'
+                                        : _exerciseTypeNumberController.text,
                                 'repetitions':
-                                    _exerciseRepsNumberController.text,
-                                'series': _exerciseSeriesNumberController.text,
+                                    _exerciseRepsNumberController.text == ''
+                                        ? '0'
+                                        : _exerciseRepsNumberController.text,
+                                'series':
+                                    _exerciseSeriesNumberController.text == ''
+                                        ? '0'
+                                        : _exerciseSeriesNumberController.text,
                                 'repetitionType': _exerciseRepetitionType,
                                 'types': _exerciseTypes,
                                 'note': _exerciseNoteController.text

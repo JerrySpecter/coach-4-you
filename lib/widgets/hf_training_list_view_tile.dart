@@ -145,7 +145,10 @@ class _HFTrainingListViewTileState extends State<HFTrainingListViewTile> {
                             ),
                             const SizedBox(height: 5),
                             HFHeading(
-                              text: '${widget.amount}',
+                              text:
+                                  widget.amount.toString().split('.')[1] == '0'
+                                      ? widget.amount.toString().split('.')[0]
+                                      : '${widget.amount}',
                               size: 4,
                               color: HFColors().whiteColor(),
                             ),
@@ -169,7 +172,12 @@ class _HFTrainingListViewTileState extends State<HFTrainingListViewTile> {
                             ),
                             const SizedBox(height: 5),
                             HFHeading(
-                              text: '${widget.repetitions}',
+                              text: widget.repetitions
+                                          .toString()
+                                          .split('.')[1] ==
+                                      '0'
+                                  ? widget.repetitions.toString().split('.')[0]
+                                  : '${widget.repetitions}',
                               size: 4,
                               color: HFColors().whiteColor(),
                             ),
@@ -193,7 +201,10 @@ class _HFTrainingListViewTileState extends State<HFTrainingListViewTile> {
                             ),
                             const SizedBox(height: 5),
                             HFHeading(
-                              text: '${widget.series}',
+                              text:
+                                  widget.series.toString().split('.')[1] == '0'
+                                      ? widget.series.toString().split('.')[0]
+                                      : '${widget.series}',
                               size: 4,
                               color: HFColors().whiteColor(),
                             ),

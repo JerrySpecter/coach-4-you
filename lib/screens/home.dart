@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:health_factory/constants/colors.dart';
+import 'package:health_factory/constants/firebase_functions.dart';
 import 'package:health_factory/constants/global_state.dart';
 import 'package:health_factory/constants/routes.dart';
 import 'package:health_factory/widgets/hf_image.dart';
@@ -77,7 +79,8 @@ class Home extends StatelessWidget {
                       height: 50,
                       width: 50,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(16)),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(16)),
                         boxShadow: getShadow(),
                         border: Border.all(
                           width: 2,
@@ -85,26 +88,67 @@ class Home extends StatelessWidget {
                         ),
                       ),
                       child: ClipRRect(
-                        borderRadius: BorderRadius.all(Radius.circular(14)),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(14)),
                         clipBehavior: Clip.hardEdge,
                         child: context.watch<HFGlobalState>().userImage != ''
                             ? Image.network(
                                 context.watch<HFGlobalState>().userImage,
                                 fit: BoxFit.cover,
                               )
-                            : HFImage(
+                            : const HFImage(
                                 imageUrl: '',
                                 network: false,
                               ),
                       ),
                     ),
                   ),
-                  // IconButton(
-                  //     onPressed: () {},
-                  //     icon: Icon(
-                  //       CupertinoIcons.bell,
-                  //       color: HFColors().primaryColor(),
-                  //     ))
+                  StreamBuilder(
+                    stream: HFFirebaseFunctions()
+                        .getFirebaseAuthUser(context)
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData || snapshot.hasError) {
+                        return NotificationBell(context);
+                      }
+
+                      var data = snapshot.data as DocumentSnapshot;
+
+                      if (!data.exists) {
+                        return NotificationBell(context);
+                      }
+
+                      var unreadNotifications = data.get('unreadNotifications');
+
+                      return Stack(
+                        children: [
+                          NotificationBell(context),
+                          AnimatedPositioned(
+                            top: unreadNotifications > 0 ? 0 : 5,
+                            right: 0,
+                            duration: const Duration(milliseconds: 200),
+                            child: AnimatedOpacity(
+                              opacity: unreadNotifications > 0 ? 1 : 0,
+                              duration: const Duration(milliseconds: 200),
+                              child: Container(
+                                width: 18,
+                                height: 18,
+                                decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: HFColors().redColor()),
+                                child: Center(
+                                  child: HFParagrpah(
+                                    text: '$unreadNotifications',
+                                    size: 6,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      );
+                    },
+                  )
                 ],
               ),
             ),
@@ -194,4 +238,16 @@ class Home extends StatelessWidget {
       ),
     );
   }
+}
+
+Widget NotificationBell(context) {
+  return IconButton(
+    onPressed: () {
+      Navigator.pushNamed(context, notifications);
+    },
+    icon: Icon(
+      CupertinoIcons.bell,
+      color: HFColors().primaryColor(),
+    ),
+  );
 }

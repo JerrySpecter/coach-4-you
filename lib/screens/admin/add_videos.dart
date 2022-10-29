@@ -196,6 +196,7 @@ class _AddVideosFormState extends State<AddVideosForm> {
           HFInput(
             hintText: 'Video description',
             controller: _videoDescriptionController,
+            keyboardType: TextInputType.multiline,
             maxLines: 9,
             validator: (value) {
               if (value == null || value.isEmpty) {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:health_factory/constants/colors.dart';
 import 'package:health_factory/widgets/hf_paragraph.dart';
+import 'package:another_flushbar/flushbar.dart';
 
 class HFSnackbar extends StatelessWidget {
   const HFSnackbar({
@@ -108,5 +109,24 @@ SnackBar getSnackBar({
         ),
       ],
     ),
+  );
+}
+
+Flushbar getNotificationBar(text, message, onTap) {
+  return Flushbar(
+    title: text,
+    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    margin: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+    titleColor: HFColors().whiteColor(),
+    message: message,
+    messageColor: HFColors().whiteColor(),
+    borderRadius: BorderRadius.circular(16),
+    onTap: onTap,
+    backgroundColor: HFColors().secondaryLightColor(),
+    flushbarPosition: FlushbarPosition.TOP,
+    duration: Duration(seconds: 5),
+    forwardAnimationCurve: Curves.easeInOut,
+    reverseAnimationCurve: Curves.easeInOut,
+    animationDuration: Duration(milliseconds: 400),
   );
 }

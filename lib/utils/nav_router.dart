@@ -16,6 +16,7 @@ import 'package:health_factory/screens/clients/add_client.dart';
 import 'package:health_factory/screens/news/add_news.dart';
 import 'package:health_factory/screens/events/single_event.dart';
 import 'package:health_factory/screens/news/news.dart';
+import 'package:health_factory/screens/notifications.dart';
 import 'package:health_factory/screens/report_a_bug.dart';
 import 'package:health_factory/screens/request_a_feature.dart';
 import 'package:health_factory/screens/requests/requests.dart';
@@ -466,6 +467,10 @@ Route<dynamic>? genRoute(RouteSettings settings) {
         builder: (_) => ClientThigh(
           clientId: data['clientId'],
         ),
+      );
+    case notifications:
+      return MaterialPageRoute(
+        builder: (_) => Notifications(),
       );
     case clientAddMidThighRoute:
       return MaterialPageRoute(

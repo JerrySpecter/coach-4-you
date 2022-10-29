@@ -40,6 +40,7 @@ class _RequestAFeatureState extends State<RequestAFeature> {
               ),
               HFInput(
                 controller: requestFieldTextController,
+                keyboardType: TextInputType.multiline,
                 labelText: 'Describe your feature',
                 minLines: 6,
                 maxLines: 10,

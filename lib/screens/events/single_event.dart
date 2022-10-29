@@ -470,6 +470,37 @@ class _EventScreenState extends State<EventScreen> {
               'notes': widget.notes,
               'isDone': widget.isDone,
             }).then((value) {
+              FirebaseFirestore.instance
+                  .collection('trainers')
+                  .doc(context.read<HFGlobalState>().userTrainerId)
+                  .get()
+                  .then((trainerRef) {
+                trainerRef.reference.collection('notifications').doc().set({
+                  'token': trainerRef['notificationToken'],
+                  'data': {
+                    'title': widget.title,
+                    'id': widget.id,
+                    'date': '${widget.date}',
+                    'startTime': widget.startTime,
+                    'endTime': widget.endTime,
+                    'client': widget.client,
+                    'exercises': widget.exercises,
+                    'location': widget.location,
+                    'notes': widget.notes,
+                    'isDone': widget.isDone,
+                  },
+                  'type': 'completed-workout',
+                  'read': false,
+                  'trainerImage': context.read<HFGlobalState>().userImage,
+                  'trainerName': context.read<HFGlobalState>().userName,
+                  'date': '${DateTime.now()}'
+                }).then((val) {
+                  trainerRef.reference.update({
+                    'unreadNotifications': trainerRef['unreadNotifications'] + 1
+                  });
+                });
+              });
+            }).then((value) {
               ScaffoldMessenger.of(context)
                   .showSnackBar(getSnackBar(text: 'Event marked as completed'));
 

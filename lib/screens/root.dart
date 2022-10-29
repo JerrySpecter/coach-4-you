@@ -1,7 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
 
+import 'package:another_flushbar/flushbar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -18,7 +21,9 @@ import 'package:intl/intl.dart';
 import '../constants/colors.dart';
 import '../constants/global_state.dart';
 import '../utils/event.dart';
+import '../widgets/hf_snackbar.dart';
 import 'chat.dart';
+import 'notifications.dart';
 
 const double iconSize = 32;
 const double barHeight = 60;
@@ -65,6 +70,21 @@ class RootPageState extends State<RootPage> {
               accessLevels.trainer) {
             HFFirebaseFunctions().initTrainerData(user.uid, context);
           }
+        });
+
+        FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+          var decodedData = jsonDecode(message.data['data']);
+
+          await getNotificationBar(
+            getNotificationHeading(decodedData),
+            getNotificationText(decodedData),
+            (Flushbar flushbar) {
+              handleNotificationTap(
+                  context, decodedData['type'], decodedData['data']);
+
+              flushbar.dismiss(context);
+            },
+          ).show(context);
         });
       } else {
         context.read<HFGlobalState>().setUserLoggedIn(false);

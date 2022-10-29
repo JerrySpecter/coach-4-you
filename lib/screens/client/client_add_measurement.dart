@@ -22,7 +22,7 @@ class ClientAddMeasurement extends StatelessWidget {
         foregroundColor: HFColors().primaryColor(),
         shadowColor: Colors.transparent,
         systemOverlayStyle: SystemUiOverlayStyle.light,
-        title: HFHeading(
+        title: const HFHeading(
           text: 'Add new measurement',
         ),
       ),
@@ -79,6 +79,7 @@ class _ClientAddMeasurementFormState extends State<ClientAddMeasurementForm> {
           HFInput(
             hintText: widget.hintText,
             controller: weightController,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Please enter weight.';
@@ -98,7 +99,7 @@ class _ClientAddMeasurementFormState extends State<ClientAddMeasurementForm> {
                   _isLoading = true;
                 });
 
-                var newId = Uuid().v4();
+                var newId = const Uuid().v4();
 
                 var editedData = {
                   'value': weightController.text,
@@ -136,7 +137,7 @@ class _ClientAddMeasurementFormState extends State<ClientAddMeasurementForm> {
               }
             },
           ),
-          SizedBox(
+          const SizedBox(
             height: 40,
           )
         ],

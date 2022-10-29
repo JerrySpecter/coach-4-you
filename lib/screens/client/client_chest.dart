@@ -202,10 +202,13 @@ class ClientChest extends StatelessWidget {
                                             .entries
                                             .map((entry) {
                                           double idx = entry.key.toDouble();
-                                          var val = entry.value;
+                                          String val = entry.value['value'];
 
-                                          return FlSpot(
-                                              idx, double.parse(val['value']));
+                                          if (val.contains(',')) {
+                                            val = val.split(',').join('.');
+                                          }
+
+                                          return FlSpot(idx, double.parse(val));
                                         }),
                                       ],
                                     )

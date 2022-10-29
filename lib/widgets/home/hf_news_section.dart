@@ -47,6 +47,8 @@ class HFNewsSection extends StatelessWidget {
                             : context.read<HFGlobalState>().userId,
                       )
                       .collection("news")
+                      .limit(20)
+                      .orderBy('date', descending: true)
                       .snapshots()
                   : Stream.empty(),
               builder: (context, snapshot) {

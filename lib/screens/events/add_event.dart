@@ -128,9 +128,9 @@ class AddEventScreenState extends State<AddEventScreen> {
       startTimeInitialDate = widget.date;
     }
 
-    exerciseTypeNumberController.text = '0';
-    exerciseRepsNumberController.text = '0';
-    exerciseSeriesNumberController.text = '0';
+    // exerciseTypeNumberController.text = '0';
+    // exerciseRepsNumberController.text = '0';
+    // exerciseSeriesNumberController.text = '0';
     selectedEventDate = widget.date;
     eventDateController.text = DateFormat('EEE, d/M/y').format(widget.date);
     stream = getTrainingsStream(searchText);
@@ -739,8 +739,9 @@ class AddEventScreenState extends State<AddEventScreen> {
                                                                 flex: 1,
                                                                 child: HFInput(
                                                                   keyboardType:
-                                                                      TextInputType
-                                                                          .number,
+                                                                      TextInputType.numberWithOptions(
+                                                                          decimal:
+                                                                              true),
                                                                   labelText: selectedTrainingExercises[index]
                                                                               [
                                                                               'repetitionType'] ==
@@ -761,8 +762,9 @@ class AddEventScreenState extends State<AddEventScreen> {
                                                                 flex: 1,
                                                                 child: HFInput(
                                                                   keyboardType:
-                                                                      TextInputType
-                                                                          .number,
+                                                                      TextInputType.numberWithOptions(
+                                                                          decimal:
+                                                                              true),
                                                                   labelText:
                                                                       'Reps',
                                                                   controller:
@@ -776,8 +778,9 @@ class AddEventScreenState extends State<AddEventScreen> {
                                                                 flex: 1,
                                                                 child: HFInput(
                                                                   keyboardType:
-                                                                      TextInputType
-                                                                          .number,
+                                                                      TextInputType.numberWithOptions(
+                                                                          decimal:
+                                                                              true),
                                                                   labelText:
                                                                       'Series',
                                                                   controller:
@@ -792,6 +795,9 @@ class AddEventScreenState extends State<AddEventScreen> {
                                                           HFInput(
                                                             controller:
                                                                 editexercisenotecontroller,
+                                                            keyboardType:
+                                                                TextInputType
+                                                                    .multiline,
                                                             labelText: 'Note',
                                                             hintText:
                                                                 'Exercise notes',
@@ -1010,6 +1016,9 @@ class AddEventScreenState extends State<AddEventScreen> {
                                                       HFInput(
                                                         controller:
                                                             editadditionalexercisenotecontroller,
+                                                        keyboardType:
+                                                            TextInputType
+                                                                .multiline,
                                                         labelText: 'Note',
                                                         hintText:
                                                             'Exercise notes',
@@ -1340,6 +1349,7 @@ class AddEventScreenState extends State<AddEventScreen> {
                           ),
                           HFInput(
                             controller: eventNoteController,
+                            keyboardType: TextInputType.multiline,
                             hintText: 'Workout notes',
                             maxLines: 8,
                           ),
@@ -1473,6 +1483,52 @@ class AddEventScreenState extends State<AddEventScreen> {
                                             .update({
                                           'changed': '$newDate',
                                         });
+                                      }).then((value) {
+                                        FirebaseFirestore.instance
+                                            .collection('clients')
+                                            .doc(selectedClient)
+                                            .get()
+                                            .then((clientRef) {
+                                          clientRef.reference
+                                              .collection('notifications')
+                                              .doc()
+                                              .set({
+                                            'type': 'new-workout',
+                                            'token':
+                                                clientRef['notificationToken'],
+                                            'read': false,
+                                            'trainerName': context
+                                                .read<HFGlobalState>()
+                                                .userName,
+                                            'trainerImage': context
+                                                .read<HFGlobalState>()
+                                                .userImage,
+                                            'data': {
+                                              'id': newId,
+                                              'title': eventNameController.text,
+                                              'date': '$selectedEventDate',
+                                              'startTime':
+                                                  eventStartController.text,
+                                              'endTime':
+                                                  eventEndController.text,
+                                              'client': {
+                                                'id': selectedClient,
+                                                'name': selectedClientName,
+                                              },
+                                              'exercises': exerciseList,
+                                              'color': selectedColor,
+                                              'location': selectedLocationName,
+                                              'notes': eventNoteController.text,
+                                              'isDone': false,
+                                            }
+                                          });
+
+                                          clientRef.reference.update({
+                                            'unreadNotifications': clientRef[
+                                                    'unreadNotifications'] +
+                                                1
+                                          });
+                                        });
                                       });
                                     }).then((value) {
                                       context
@@ -1484,7 +1540,7 @@ class AddEventScreenState extends State<AddEventScreen> {
 
                                     ScaffoldMessenger.of(context)
                                         .showSnackBar(getSnackBar(
-                                      text: 'New set added!',
+                                      text: 'New workout created',
                                       color:
                                           HFColors().primaryColor(opacity: 1),
                                     ));
@@ -1722,7 +1778,9 @@ class AddEventScreenState extends State<AddEventScreen> {
                                 Expanded(
                                   flex: 1,
                                   child: HFInput(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType:
+                                        const TextInputType.numberWithOptions(
+                                            decimal: true),
                                     labelText:
                                         exerciseRepetitionType == 'weight'
                                             ? 'kg'
@@ -1738,7 +1796,9 @@ class AddEventScreenState extends State<AddEventScreen> {
                                 Expanded(
                                   flex: 1,
                                   child: HFInput(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType:
+                                        const TextInputType.numberWithOptions(
+                                            decimal: true),
                                     labelText: 'Reps',
                                     controller: exerciseRepsNumberController,
                                   ),
@@ -1749,7 +1809,9 @@ class AddEventScreenState extends State<AddEventScreen> {
                                 Expanded(
                                   flex: 1,
                                   child: HFInput(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType:
+                                        const TextInputType.numberWithOptions(
+                                            decimal: true),
                                     labelText: 'Series',
                                     controller: exerciseSeriesNumberController,
                                   ),
@@ -1762,6 +1824,7 @@ class AddEventScreenState extends State<AddEventScreen> {
                             ),
                           HFInput(
                             controller: exerciseNoteController,
+                            keyboardType: TextInputType.multiline,
                             hintText: 'Exercise notes',
                             maxLines: 8,
                           ),
@@ -1863,9 +1926,9 @@ class AddEventScreenState extends State<AddEventScreen> {
     exerciseThumbnail = '';
     exerciseSelected = '';
     exerciseIdSelected = '';
-    exerciseTypeNumberController.text = '0';
-    exerciseRepsNumberController.text = '0';
-    exerciseSeriesNumberController.text = '0';
+    // exerciseTypeNumberController.text = '0';
+    // exerciseRepsNumberController.text = '0';
+    // exerciseSeriesNumberController.text = '0';
     exerciseRepetitionType = '';
     exerciseTypes = [];
     exerciseNoteController.text = '';

@@ -1,7 +1,11 @@
+import 'dart:convert';
+
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:health_factory/constants/colors.dart';
+import 'package:health_factory/screens/notifications.dart';
 import 'package:health_factory/screens/root.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'constants/global_state.dart';
@@ -9,6 +13,7 @@ import 'firebase_options.dart';
 import 'utils/nav_router.dart' as router;
 import 'package:provider/provider.dart';
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -26,9 +31,14 @@ void main() async {
   );
 }
 
-class HFApp extends StatelessWidget {
+class HFApp extends StatefulWidget {
   const HFApp({Key? key}) : super(key: key);
 
+  @override
+  State<HFApp> createState() => _HFAppState();
+}
+
+class _HFAppState extends State<HFApp> {
   checkForPermissions() async {
     var status = await Permission.photos.status;
     if (status.isDenied) {
@@ -40,6 +50,30 @@ class HFApp extends StatelessWidget {
       Permission.photos,
       Permission.notification,
     ].request();
+  }
+
+  Future<void> setupInteractedMessage() async {
+    RemoteMessage? initialMessage =
+        await FirebaseMessaging.instance.getInitialMessage();
+
+    if (initialMessage != null) {
+      _handleMessage(initialMessage);
+    }
+
+    FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
+  }
+
+  void _handleMessage(RemoteMessage message) {
+    var decodedData = jsonDecode(message.data['data']);
+
+    handleNotificationTap(context, decodedData['type'], decodedData['data']);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    setupInteractedMessage();
   }
 
   // This widget is the root of your application.
@@ -60,6 +94,7 @@ class HFApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Coach 4 you',
         onGenerateRoute: router.genRoute,
+        navigatorKey: navigatorKey,
         home: const RootPage(),
         theme: ThemeData(
           scaffoldBackgroundColor: HFColors().backgroundColor(),
@@ -92,3 +127,12 @@ class HFApp extends StatelessWidget {
     );
   }
 }
+
+// @pragma('vm:entry-point')
+// Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+//   // If you're going to use other Firebase services in the background, such as Firestore,
+//   // make sure you call `initializeApp` before using other Firebase services.
+//   await Firebase.initializeApp();
+
+//   print("Handling a background message: ${message.messageId}");
+// }

@@ -39,6 +39,7 @@ class _ReportABugState extends State<ReportABug> {
               ),
               HFInput(
                 controller: bugReportTextController,
+                keyboardType: TextInputType.multiline,
                 labelText: 'Describe your problem',
                 minLines: 6,
                 maxLines: 10,

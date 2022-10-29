@@ -620,6 +620,8 @@ class _AddExerciseFormState extends State<AddExerciseForm> {
           ),
           HFInput(
             hintText: 'Exercise description',
+            keyboardType: TextInputType.multiline,
+            minLines: 3,
             maxLines: 9,
             controller: _exerciseDescriptionController,
           ),

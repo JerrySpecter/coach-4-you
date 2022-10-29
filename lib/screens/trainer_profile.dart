@@ -512,6 +512,7 @@ class _TrainerProfileState extends State<TrainerProfile> {
                                   paste: true,
                                   selectAll: true,
                                 ),
+                                minLines: 3,
                                 maxLines: 4,
                                 keyboardType: TextInputType.multiline,
                                 controller: contentController,

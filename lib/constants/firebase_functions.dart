@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:health_factory/screens/root.dart';
 import 'package:provider/provider.dart';
@@ -103,7 +104,10 @@ class HFFirebaseFunctions {
         .collection('clients')
         .doc(userId)
         .get()
-        .then((client) {
+        .then((client) async {
+      final fcmToken = await FirebaseMessaging.instance.getToken();
+
+      client.reference.update({'notificationToken': fcmToken});
       context.read<HFGlobalState>().setUserFirstName(client['firstName']);
       context.read<HFGlobalState>().setUserLastName(client['lastName']);
       context.read<HFGlobalState>().setUserImage(client['imageUrl']);
@@ -143,7 +147,10 @@ class HFFirebaseFunctions {
         .collection('trainers')
         .doc(userId)
         .get()
-        .then((trainer) {
+        .then((trainer) async {
+      final fcmToken = await FirebaseMessaging.instance.getToken();
+      trainer.reference.update({'notificationToken': fcmToken});
+
       context.read<HFGlobalState>().setUserAvailable(trainer['available']);
       context.read<HFGlobalState>().setUserBirthday(trainer['birthday']);
       context.read<HFGlobalState>().setUserEducation(trainer['education']);
@@ -179,5 +186,31 @@ class HFFirebaseFunctions {
         }
       }
     }).catchError((error) => print(error));
+  }
+
+  addTrainerFields(context, Map<String, dynamic> fields) {
+    FirebaseFirestore.instance
+        .collection('trainers')
+        .get()
+        .then((querySnapshot) {
+      querySnapshot.docs.forEach((trainer) {
+        trainer.reference.update(fields);
+      });
+    });
+  }
+
+  addClientFields(context, Map<String, dynamic> fields) {
+    FirebaseFirestore.instance
+        .collection('clients')
+        .get()
+        .then((querySnapshot) {
+      querySnapshot.docs.forEach((client) {
+        client.reference.update(fields);
+      });
+    }).onError((error, stackTrace) {
+      print(error);
+    }).catchError((onError) {
+      print(onError);
+    });
   }
 }

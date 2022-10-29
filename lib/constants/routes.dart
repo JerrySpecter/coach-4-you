@@ -53,3 +53,4 @@ const String addClient = '/add-client';
 const String editProfile = '/edit-profile';
 const String reportBug = '/report-bug';
 const String requestFeature = '/request-feature';
+const String notifications = '/notifications';

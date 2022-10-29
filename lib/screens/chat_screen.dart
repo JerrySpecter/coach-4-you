@@ -233,6 +233,104 @@ class _ChatScreenState extends State<ChatScreen> {
                                     ? value['messages']['numberOfUnseenTrainer']
                                     : value['messages']['numberOfUnseenClient'];
 
+                                if (numberOfMessages == 0) {
+                                  if (context
+                                          .read<HFGlobalState>()
+                                          .userAccessLevel ==
+                                      accessLevels.client) {
+                                    FirebaseFirestore.instance
+                                        .collection('trainers')
+                                        .doc(getTrainerId())
+                                        .get()
+                                        .then((trainerRef) {
+                                      trainerRef.reference
+                                          .collection('notifications')
+                                          .doc()
+                                          .set({
+                                        'type': 'new-message',
+                                        'token':
+                                            trainerRef['notificationToken'],
+                                        'trainerImage': context
+                                            .read<HFGlobalState>()
+                                            .userImage,
+                                        'trainerName': context
+                                            .read<HFGlobalState>()
+                                            .userName,
+                                        'date': '${DateTime.now()}',
+                                        'read': false,
+                                        'data': {
+                                          'senderId': context
+                                              .read<HFGlobalState>()
+                                              .userId,
+                                          'senderName': context
+                                              .read<HFGlobalState>()
+                                              .userName,
+                                          'senderEmail': context
+                                              .read<HFGlobalState>()
+                                              .userEmail,
+                                          'senderImageUrl': context
+                                              .read<HFGlobalState>()
+                                              .userImage,
+                                          'message': messageText,
+                                        }
+                                      });
+
+                                      trainerRef.reference.update({
+                                        'unreadNotifications':
+                                            trainerRef['unreadNotifications'] +
+                                                1
+                                      });
+                                    });
+                                  }
+
+                                  if (context
+                                          .read<HFGlobalState>()
+                                          .userAccessLevel ==
+                                      accessLevels.trainer) {
+                                    FirebaseFirestore.instance
+                                        .collection('clients')
+                                        .doc(widget.id)
+                                        .get()
+                                        .then((clientRef) {
+                                      clientRef.reference
+                                          .collection('notifications')
+                                          .doc()
+                                          .set({
+                                        'type': 'new-message',
+                                        'token': clientRef['notificationToken'],
+                                        'trainerImage': context
+                                            .read<HFGlobalState>()
+                                            .userImage,
+                                        'trainerName': context
+                                            .read<HFGlobalState>()
+                                            .userName,
+                                        'date': '${DateTime.now()}',
+                                        'read': false,
+                                        'data': {
+                                          'senderId': context
+                                              .read<HFGlobalState>()
+                                              .userId,
+                                          'senderName': context
+                                              .read<HFGlobalState>()
+                                              .userName,
+                                          'senderEmail': context
+                                              .read<HFGlobalState>()
+                                              .userEmail,
+                                          'senderImageUrl': context
+                                              .read<HFGlobalState>()
+                                              .userImage,
+                                          'message': messageText,
+                                        }
+                                      });
+
+                                      clientRef.reference.update({
+                                        'unreadNotifications':
+                                            clientRef['unreadNotifications'] + 1
+                                      });
+                                    });
+                                  }
+                                }
+
                                 FirebaseFirestore.instance
                                     .collection('trainers')
                                     .doc(getTrainerId())

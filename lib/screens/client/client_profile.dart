@@ -379,7 +379,7 @@ class _ClientProfileState extends State<ClientProfile> {
                       'Thigh circumference',
                       'cm',
                       clientMidThighRoute,
-                      widget.asTrainer,
+                      widget.id,
                     ),
                   ],
                 ),

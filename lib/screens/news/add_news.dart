@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudinary_public/cloudinary_public.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -88,6 +89,7 @@ class AddNewsScreenState extends State<AddNewsScreen> {
                     ),
                     HFInput(
                       controller: newsExcerptController,
+                      keyboardType: TextInputType.multiline,
                       hintText: 'News content',
                       labelText: 'News content',
                       showCursor: true,
@@ -117,7 +119,7 @@ class AddNewsScreenState extends State<AddNewsScreen> {
                                     _uploadingPercentage = (count / total);
                                   });
                                 },
-                              ).then((value) {
+                              ).then((cloudinaryResponse) {
                                 HFFirebaseFunctions()
                                     .getFirebaseAuthUser(context)
                                     .collection('news')
@@ -130,8 +132,63 @@ class AddNewsScreenState extends State<AddNewsScreen> {
                                   'likes': [],
                                   'id': newId,
                                   'date': '${DateTime.now()}',
-                                  'imageUrl': value.secureUrl,
+                                  'imageUrl': cloudinaryResponse.secureUrl,
                                 }).then(
+                                  (v) {
+                                    HFFirebaseFunctions()
+                                        .getFirebaseAuthUser(context)
+                                        .collection('clients')
+                                        .get()
+                                        .then((clientRef) {
+                                      var clientDocs = clientRef.docs;
+
+                                      for (var clientDoc in clientDocs) {
+                                        FirebaseFirestore.instance
+                                            .collection('clients')
+                                            .doc(clientDoc['id'])
+                                            .get()
+                                            .then((clientProfileDoc) {
+                                          clientProfileDoc.reference
+                                              .collection('notifications')
+                                              .doc()
+                                              .set({
+                                            'type': 'new-news',
+                                            'token': clientProfileDoc[
+                                                'notificationToken'],
+                                            'trainerName': context
+                                                .read<HFGlobalState>()
+                                                .userName,
+                                            'trainerImage': context
+                                                .read<HFGlobalState>()
+                                                .userImage,
+                                            'date': '${DateTime.now()}',
+                                            'read': false,
+                                            'data': {
+                                              'title': newsTitleController.text,
+                                              'excerpt':
+                                                  newsExcerptController.text,
+                                              'author': context
+                                                  .read<HFGlobalState>()
+                                                  .userName,
+                                              'likes': [],
+                                              'id': newId,
+                                              'date': '${DateTime.now()}',
+                                              'imageUrl':
+                                                  cloudinaryResponse.secureUrl,
+                                            }
+                                          });
+
+                                          clientProfileDoc.reference.update({
+                                            'unreadNotifications':
+                                                clientProfileDoc[
+                                                        'unreadNotifications'] +
+                                                    1
+                                          });
+                                        });
+                                      }
+                                    });
+                                  },
+                                ).then(
                                   (value) {
                                     Navigator.pop(context);
 
@@ -163,15 +220,65 @@ class AddNewsScreenState extends State<AddNewsScreen> {
                               'imageUrl': _imageUrl,
                             }).then(
                               (value) {
-                                Navigator.pop(context);
+                                HFFirebaseFunctions()
+                                    .getFirebaseAuthUser(context)
+                                    .collection('clients')
+                                    .get()
+                                    .then((clientRef) {
+                                  var clientDocs = clientRef.docs;
 
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(getSnackBar(
-                                  text: 'New post published!',
-                                  color: HFColors().primaryColor(),
-                                ));
+                                  for (var clientDoc in clientDocs) {
+                                    FirebaseFirestore.instance
+                                        .collection('clients')
+                                        .doc(clientDoc['id'])
+                                        .get()
+                                        .then((clientProfileDoc) {
+                                      clientProfileDoc.reference
+                                          .collection('notifications')
+                                          .doc()
+                                          .set({
+                                        'type': 'new-news',
+                                        'token': clientProfileDoc[
+                                            'notificationToken'],
+                                        'trainerName': context
+                                            .read<HFGlobalState>()
+                                            .userName,
+                                        'trainerImage': context
+                                            .read<HFGlobalState>()
+                                            .userImage,
+                                        'date': '${DateTime.now()}',
+                                        'read': false,
+                                        'data': {
+                                          'title': newsTitleController.text,
+                                          'excerpt': newsExcerptController.text,
+                                          'author': context
+                                              .read<HFGlobalState>()
+                                              .userName,
+                                          'likes': [],
+                                          'id': newId,
+                                          'date': '${DateTime.now()}',
+                                          'imageUrl': _imageUrl,
+                                        }
+                                      });
+
+                                      clientProfileDoc.reference.update({
+                                        'unreadNotifications': clientProfileDoc[
+                                                'unreadNotifications'] +
+                                            1
+                                      });
+                                    });
+                                  }
+                                });
                               },
-                            ).catchError(
+                            ).then((value) {
+                              Navigator.pop(context);
+
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(getSnackBar(
+                                text: 'New post published!',
+                                color: HFColors().primaryColor(),
+                              ));
+                            }).catchError(
                                     (error) => print('Add failed: $error'));
                           }
                         }
