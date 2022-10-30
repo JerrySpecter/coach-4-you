@@ -14,6 +14,7 @@ import 'package:uuid/uuid.dart';
 import 'package:intl/intl.dart';
 
 import '../../constants/global_state.dart';
+import '../../widgets/hf_input_number_field.dart';
 import '../../widgets/hf_paragraph.dart';
 import '../../widgets/hf_select_list_view_tile.dart';
 import '../../widgets/hf_training_list_view_tile.dart';
@@ -737,11 +738,8 @@ class AddEventScreenState extends State<AddEventScreen> {
                                                             children: [
                                                               Expanded(
                                                                 flex: 1,
-                                                                child: HFInput(
-                                                                  keyboardType:
-                                                                      TextInputType.numberWithOptions(
-                                                                          decimal:
-                                                                              true),
+                                                                child:
+                                                                    HFInputNumber(
                                                                   labelText: selectedTrainingExercises[index]
                                                                               [
                                                                               'repetitionType'] ==
@@ -760,11 +758,8 @@ class AddEventScreenState extends State<AddEventScreen> {
                                                               ),
                                                               Expanded(
                                                                 flex: 1,
-                                                                child: HFInput(
-                                                                  keyboardType:
-                                                                      TextInputType.numberWithOptions(
-                                                                          decimal:
-                                                                              true),
+                                                                child:
+                                                                    HFInputNumber(
                                                                   labelText:
                                                                       'Reps',
                                                                   controller:
@@ -776,11 +771,8 @@ class AddEventScreenState extends State<AddEventScreen> {
                                                               ),
                                                               Expanded(
                                                                 flex: 1,
-                                                                child: HFInput(
-                                                                  keyboardType:
-                                                                      TextInputType.numberWithOptions(
-                                                                          decimal:
-                                                                              true),
+                                                                child:
+                                                                    HFInputNumber(
                                                                   labelText:
                                                                       'Series',
                                                                   controller:
@@ -811,22 +803,28 @@ class AddEventScreenState extends State<AddEventScreen> {
                                                             onPressed: () {
                                                               setState(() {
                                                                 selectedTrainingExercises[
-                                                                            index]
-                                                                        [
-                                                                        'amount'] =
-                                                                    editexerciseamountcontroller
+                                                                        index][
+                                                                    'amount'] = editexerciseamountcontroller
+                                                                            .text ==
+                                                                        ''
+                                                                    ? '0'
+                                                                    : editexerciseamountcontroller
                                                                         .text;
                                                                 selectedTrainingExercises[
-                                                                            index]
-                                                                        [
-                                                                        'repetitions'] =
-                                                                    editexerciserepetitionscontroller
+                                                                        index][
+                                                                    'repetitions'] = editexerciserepetitionscontroller
+                                                                            .text ==
+                                                                        ''
+                                                                    ? '0'
+                                                                    : editexerciserepetitionscontroller
                                                                         .text;
                                                                 selectedTrainingExercises[
-                                                                            index]
-                                                                        [
-                                                                        'series'] =
-                                                                    editexerciseseriescontroller
+                                                                        index][
+                                                                    'series'] = editexerciseseriescontroller
+                                                                            .text ==
+                                                                        ''
+                                                                    ? '0'
+                                                                    : editexerciseseriescontroller
                                                                         .text;
                                                                 selectedTrainingExercises[
                                                                             index]
@@ -959,10 +957,8 @@ class AddEventScreenState extends State<AddEventScreen> {
                                                         children: [
                                                           Expanded(
                                                             flex: 1,
-                                                            child: HFInput(
-                                                              keyboardType:
-                                                                  TextInputType
-                                                                      .number,
+                                                            child:
+                                                                HFInputNumber(
                                                               labelText: selectedExercises[
                                                                               index]
                                                                           [
@@ -984,10 +980,8 @@ class AddEventScreenState extends State<AddEventScreen> {
                                                           ),
                                                           Expanded(
                                                             flex: 1,
-                                                            child: HFInput(
-                                                              keyboardType:
-                                                                  TextInputType
-                                                                      .number,
+                                                            child:
+                                                                HFInputNumber(
                                                               labelText: 'Reps',
                                                               controller:
                                                                   editadditionalexerciserepetitionscontroller,
@@ -998,10 +992,8 @@ class AddEventScreenState extends State<AddEventScreen> {
                                                           ),
                                                           Expanded(
                                                             flex: 1,
-                                                            child: HFInput(
-                                                              keyboardType:
-                                                                  TextInputType
-                                                                      .number,
+                                                            child:
+                                                                HFInputNumber(
                                                               labelText:
                                                                   'Series',
                                                               controller:
@@ -1035,17 +1027,29 @@ class AddEventScreenState extends State<AddEventScreen> {
                                                                         index]
                                                                     ['amount'] =
                                                                 editadditionalexerciseamountcontroller
-                                                                    .text;
+                                                                            .text ==
+                                                                        ''
+                                                                    ? '0'
+                                                                    : editadditionalexerciseamountcontroller
+                                                                        .text;
                                                             selectedExercises[
                                                                         index][
                                                                     'repetitions'] =
                                                                 editadditionalexerciserepetitionscontroller
-                                                                    .text;
+                                                                            .text ==
+                                                                        ''
+                                                                    ? '0'
+                                                                    : editadditionalexerciserepetitionscontroller
+                                                                        .text;
                                                             selectedExercises[
                                                                         index]
                                                                     ['series'] =
                                                                 editadditionalexerciseseriescontroller
-                                                                    .text;
+                                                                            .text ==
+                                                                        ''
+                                                                    ? '0'
+                                                                    : editadditionalexerciseseriescontroller
+                                                                        .text;
                                                             selectedExercises[
                                                                         index]
                                                                     ['note'] =
@@ -1136,382 +1140,400 @@ class AddEventScreenState extends State<AddEventScreen> {
                                               0.7,
                                         ),
                                         builder: (context) {
-                                          return Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  const BorderRadius.only(
-                                                topLeft: Radius.circular(16),
-                                                topRight: Radius.circular(16),
+                                          return StatefulBuilder(builder:
+                                              (BuildContext context,
+                                                  StateSetter setModalState) {
+                                            return Container(
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    const BorderRadius.only(
+                                                  topLeft: Radius.circular(16),
+                                                  topRight: Radius.circular(16),
+                                                ),
+                                                color: HFColors()
+                                                    .secondaryLightColor(),
                                               ),
-                                              color: HFColors()
-                                                  .secondaryLightColor(),
-                                            ),
-                                            child: SingleChildScrollView(
-                                              child: Container(
-                                                padding:
-                                                    const EdgeInsets.all(16),
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment
-                                                          .stretch,
-                                                  children: [
-                                                    Row(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .center,
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: [
-                                                        const HFHeading(
-                                                          text: 'Add exercise',
-                                                          size: 7,
-                                                        ),
-                                                        IconButton(
-                                                          onPressed: (() {
-                                                            Navigator.pop(
-                                                                context);
-                                                          }),
-                                                          icon: Icon(
-                                                            CupertinoIcons
-                                                                .multiply,
-                                                            color: HFColors()
-                                                                .primaryColor(),
-                                                          ),
-                                                        )
-                                                      ],
-                                                    ),
-                                                    const SizedBox(
-                                                      height: 20,
-                                                    ),
-                                                    Container(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              8),
-                                                      decoration: BoxDecoration(
-                                                        border: Border.all(
-                                                          width: 1,
-                                                          color: HFColors()
-                                                              .primaryColor(
-                                                                  opacity: 0.2),
-                                                        ),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(22),
-                                                      ),
-                                                      child: ConstrainedBox(
-                                                        constraints:
-                                                            const BoxConstraints(
-                                                          maxHeight: 350,
-                                                          minHeight: 100,
-                                                        ),
-                                                        child: StreamBuilder(
-                                                          stream:
-                                                              exerciseStream,
-                                                          builder: (context,
-                                                              snapshot) {
-                                                            if (!snapshot
-                                                                .hasData) {
-                                                              return const Center(
-                                                                child:
-                                                                    HFParagrpah(
-                                                                  text:
-                                                                      'No exercises. no data',
-                                                                  size: 10,
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .center,
-                                                                ),
-                                                              );
-                                                            }
-
-                                                            var data = snapshot
-                                                                    .data
-                                                                as QuerySnapshot;
-
-                                                            if (data
-                                                                .docs.isEmpty) {
-                                                              return const Center(
-                                                                child:
-                                                                    HFParagrpah(
-                                                                  text:
-                                                                      'No exercises. empty',
-                                                                  size: 10,
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .center,
-                                                                ),
-                                                              );
-                                                            }
-
-                                                            return ListView(
-                                                              shrinkWrap: true,
-                                                              children: [
-                                                                ...data.docs
-                                                                    .map(
-                                                                  (exercise) {
-                                                                    return HFSelectListViewTile(
-                                                                      name: exercise[
-                                                                          'name'],
-                                                                      imageUrl:
-                                                                          exercise[
-                                                                              'videoThumbnail'],
-                                                                      showAvailable:
-                                                                          false,
-                                                                      isSelected:
-                                                                          exerciseSelected ==
-                                                                              exercise['name'],
-                                                                      headingMargin:
-                                                                          0,
-                                                                      imageSize:
-                                                                          48,
-                                                                      backgroundColor:
-                                                                          HFColors()
-                                                                              .secondaryColor(),
-                                                                      id: exercise[
-                                                                          'id'],
-                                                                      useSpacerBottom:
-                                                                          true,
-                                                                      child:
-                                                                          Column(
-                                                                        crossAxisAlignment:
-                                                                            CrossAxisAlignment.start,
-                                                                        children: [
-                                                                          HFParagrpah(
-                                                                            text:
-                                                                                'Author: ${exercise['author']}',
-                                                                            size:
-                                                                                5,
-                                                                          ),
-                                                                          const SizedBox(
-                                                                            height:
-                                                                                5,
-                                                                          ),
-                                                                          HFParagrpah(
-                                                                            text:
-                                                                                exercise['description'],
-                                                                            size:
-                                                                                6,
-                                                                            maxLines:
-                                                                                1,
-                                                                            color:
-                                                                                HFColors().whiteColor(opacity: 0.7),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                      onTap:
-                                                                          () {
-                                                                        setState(
-                                                                            () {
-                                                                          exerciseDescription =
-                                                                              exercise['description'];
-                                                                          exerciseVideo =
-                                                                              exercise['video'];
-                                                                          exerciseThumbnail =
-                                                                              exercise['videoThumbnail'];
-                                                                          exerciseSelected =
-                                                                              exercise['name'];
-                                                                          exerciseIdSelected =
-                                                                              exercise['id'];
-                                                                          exerciseRepetitionType =
-                                                                              exercise['repetitionType'];
-                                                                          exerciseTypes =
-                                                                              exercise['types'];
-                                                                        });
-                                                                      },
-                                                                    );
-                                                                  },
-                                                                )
-                                                              ],
-                                                            );
-                                                          },
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    HFInput(
-                                                      controller:
-                                                          exerciseSearchFieldController,
-                                                      onChanged: (value) {
-                                                        setState(() {
-                                                          exerciseSearchText =
-                                                              value;
-
-                                                          exerciseStream = getStream(
-                                                              true,
-                                                              context
-                                                                  .read<
-                                                                      HFGlobalState>()
-                                                                  .userDisplayName,
-                                                              exerciseSearchText);
-                                                        });
-                                                      },
-                                                      hintText:
-                                                          'Filter exercises',
-                                                      keyboardType:
-                                                          TextInputType.text,
-                                                      verticalContentPadding:
-                                                          12,
-                                                    ),
-                                                    const SizedBox(
-                                                      height: 20,
-                                                    ),
-                                                    if (exerciseSelected
-                                                        .isNotEmpty)
-                                                      Flex(
-                                                        direction:
-                                                            Axis.horizontal,
+                                              child: SingleChildScrollView(
+                                                child: Container(
+                                                  padding:
+                                                      const EdgeInsets.all(16),
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .stretch,
+                                                    children: [
+                                                      Row(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
                                                         children: [
-                                                          Expanded(
-                                                            flex: 1,
-                                                            child: HFInput(
-                                                              keyboardType:
-                                                                  const TextInputType
-                                                                          .numberWithOptions(
-                                                                      decimal:
-                                                                          true),
-                                                              labelText: exerciseRepetitionType ==
-                                                                      'weight'
-                                                                  ? 'kg'
-                                                                  : exerciseRepetitionType ==
-                                                                          'time'
-                                                                      ? 'Minutes'
-                                                                      : '',
-                                                              controller:
-                                                                  exerciseTypeNumberController,
+                                                          const HFHeading(
+                                                            text:
+                                                                'Add exercise',
+                                                            size: 7,
+                                                          ),
+                                                          IconButton(
+                                                            onPressed: (() {
+                                                              Navigator.pop(
+                                                                  context);
+                                                            }),
+                                                            icon: Icon(
+                                                              CupertinoIcons
+                                                                  .multiply,
+                                                              color: HFColors()
+                                                                  .primaryColor(),
                                                             ),
-                                                          ),
-                                                          const SizedBox(
-                                                            width: 20,
-                                                          ),
-                                                          Expanded(
-                                                            flex: 1,
-                                                            child: HFInput(
-                                                              keyboardType:
-                                                                  const TextInputType
-                                                                          .numberWithOptions(
-                                                                      decimal:
-                                                                          true),
-                                                              labelText: 'Reps',
-                                                              controller:
-                                                                  exerciseRepsNumberController,
-                                                            ),
-                                                          ),
-                                                          const SizedBox(
-                                                            width: 20,
-                                                          ),
-                                                          Expanded(
-                                                            flex: 1,
-                                                            child: HFInput(
-                                                              keyboardType:
-                                                                  const TextInputType
-                                                                          .numberWithOptions(
-                                                                      decimal:
-                                                                          true),
-                                                              labelText:
-                                                                  'Series',
-                                                              controller:
-                                                                  exerciseSeriesNumberController,
-                                                            ),
-                                                          ),
+                                                          )
                                                         ],
                                                       ),
-                                                    if (exerciseSelected
-                                                        .isNotEmpty)
                                                       const SizedBox(
                                                         height: 20,
                                                       ),
-                                                    HFInput(
-                                                      controller:
-                                                          exerciseNoteController,
-                                                      keyboardType:
-                                                          TextInputType
-                                                              .multiline,
-                                                      hintText:
-                                                          'Exercise notes',
-                                                      maxLines: 8,
-                                                    ),
-                                                    const SizedBox(
-                                                      height: 20,
-                                                    ),
-                                                    HFButton(
-                                                      text: 'Add exercise',
-                                                      padding: const EdgeInsets
-                                                              .symmetric(
-                                                          vertical: 16),
-                                                      onPressed: () {
-                                                        setState(() {
-                                                          var newId =
-                                                              const Uuid().v4();
-                                                          selectedExercises
-                                                              .add({
-                                                            'id': newId,
-                                                            'name':
-                                                                exerciseSelected,
-                                                            'exerciseId':
-                                                                exerciseIdSelected,
-                                                            'amount': exerciseTypeNumberController
-                                                                        .text ==
-                                                                    ''
-                                                                ? '0'
-                                                                : exerciseTypeNumberController
-                                                                    .text,
-                                                            'repetitions':
-                                                                exerciseRepsNumberController
-                                                                            .text ==
-                                                                        ''
-                                                                    ? '0'
-                                                                    : exerciseRepsNumberController
-                                                                        .text,
-                                                            'series': exerciseSeriesNumberController
-                                                                        .text ==
-                                                                    ''
-                                                                ? '0'
-                                                                : exerciseSeriesNumberController
-                                                                    .text,
-                                                            'repetitionType':
-                                                                exerciseRepetitionType,
-                                                            'types':
-                                                                exerciseTypes,
-                                                            'note':
-                                                                exerciseNoteController
-                                                                    .text,
-                                                            'description':
-                                                                exerciseDescription,
-                                                            'video':
-                                                                exerciseVideo,
-                                                            'videoThumbnail':
-                                                                exerciseThumbnail
+                                                      Container(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(8),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          border: Border.all(
+                                                            width: 1,
+                                                            color: HFColors()
+                                                                .primaryColor(
+                                                                    opacity:
+                                                                        0.2),
+                                                          ),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(22),
+                                                        ),
+                                                        child: ConstrainedBox(
+                                                          constraints:
+                                                              const BoxConstraints(
+                                                            maxHeight: 350,
+                                                            minHeight: 100,
+                                                          ),
+                                                          child: StreamBuilder(
+                                                            stream:
+                                                                exerciseStream,
+                                                            builder: (context,
+                                                                snapshot) {
+                                                              if (!snapshot
+                                                                  .hasData) {
+                                                                return const Center(
+                                                                  child:
+                                                                      HFParagrpah(
+                                                                    text:
+                                                                        'No exercises. no data',
+                                                                    size: 10,
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .center,
+                                                                  ),
+                                                                );
+                                                              }
+
+                                                              var data = snapshot
+                                                                      .data
+                                                                  as QuerySnapshot;
+
+                                                              if (data.docs
+                                                                  .isEmpty) {
+                                                                return const Center(
+                                                                  child:
+                                                                      HFParagrpah(
+                                                                    text:
+                                                                        'No exercises.',
+                                                                    size: 10,
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .center,
+                                                                  ),
+                                                                );
+                                                              }
+
+                                                              return ListView(
+                                                                shrinkWrap:
+                                                                    true,
+                                                                children: [
+                                                                  ...data.docs
+                                                                      .map(
+                                                                    (exercise) {
+                                                                      return HFSelectListViewTile(
+                                                                        name: exercise[
+                                                                            'name'],
+                                                                        imageUrl:
+                                                                            exercise['videoThumbnail'],
+                                                                        showAvailable:
+                                                                            false,
+                                                                        isSelected:
+                                                                            exerciseSelected ==
+                                                                                exercise['name'],
+                                                                        headingMargin:
+                                                                            0,
+                                                                        imageSize:
+                                                                            48,
+                                                                        backgroundColor:
+                                                                            HFColors().secondaryColor(),
+                                                                        id: exercise[
+                                                                            'id'],
+                                                                        useSpacerBottom:
+                                                                            true,
+                                                                        child:
+                                                                            Column(
+                                                                          crossAxisAlignment:
+                                                                              CrossAxisAlignment.start,
+                                                                          children: [
+                                                                            HFParagrpah(
+                                                                              text: 'Author: ${exercise['author']}',
+                                                                              size: 5,
+                                                                            ),
+                                                                            const SizedBox(
+                                                                              height: 5,
+                                                                            ),
+                                                                            HFParagrpah(
+                                                                              text: exercise['description'],
+                                                                              size: 6,
+                                                                              maxLines: 1,
+                                                                              color: HFColors().whiteColor(opacity: 0.7),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                        onTap:
+                                                                            () {
+                                                                          setModalState(
+                                                                              () {
+                                                                            exerciseDescription =
+                                                                                exercise['description'];
+                                                                            exerciseVideo =
+                                                                                exercise['video'];
+                                                                            exerciseThumbnail =
+                                                                                exercise['videoThumbnail'];
+                                                                            exerciseSelected =
+                                                                                exercise['name'];
+                                                                            exerciseIdSelected =
+                                                                                exercise['id'];
+                                                                            exerciseRepetitionType =
+                                                                                exercise['repetitionType'];
+                                                                            exerciseTypes =
+                                                                                exercise['types'];
+                                                                          });
+                                                                        },
+                                                                      );
+                                                                    },
+                                                                  )
+                                                                ],
+                                                              );
+                                                            },
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      HFInput(
+                                                        controller:
+                                                            exerciseSearchFieldController,
+                                                        onChanged: (value) {
+                                                          setModalState(() {
+                                                            exerciseSearchText =
+                                                                value;
+
+                                                            exerciseStream = getStream(
+                                                                true,
+                                                                context
+                                                                    .read<
+                                                                        HFGlobalState>()
+                                                                    .userDisplayName,
+                                                                exerciseSearchText);
+                                                          });
+                                                        },
+                                                        hintText:
+                                                            'Filter exercises',
+                                                        keyboardType:
+                                                            TextInputType.text,
+                                                        verticalContentPadding:
+                                                            12,
+                                                      ),
+                                                      const SizedBox(
+                                                        height: 20,
+                                                      ),
+                                                      if (exerciseSelected
+                                                          .isNotEmpty)
+                                                        Flex(
+                                                          direction:
+                                                              Axis.horizontal,
+                                                          children: [
+                                                            Expanded(
+                                                              flex: 1,
+                                                              child: HFInput(
+                                                                keyboardType:
+                                                                    const TextInputType
+                                                                            .numberWithOptions(
+                                                                        decimal:
+                                                                            true),
+                                                                labelText: exerciseRepetitionType ==
+                                                                        'weight'
+                                                                    ? 'kg'
+                                                                    : exerciseRepetitionType ==
+                                                                            'time'
+                                                                        ? 'Minutes'
+                                                                        : '',
+                                                                controller:
+                                                                    exerciseTypeNumberController,
+                                                              ),
+                                                            ),
+                                                            const SizedBox(
+                                                              width: 20,
+                                                            ),
+                                                            Expanded(
+                                                              flex: 1,
+                                                              child: HFInput(
+                                                                keyboardType:
+                                                                    const TextInputType
+                                                                            .numberWithOptions(
+                                                                        decimal:
+                                                                            true),
+                                                                labelText:
+                                                                    'Reps',
+                                                                controller:
+                                                                    exerciseRepsNumberController,
+                                                              ),
+                                                            ),
+                                                            const SizedBox(
+                                                              width: 20,
+                                                            ),
+                                                            Expanded(
+                                                              flex: 1,
+                                                              child: HFInput(
+                                                                keyboardType:
+                                                                    const TextInputType
+                                                                            .numberWithOptions(
+                                                                        decimal:
+                                                                            true),
+                                                                labelText:
+                                                                    'Series',
+                                                                controller:
+                                                                    exerciseSeriesNumberController,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      if (exerciseSelected
+                                                          .isNotEmpty)
+                                                        const SizedBox(
+                                                          height: 20,
+                                                        ),
+                                                      HFInput(
+                                                        controller:
+                                                            exerciseNoteController,
+                                                        keyboardType:
+                                                            TextInputType
+                                                                .multiline,
+                                                        hintText:
+                                                            'Exercise notes',
+                                                        maxLines: 8,
+                                                      ),
+                                                      const SizedBox(
+                                                        height: 20,
+                                                      ),
+                                                      HFButton(
+                                                        text: 'Add exercise',
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .symmetric(
+                                                                vertical: 16),
+                                                        onPressed: () {
+                                                          setState(() {
+                                                            var newId =
+                                                                const Uuid()
+                                                                    .v4();
+                                                            selectedExercises
+                                                                .add({
+                                                              'id': newId,
+                                                              'name':
+                                                                  exerciseSelected,
+                                                              'exerciseId':
+                                                                  exerciseIdSelected,
+                                                              'amount': exerciseTypeNumberController
+                                                                          .text ==
+                                                                      ''
+                                                                  ? '0'
+                                                                  : exerciseTypeNumberController
+                                                                      .text,
+                                                              'repetitions':
+                                                                  exerciseRepsNumberController
+                                                                              .text ==
+                                                                          ''
+                                                                      ? '0'
+                                                                      : exerciseRepsNumberController
+                                                                          .text,
+                                                              'series': exerciseSeriesNumberController
+                                                                          .text ==
+                                                                      ''
+                                                                  ? '0'
+                                                                  : exerciseSeriesNumberController
+                                                                      .text,
+                                                              'repetitionType':
+                                                                  exerciseRepetitionType,
+                                                              'types':
+                                                                  exerciseTypes,
+                                                              'note':
+                                                                  exerciseNoteController
+                                                                      .text,
+                                                              'description':
+                                                                  exerciseDescription,
+                                                              'video':
+                                                                  exerciseVideo,
+                                                              'videoThumbnail':
+                                                                  exerciseThumbnail
+                                                            });
+
+                                                            exerciseTypeNumberController
+                                                                .text = '';
+                                                            exerciseTypeNumberController
+                                                                .text = '';
+                                                            exerciseRepsNumberController
+                                                                .text = '';
+                                                            exerciseSeriesNumberController
+                                                                .text = '';
+                                                            exerciseSelected =
+                                                                '';
+                                                            exerciseIdSelected =
+                                                                '';
+                                                            exerciseNoteController
+                                                                .text = '';
                                                           });
 
-                                                          closePullUp();
-                                                        });
+                                                          Navigator.pop(
+                                                              context);
 
-                                                        ScaffoldMessenger.of(
-                                                                context)
-                                                            .showSnackBar(
-                                                                getSnackBar(
-                                                                    text:
-                                                                        'Exercise added'));
-                                                      },
-                                                    ),
-                                                    SizedBox(
-                                                      height: MediaQuery.of(
-                                                                      context)
-                                                                  .viewInsets
-                                                                  .bottom <
-                                                              40
-                                                          ? 40
-                                                          : MediaQuery.of(
-                                                                      context)
-                                                                  .viewInsets
-                                                                  .bottom +
-                                                              20,
-                                                    ),
-                                                  ],
+                                                          ScaffoldMessenger.of(
+                                                                  context)
+                                                              .showSnackBar(
+                                                                  getSnackBar(
+                                                                      text:
+                                                                          'Exercise added'));
+                                                        },
+                                                      ),
+                                                      SizedBox(
+                                                        height: MediaQuery.of(
+                                                                        context)
+                                                                    .viewInsets
+                                                                    .bottom <
+                                                                40
+                                                            ? 40
+                                                            : MediaQuery.of(
+                                                                        context)
+                                                                    .viewInsets
+                                                                    .bottom +
+                                                                20,
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                          );
+                                            );
+                                          });
                                         },
                                       );
                                     });

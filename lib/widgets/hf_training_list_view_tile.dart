@@ -62,6 +62,10 @@ class _HFTrainingListViewTileState extends State<HFTrainingListViewTile> {
 
   @override
   Widget build(BuildContext context) {
+    widget.series.toString().replaceAll(',', '.');
+    widget.amount.toString().replaceAll(',', '.');
+    widget.repetitions.toString().replaceAll(',', '.');
+
     return Column(
       children: [
         const SizedBox(
