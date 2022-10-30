@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +8,7 @@ import 'package:health_factory/constants/firebase_functions.dart';
 import 'package:health_factory/constants/global_state.dart';
 import 'package:health_factory/widgets/hf_heading.dart';
 import 'package:health_factory/widgets/hf_paragraph.dart';
+import 'package:health_factory/widgets/hf_snackbar.dart';
 import 'package:provider/provider.dart';
 import '../../../constants/colors.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -223,7 +226,7 @@ class ClientWeight extends StatelessWidget {
                             children: [
                               if (data.docs.isNotEmpty)
                                 ClientDataListTile(context, 'Current weight:',
-                                    '${data.docs[0]['value']}kg'),
+                                    '${data.docs[0]['value']}kg', () {}),
                               const SizedBox(
                                 height: 30,
                               ),
@@ -259,12 +262,21 @@ class ClientWeight extends StatelessWidget {
                                                   : const EdgeInsets.symmetric(
                                                       horizontal: 8),
                                               child: ClientDataListTile(
-                                                  context,
-                                                  DateFormat('d/M/y').format(
-                                                      DateTime.parse(data.docs
-                                                              .toList()[index]
-                                                          ['date'])),
-                                                  '${data.docs.toList()[index]['value']}kg'),
+                                                context,
+                                                DateFormat('d/M/y').format(
+                                                    DateTime.parse(data.docs
+                                                            .toList()[index]
+                                                        ['date'])),
+                                                '${data.docs.toList()[index]['value']}kg',
+                                                () {
+                                                  showMeasurementActionSheet(
+                                                      context,
+                                                      '${data.docs.toList()[index]['value']}kg',
+                                                      data.docs
+                                                          .toList()[index]
+                                                          .reference);
+                                                },
+                                              ),
                                             );
                                           },
                                           itemCount: data.docs.length,
@@ -293,51 +305,54 @@ class ClientWeight extends StatelessWidget {
   }
 }
 
-Widget ClientDataListTile(context, text, value) {
+Widget ClientDataListTile(context, text, value, onTap) {
   return Column(
     children: [
-      Container(
-        padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(14),
-          color: HFColors().secondaryLightColor(),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
-          child: Row(
-            children: [
-              Flexible(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Flexible(
-                        flex: 3,
-                        child: HFHeading(
-                          text: text,
-                          size: 4,
-                          fontWeight: FontWeight.w400,
+      InkWell(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(14),
+            color: HFColors().secondaryLightColor(),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+            child: Row(
+              children: [
+                Flexible(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Flexible(
+                          flex: 3,
+                          child: HFHeading(
+                            text: text,
+                            size: 4,
+                            fontWeight: FontWeight.w400,
+                          ),
                         ),
-                      ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      Flexible(
-                        flex: 1,
-                        child: HFHeading(
-                          text: value,
-                          textAlign: TextAlign.right,
-                          size: 4,
-                          fontWeight: FontWeight.w700,
-                          maxLines: 9,
+                        const SizedBox(
+                          width: 20,
                         ),
-                      ),
-                    ],
+                        Flexible(
+                          flex: 1,
+                          child: HFHeading(
+                            text: value,
+                            textAlign: TextAlign.right,
+                            size: 4,
+                            fontWeight: FontWeight.w700,
+                            maxLines: 9,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              )
-            ],
+                )
+              ],
+            ),
           ),
         ),
       ),
@@ -345,5 +360,61 @@ Widget ClientDataListTile(context, text, value) {
         height: 10,
       ),
     ],
+  );
+}
+
+void showMeasurementActionSheet(
+    BuildContext context, title, DocumentReference<Object?> docRef) {
+  showCupertinoModalPopup<void>(
+    context: context,
+    builder: (BuildContext context) => CupertinoActionSheet(
+      title: HFParagrpah(
+        text: 'Selected:',
+        size: 10,
+        textAlign: TextAlign.center,
+        color: HFColors().secondaryColor(),
+      ),
+      message: HFHeading(
+        text: title,
+        size: 4,
+        color: HFColors().secondaryColor(),
+        textAlign: TextAlign.center,
+      ),
+      actions: <CupertinoActionSheetAction>[
+        CupertinoActionSheetAction(
+          /// This parameter indicates the action would perform
+          /// a destructive action such as delete or exit and turns
+          /// the action's text color to red.
+          isDestructiveAction: true,
+          onPressed: () {
+            docRef.delete().then((value) {
+              Navigator.pop(context);
+
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(getSnackBar(text: 'Weight deleted'));
+            });
+          },
+          child: HFParagrpah(
+            text: 'Delete',
+            size: 10,
+            color: HFColors().redColor(),
+          ),
+        ),
+      ],
+      cancelButton: CupertinoActionSheetAction(
+        /// This parameter indicates the action would perform
+        /// a destructive action such as delete or exit and turns
+        /// the action's text color to red.
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        child: HFParagrpah(
+          text: 'Cancel',
+          size: 10,
+          color: HFColors().secondaryColor(),
+        ),
+      ),
+    ),
+    filter: ImageFilter.blur(sigmaX: 1.4, sigmaY: 1.4),
   );
 }

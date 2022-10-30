@@ -12,6 +12,7 @@ import 'package:intl/intl.dart';
 
 import '../../constants/global_state.dart';
 import '../../constants/routes.dart';
+import 'client_weight.dart';
 
 class ClientThigh extends StatelessWidget {
   ClientThigh({super.key, required this.clientId});
@@ -223,9 +224,11 @@ class ClientThigh extends StatelessWidget {
                             children: [
                               if (data.docs.isNotEmpty)
                                 ClientDataListTile(
-                                    context,
-                                    'Current mid thigh circumference:',
-                                    '${data.docs[0]['value']}cm'),
+                                  context,
+                                  'Current mid thigh circumference:',
+                                  '${data.docs[0]['value']}cm',
+                                  () {},
+                                ),
                               const SizedBox(
                                 height: 30,
                               ),
@@ -266,7 +269,15 @@ class ClientThigh extends StatelessWidget {
                                                       DateTime.parse(data.docs
                                                               .toList()[index]
                                                           ['date'])),
-                                                  '${data.docs.toList()[index]['value']}cm'),
+                                                  '${data.docs.toList()[index]['value']}cm',
+                                                  () {
+                                                showMeasurementActionSheet(
+                                                    context,
+                                                    '${data.docs.toList()[index]['value']}cm',
+                                                    data.docs
+                                                        .toList()[index]
+                                                        .reference);
+                                              }),
                                             );
                                           },
                                           itemCount: data.docs.length,
@@ -293,59 +304,4 @@ class ClientThigh extends StatelessWidget {
       ),
     );
   }
-}
-
-Widget ClientDataListTile(context, text, value) {
-  return Column(
-    children: [
-      Container(
-        padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(14),
-          color: HFColors().secondaryLightColor(),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
-          child: Row(
-            children: [
-              Flexible(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Flexible(
-                        flex: 3,
-                        child: HFHeading(
-                          text: text,
-                          size: 4,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      Flexible(
-                        flex: 1,
-                        child: HFHeading(
-                          text: value,
-                          textAlign: TextAlign.right,
-                          size: 4,
-                          fontWeight: FontWeight.w700,
-                          maxLines: 9,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              )
-            ],
-          ),
-        ),
-      ),
-      const SizedBox(
-        height: 10,
-      ),
-    ],
-  );
 }

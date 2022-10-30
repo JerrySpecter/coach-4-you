@@ -5,6 +5,7 @@ import 'package:health_factory/constants/firebase_functions.dart';
 import 'package:health_factory/widgets/hf_button.dart';
 import 'package:health_factory/widgets/hf_heading.dart';
 import 'package:health_factory/widgets/hf_input_field.dart';
+import 'package:health_factory/widgets/hf_input_number_field.dart';
 import 'package:health_factory/widgets/hf_snackbar.dart';
 import 'package:uuid/uuid.dart';
 
@@ -76,10 +77,9 @@ class _ClientAddMeasurementFormState extends State<ClientAddMeasurementForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          HFInput(
+          HFInputNumber(
             hintText: widget.hintText,
             controller: weightController,
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Please enter weight.';

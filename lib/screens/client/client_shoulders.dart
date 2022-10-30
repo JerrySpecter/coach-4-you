@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:health_factory/constants/firebase_functions.dart';
+import 'package:health_factory/screens/client/client_weight.dart';
 import 'package:health_factory/widgets/hf_heading.dart';
 import 'package:health_factory/widgets/hf_paragraph.dart';
 import 'package:provider/provider.dart';
@@ -225,7 +226,8 @@ class ClientShoulders extends StatelessWidget {
                                 ClientDataListTile(
                                     context,
                                     'Current shoulders circumference:',
-                                    '${data.docs[0]['value']}cm'),
+                                    '${data.docs[0]['value']}cm',
+                                    () {}),
                               const SizedBox(
                                 height: 30,
                               ),
@@ -266,7 +268,15 @@ class ClientShoulders extends StatelessWidget {
                                                       DateTime.parse(data.docs
                                                               .toList()[index]
                                                           ['date'])),
-                                                  '${data.docs.toList()[index]['value']}cm'),
+                                                  '${data.docs.toList()[index]['value']}cm',
+                                                  () {
+                                                showMeasurementActionSheet(
+                                                    context,
+                                                    '${data.docs.toList()[index]['value']}cm',
+                                                    data.docs
+                                                        .toList()[index]
+                                                        .reference);
+                                              }),
                                             );
                                           },
                                           itemCount: data.docs.length,
@@ -293,59 +303,4 @@ class ClientShoulders extends StatelessWidget {
       ),
     );
   }
-}
-
-Widget ClientDataListTile(context, text, value) {
-  return Column(
-    children: [
-      Container(
-        padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(14),
-          color: HFColors().secondaryLightColor(),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
-          child: Row(
-            children: [
-              Flexible(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Flexible(
-                        flex: 3,
-                        child: HFHeading(
-                          text: text,
-                          size: 4,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      Flexible(
-                        flex: 1,
-                        child: HFHeading(
-                          text: value,
-                          textAlign: TextAlign.right,
-                          size: 4,
-                          fontWeight: FontWeight.w700,
-                          maxLines: 9,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              )
-            ],
-          ),
-        ),
-      ),
-      const SizedBox(
-        height: 10,
-      ),
-    ],
-  );
 }
