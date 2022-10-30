@@ -271,7 +271,8 @@ class _FindTrainerSectionState extends State<FindTrainerSection> {
                             (trainer) {
                               List<dynamic> locations = trainer['locations'];
 
-                              if (trainer['newAccount']) {
+                              if (trainer['newAccount'] ||
+                                  trainer['isTestAccount']) {
                                 return SizedBox(height: 0);
                               }
 
