@@ -1365,12 +1365,8 @@ class AddEventScreenState extends State<AddEventScreen> {
                                                           children: [
                                                             Expanded(
                                                               flex: 1,
-                                                              child: HFInput(
-                                                                keyboardType:
-                                                                    const TextInputType
-                                                                            .numberWithOptions(
-                                                                        decimal:
-                                                                            true),
+                                                              child:
+                                                                  HFInputNumber(
                                                                 labelText: exerciseRepetitionType ==
                                                                         'weight'
                                                                     ? 'kg'
@@ -1387,12 +1383,8 @@ class AddEventScreenState extends State<AddEventScreen> {
                                                             ),
                                                             Expanded(
                                                               flex: 1,
-                                                              child: HFInput(
-                                                                keyboardType:
-                                                                    const TextInputType
-                                                                            .numberWithOptions(
-                                                                        decimal:
-                                                                            true),
+                                                              child:
+                                                                  HFInputNumber(
                                                                 labelText:
                                                                     'Reps',
                                                                 controller:
@@ -1404,12 +1396,8 @@ class AddEventScreenState extends State<AddEventScreen> {
                                                             ),
                                                             Expanded(
                                                               flex: 1,
-                                                              child: HFInput(
-                                                                keyboardType:
-                                                                    const TextInputType
-                                                                            .numberWithOptions(
-                                                                        decimal:
-                                                                            true),
+                                                              child:
+                                                                  HFInputNumber(
                                                                 labelText:
                                                                     'Series',
                                                                 controller:

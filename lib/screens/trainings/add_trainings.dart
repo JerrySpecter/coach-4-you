@@ -15,6 +15,7 @@ import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../constants/global_state.dart';
+import '../../widgets/hf_input_number_field.dart';
 import '../../widgets/hf_select_list_view_tile.dart';
 
 class AddTraining extends StatefulWidget {
@@ -500,10 +501,7 @@ class _AddTrainingState extends State<AddTraining> {
                                                                 children: [
                                                                   Expanded(
                                                                     child:
-                                                                        HFInput(
-                                                                      keyboardType:
-                                                                          TextInputType.numberWithOptions(
-                                                                              decimal: true),
+                                                                        HFInputNumber(
                                                                       labelText: _exerciseRepetitionType ==
                                                                               'weight'
                                                                           ? 'kg'
@@ -520,10 +518,7 @@ class _AddTrainingState extends State<AddTraining> {
                                                                   ),
                                                                   Expanded(
                                                                     child:
-                                                                        HFInput(
-                                                                      keyboardType:
-                                                                          TextInputType.numberWithOptions(
-                                                                              decimal: true),
+                                                                        HFInputNumber(
                                                                       labelText:
                                                                           'Reps',
                                                                       controller:
@@ -536,10 +531,7 @@ class _AddTrainingState extends State<AddTraining> {
                                                                   ),
                                                                   Expanded(
                                                                     child:
-                                                                        HFInput(
-                                                                      keyboardType:
-                                                                          TextInputType.numberWithOptions(
-                                                                              decimal: true),
+                                                                        HFInputNumber(
                                                                       labelText:
                                                                           'Series',
                                                                       controller:
