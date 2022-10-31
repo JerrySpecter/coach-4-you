@@ -62,6 +62,7 @@ class _RequestAFeatureState extends State<RequestAFeature> {
                     'name': context.read<HFGlobalState>().userName,
                     'email': context.read<HFGlobalState>().userEmail,
                     'request': requestFieldTextController.text,
+                    'resolved': false,
                     'date': DateTime.now(),
                   }).then((value) {
                     Navigator.pop(context);

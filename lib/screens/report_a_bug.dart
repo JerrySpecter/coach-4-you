@@ -62,6 +62,7 @@ class _ReportABugState extends State<ReportABug> {
                     'email': context.read<HFGlobalState>().userEmail,
                     'report': bugReportTextController.text,
                     'date': DateTime.now(),
+                    'resolved': false,
                     'device': deviceInfo.toMap()
                   }).then((value) {
                     Navigator.pop(context);
