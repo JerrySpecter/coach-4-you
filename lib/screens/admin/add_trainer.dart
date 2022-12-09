@@ -68,6 +68,7 @@ class _AddTrainersFormState extends State<AddTrainersForm> {
   bool _isLoading = false;
   bool _isAdmin = false;
   bool _isTestAccount = false;
+  bool _isExternal = false;
 
   @override
   Widget build(BuildContext context) {
@@ -120,107 +121,27 @@ class _AddTrainersFormState extends State<AddTrainersForm> {
           SizedBox(
             height: 20,
           ),
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(14),
-              color: HFColors().secondaryLightColor(),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-              child: Row(
-                children: [
-                  Flexible(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Flexible(
-                            flex: 3,
-                            child: HFHeading(
-                              text: 'Trainer is admin',
-                              size: 4,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                          SizedBox(
-                            width: 20,
-                          ),
-                          Flexible(
-                            flex: 1,
-                            child: CupertinoSwitch(
-                              value: _isAdmin,
-                              onChanged: (value) {
-                                setState(() {
-                                  _isAdmin = value;
-                                });
-                              },
-                              thumbColor: HFColors().primaryColor(),
-                              trackColor: HFColors().redColor(opacity: 0.4),
-                              activeColor: HFColors().greenColor(opacity: 0.4),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
+          getToggleRow('Trainer is admin', _isAdmin, (value) {
+            setState(() {
+              _isAdmin = value;
+            });
+          }),
           SizedBox(
             height: 10,
           ),
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(14),
-              color: HFColors().secondaryLightColor(),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-              child: Row(
-                children: [
-                  Flexible(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Flexible(
-                            flex: 3,
-                            child: HFHeading(
-                              text: 'Test account',
-                              size: 4,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                          SizedBox(
-                            width: 20,
-                          ),
-                          Flexible(
-                            flex: 1,
-                            child: CupertinoSwitch(
-                              value: _isTestAccount,
-                              onChanged: (value) {
-                                setState(() {
-                                  _isTestAccount = value;
-                                });
-                              },
-                              thumbColor: HFColors().primaryColor(),
-                              trackColor: HFColors().redColor(opacity: 0.4),
-                              activeColor: HFColors().greenColor(opacity: 0.4),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
+          getToggleRow('Test account', _isTestAccount, (value) {
+            setState(() {
+              _isTestAccount = value;
+            });
+          }),
+          SizedBox(
+            height: 10,
           ),
+          getToggleRow('External', _isExternal, (value) {
+            setState(() {
+              _isExternal = value;
+            });
+          }),
           SizedBox(
             height: 40,
           ),
@@ -236,20 +157,22 @@ class _AddTrainersFormState extends State<AddTrainersForm> {
                 http
                     .post(
                         Uri.parse(
-                            'https://hf.specter.design/wp-json/hfapp/v1/create-user'),
+                            'https://us-central1-health-factory-56e91.cloudfunctions.net/createUser'),
                         headers: <String, String>{
                           'Content-Type': 'application/json; charset=UTF-8'
                         },
                         body: jsonEncode(<String, dynamic>{
-                          'trainerFirstName': _trainerFirstNameController.text,
-                          'trainerLastName': _trainerLastNameController.text,
-                          'trainerEmail': _trainerEmailController.text,
-                          'trainerChanged': '${DateTime.now()}',
-                          'trainerIsAdmin': _isAdmin,
-                          'trainerIsTestAccount': _isTestAccount
+                          'firstName': _trainerFirstNameController.text,
+                          'lastName': _trainerLastNameController.text,
+                          'email': _trainerEmailController.text,
+                          'changed': '${DateTime.now()}',
+                          'isAdmin': _isAdmin,
+                          'isTestAccount': _isTestAccount,
+                          'isExternal': _isExternal
                         }))
                     .then((value) {
                   var responseBody = jsonDecode(value.body);
+
                   switch (responseBody['code']) {
                     case 400:
                       ScaffoldMessenger.of(context).showSnackBar(getSnackBar(
@@ -284,6 +207,54 @@ class _AddTrainersFormState extends State<AddTrainersForm> {
             },
           ),
         ],
+      ),
+    );
+  }
+
+  Widget getToggleRow(text, prop, onChanged) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(14),
+        color: HFColors().secondaryLightColor(),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+        child: Row(
+          children: [
+            Flexible(
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Flexible(
+                      flex: 3,
+                      child: HFHeading(
+                        text: text,
+                        size: 4,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 20,
+                    ),
+                    Flexible(
+                      flex: 1,
+                      child: CupertinoSwitch(
+                        value: prop,
+                        onChanged: onChanged,
+                        thumbColor: HFColors().primaryColor(),
+                        trackColor: HFColors().redColor(opacity: 0.4),
+                        activeColor: HFColors().greenColor(opacity: 0.4),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

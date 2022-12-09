@@ -54,8 +54,6 @@ class RootPageState extends State<RootPage> {
 
     FirebaseAuth.instance.authStateChanges().listen((user) {
       if (user != null) {
-        context.read<HFGlobalState>().setUserLoggedIn(true);
-
         user.getIdTokenResult(true).then((result) {
           var accessLevel = result.claims?['accessLevel'];
 
@@ -71,6 +69,10 @@ class RootPageState extends State<RootPage> {
             HFFirebaseFunctions().initTrainerData(user.uid, context);
           }
         });
+
+        Timer(Duration(milliseconds: 300), (() {
+          context.read<HFGlobalState>().setUserLoggedIn(true);
+        }));
 
         FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
           var decodedData = jsonDecode(message.data['data']);
@@ -89,521 +91,623 @@ class RootPageState extends State<RootPage> {
       } else {
         context.read<HFGlobalState>().setUserLoggedIn(false);
         context.read<HFGlobalState>().setRootScreenState(RootScreens.login);
-        context
-            .read<HFGlobalState>()
-            .setSplashScreenState(SplashScreens.splash);
+        context.read<HFGlobalState>().setSplashScreenState(SplashScreens.init);
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        FocusScope.of(context).requestFocus(FocusNode());
-      },
-      onHorizontalDragEnd: (details) {
-        const sensitivity = 400;
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      backgroundColor: HFColors().backgroundColor(),
+      body: SizedBox(
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        child: Stack(
+          children: [
+            if (context.watch<HFGlobalState>().userLoggedIn)
+              AnimatedOpacity(
+                opacity: context.watch<HFGlobalState>().userLoggedIn ? 1 : 0,
+                duration: Duration(milliseconds: 300),
+                child: GestureDetector(
+                  onTap: () {
+                    FocusScope.of(context).requestFocus(FocusNode());
+                  },
+                  onHorizontalDragEnd: (details) {
+                    const sensitivity = 400;
 
-        if (context.read<HFGlobalState>().rootScreenState ==
-                RootScreens.login ||
-            context.read<HFGlobalState>().rootScreenState ==
-                RootScreens.welcome) {
-          return;
-        }
+                    if (context.read<HFGlobalState>().rootScreenState ==
+                        RootScreens.welcome) {
+                      return;
+                    }
 
-        if (details.primaryVelocity! < sensitivity) {
-          if (context.read<HFGlobalState>().rootScreenState !=
-              RootScreens.settings) {
-            switch (context.read<HFGlobalState>().rootScreenState) {
-              case RootScreens.home:
-                context
-                    .read<HFGlobalState>()
-                    .setRootScreenState(RootScreens.calendar);
-                break;
-              case RootScreens.calendar:
-                context
-                    .read<HFGlobalState>()
-                    .setRootScreenState(RootScreens.chat);
-                break;
-              case RootScreens.chat:
-                context
-                    .read<HFGlobalState>()
-                    .setRootScreenState(RootScreens.settings);
-                break;
-              default:
-            }
-          }
-        }
+                    if (details.primaryVelocity! < sensitivity) {
+                      if (context.read<HFGlobalState>().rootScreenState !=
+                          RootScreens.settings) {
+                        switch (context.read<HFGlobalState>().rootScreenState) {
+                          case RootScreens.home:
+                            context
+                                .read<HFGlobalState>()
+                                .setRootScreenState(RootScreens.calendar);
+                            break;
+                          case RootScreens.calendar:
+                            context
+                                .read<HFGlobalState>()
+                                .setRootScreenState(RootScreens.chat);
+                            break;
+                          case RootScreens.chat:
+                            context
+                                .read<HFGlobalState>()
+                                .setRootScreenState(RootScreens.settings);
+                            break;
+                          default:
+                        }
+                      }
+                    }
 
-        if (details.primaryVelocity! > -sensitivity) {
-          if (context.read<HFGlobalState>().rootScreenState !=
-              RootScreens.home) {
-            switch (context.read<HFGlobalState>().rootScreenState) {
-              case RootScreens.settings:
-                context
-                    .read<HFGlobalState>()
-                    .setRootScreenState(RootScreens.chat);
-                break;
-              case RootScreens.chat:
-                context
-                    .read<HFGlobalState>()
-                    .setRootScreenState(RootScreens.calendar);
-                break;
-              case RootScreens.calendar:
-                context
-                    .read<HFGlobalState>()
-                    .setRootScreenState(RootScreens.home);
-                break;
-              default:
-            }
-          }
-        }
-      },
-      child: Container(
-        color: HFColors().backgroundColor(),
-        child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          backgroundColor: HFColors().backgroundColor(),
-          body: SizedBox(
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            child: Stack(
-              children: [
-                // Login screen
-
-                // Home screen
-                AnimatedPositioned(
-                  curve: Curves.easeInOut,
-                  top: 0,
-                  left: context.watch<HFGlobalState>().rootScreenState !=
-                          RootScreens.home
-                      ? -20
-                      : 0,
-                  height: MediaQuery.of(context).size.height,
-                  width: MediaQuery.of(context).size.width,
-                  duration: const Duration(milliseconds: 200),
-                  child: AnimatedOpacity(
-                    opacity: context.watch<HFGlobalState>().rootScreenState ==
-                            RootScreens.home
-                        ? 1
-                        : 0,
-                    duration: const Duration(milliseconds: 100),
-                    child: IgnorePointer(
-                      ignoring:
-                          context.watch<HFGlobalState>().rootScreenState !=
-                              RootScreens.home,
-                      child: const Home(),
-                    ),
-                  ),
-                ),
-                // Calendar screen
-                AnimatedPositioned(
-                  curve: Curves.easeInOut,
-                  top: 0,
-                  left: context.watch<HFGlobalState>().rootScreenState ==
-                          RootScreens.home
-                      ? 20
-                      : context.watch<HFGlobalState>().rootScreenState ==
-                              RootScreens.chat
-                          ? -20
-                          : 0,
-                  height: MediaQuery.of(context).size.height,
-                  width: MediaQuery.of(context).size.width,
-                  duration: const Duration(milliseconds: 200),
-                  child: AnimatedOpacity(
-                    opacity: context.watch<HFGlobalState>().rootScreenState ==
-                            RootScreens.calendar
-                        ? 1
-                        : 0,
-                    duration: const Duration(milliseconds: 100),
-                    child: IgnorePointer(
-                      ignoring:
-                          context.watch<HFGlobalState>().rootScreenState !=
-                              RootScreens.calendar,
-                      child: const CalendarPage(),
-                    ),
-                  ),
-                ),
-                // Chat screen
-                AnimatedPositioned(
-                  curve: Curves.easeInOut,
-                  top: 0,
-                  left: context.watch<HFGlobalState>().rootScreenState ==
-                          RootScreens.calendar
-                      ? 20
-                      : context.watch<HFGlobalState>().rootScreenState ==
-                              RootScreens.settings
-                          ? -20
-                          : 0,
-                  height: MediaQuery.of(context).size.height,
-                  width: MediaQuery.of(context).size.width,
-                  duration: const Duration(milliseconds: 200),
-                  child: AnimatedOpacity(
-                    opacity: context.watch<HFGlobalState>().rootScreenState ==
-                            RootScreens.chat
-                        ? 1
-                        : 0,
-                    duration: const Duration(milliseconds: 100),
-                    child: IgnorePointer(
-                      ignoring:
-                          context.watch<HFGlobalState>().rootScreenState !=
-                              RootScreens.chat,
-                      child: const Chat(),
-                    ),
-                  ),
-                ),
-                // Settings screen
-                AnimatedPositioned(
-                  curve: Curves.easeInOut,
-                  top: 0,
-                  left: context.watch<HFGlobalState>().rootScreenState !=
-                          RootScreens.settings
-                      ? 20
-                      : 0,
-                  height: MediaQuery.of(context).size.height,
-                  width: MediaQuery.of(context).size.width,
-                  duration: const Duration(milliseconds: 200),
-                  child: AnimatedOpacity(
-                    opacity: context.watch<HFGlobalState>().rootScreenState ==
-                            RootScreens.settings
-                        ? 1
-                        : 0,
-                    duration: const Duration(milliseconds: 100),
-                    child: IgnorePointer(
-                      ignoring:
-                          context.watch<HFGlobalState>().rootScreenState !=
-                              RootScreens.settings,
-                      child: const SettingsPage(),
-                    ),
-                  ),
-                ),
-
-                // Welcome screen
-                AnimatedPositioned(
-                  curve: Curves.easeInOut,
-                  left: 0,
-                  top: context.watch<HFGlobalState>().rootScreenState !=
-                          RootScreens.welcome
-                      ? -20
-                      : 0,
-                  height: MediaQuery.of(context).size.height,
-                  width: MediaQuery.of(context).size.width,
-                  duration: const Duration(milliseconds: 200),
-                  child: AnimatedOpacity(
-                    opacity: context.watch<HFGlobalState>().rootScreenState ==
-                            RootScreens.welcome
-                        ? 1
-                        : 0,
-                    duration: const Duration(milliseconds: 100),
-                    child: IgnorePointer(
-                      ignoring:
-                          context.watch<HFGlobalState>().rootScreenState !=
-                              RootScreens.welcome,
-                      child: const WelcomePage(),
-                    ),
-                  ),
-                ),
-                // Login screen
-                AnimatedPositioned(
-                  curve: Curves.easeInOut,
-                  left: 0,
-                  top: context.watch<HFGlobalState>().rootScreenState ==
-                          SplashScreens.login
-                      ? -20
-                      : 0,
-                  height: MediaQuery.of(context).size.height,
-                  width: MediaQuery.of(context).size.width,
-                  duration: const Duration(milliseconds: 200),
-                  child: AnimatedOpacity(
-                    opacity: context.watch<HFGlobalState>().rootScreenState ==
-                            RootScreens.login
-                        ? 1
-                        : 0,
-                    duration: const Duration(milliseconds: 100),
-                    child: IgnorePointer(
-                      ignoring:
-                          context.watch<HFGlobalState>().rootScreenState !=
-                              RootScreens.login,
-                      child: const SplashScreen(),
-                    ),
-                  ),
-                ),
-                // Floating event button
-                AnimatedPositioned(
-                  curve: floatingButtonShowEvent
-                      ? Curves.easeOutBack
-                      : Curves.easeInOut,
-                  bottom: floatingButtonShowEvent ? 180 : 120,
-                  right: floatingButtonShowEvent ? 20 : 30,
-                  duration: const Duration(milliseconds: 300),
-                  child: AnimatedOpacity(
-                    curve: floatingButtonShowEvent
-                        ? Curves.easeOutBack
-                        : Curves.easeInOut,
-                    opacity: floatingButtonShowEvent ? 1 : 0,
-                    duration: const Duration(milliseconds: 300),
-                    child: AnimatedScale(
-                      curve: floatingButtonShowEvent
-                          ? Curves.easeOutBack
-                          : Curves.easeInOut,
-                      scale: floatingButtonShowEvent ? 1 : 0,
-                      duration: const Duration(milliseconds: 300),
-                      child: IgnorePointer(
-                        ignoring: !floatingButtonShowEvent,
-                        child: HFButton(
-                          useIcon: true,
-                          icon: Icon(
-                            CupertinoIcons.calendar_badge_plus,
-                            size: 20,
-                            color: HFColors().secondaryColor(),
-                          ),
-                          padding: const EdgeInsets.all(10),
-                          text: 'Workout',
-                          onPressed: () {
-                            hideFloatingButtonOptions();
-
-                            Navigator.pushNamed(context, addEventRoute,
-                                arguments: {
-                                  'date': DateTime.parse(
-                                      '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 00:00:00.000Z'),
-                                  'title': '',
-                                  'id': '',
-                                  'startTime': '',
-                                  'endTime': '',
-                                  'location': '',
-                                  'client': {
-                                    'name': '',
-                                    'id': '',
-                                  },
-                                  'exercises': [],
-                                  'note': '',
-                                  'color': '',
-                                  'isEdit': false,
-                                  'isDuplicate': false,
-                                });
-                          },
-                          backgroundColor: HFColors().primaryColor(),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                // Floating news button
-                AnimatedPositioned(
-                  curve: floatingButtonShowNews
-                      ? Curves.easeOutBack
-                      : Curves.easeInOut,
-                  bottom: floatingButtonShowNews ? 160 : 120,
-                  right: floatingButtonShowNews ? 70 : 30,
-                  duration: const Duration(milliseconds: 300),
-                  child: AnimatedOpacity(
-                    curve: floatingButtonShowNews
-                        ? Curves.easeOutBack
-                        : Curves.easeInOut,
-                    opacity: floatingButtonShowNews ? 1 : 0,
-                    duration: const Duration(milliseconds: 300),
-                    child: AnimatedScale(
-                      curve: floatingButtonShowNews
-                          ? Curves.easeOutBack
-                          : Curves.easeInOut,
-                      scale: floatingButtonShowNews ? 1 : 0,
-                      duration: const Duration(milliseconds: 300),
-                      child: IgnorePointer(
-                        ignoring: !floatingButtonShowNews,
-                        child: HFButton(
-                          useIcon: true,
-                          icon: Icon(
-                            CupertinoIcons.news_solid,
-                            size: 20,
-                            color: HFColors().secondaryColor(),
-                          ),
-                          padding: const EdgeInsets.all(10),
-                          text: 'News',
-                          onPressed: () {
-                            hideFloatingButtonOptions();
-                            Navigator.pushNamed(context, addNewsRoute);
-                          },
-                          backgroundColor: HFColors().primaryColor(),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                // Floating exercise button
-                AnimatedPositioned(
-                  curve: floatingButtonShowExercise
-                      ? Curves.easeOutBack
-                      : Curves.easeInOut,
-                  bottom: floatingButtonShowExercise ? 110 : 120,
-                  right: floatingButtonShowExercise ? 90 : 30,
-                  duration: const Duration(milliseconds: 300),
-                  child: AnimatedOpacity(
-                    curve: floatingButtonShowExercise
-                        ? Curves.easeOutBack
-                        : Curves.easeInOut,
-                    opacity: floatingButtonShowExercise ? 1 : 0,
-                    duration: const Duration(milliseconds: 300),
-                    child: AnimatedScale(
-                      curve: floatingButtonShowExercise
-                          ? Curves.easeOutBack
-                          : Curves.easeInOut,
-                      scale: floatingButtonShowExercise ? 1 : 0,
-                      duration: const Duration(milliseconds: 300),
-                      child: IgnorePointer(
-                        ignoring: !floatingButtonShowExercise,
-                        child: HFButton(
-                          useIcon: true,
-                          icon: SvgPicture.asset(
-                            'assets/icon-gym.svg',
-                            color: HFColors().secondaryColor(),
-                            width: 20,
-                          ),
-                          padding: const EdgeInsets.all(10),
-                          text: 'Exercise',
-                          onPressed: () {
-                            hideFloatingButtonOptions();
-                            Navigator.pushNamed(context, addTrainingRoute);
-                          },
-                          backgroundColor: HFColors().primaryColor(),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                // Main floating button
-                if (context.watch<HFGlobalState>().userAccessLevel ==
-                    accessLevels.trainer)
-                  AnimatedPositioned(
-                    curve: Curves.easeInOut,
-                    bottom: 120,
-                    right: context.watch<HFGlobalState>().rootScreenState !=
-                                RootScreens.login &&
-                            context.watch<HFGlobalState>().rootScreenState !=
-                                RootScreens.welcome &&
-                            context.watch<HFGlobalState>().rootScreenState !=
-                                RootScreens.chat &&
-                            context.watch<HFGlobalState>().rootScreenState !=
-                                RootScreens.settings
-                        ? 30
-                        : -60,
-                    duration: const Duration(milliseconds: 200),
-                    child: AnimatedOpacity(
-                      opacity: context.watch<HFGlobalState>().rootPageIndex ==
-                                  0 ||
-                              context.watch<HFGlobalState>().rootPageIndex == 1
-                          ? 1
-                          : 0,
-                      duration: const Duration(milliseconds: 100),
-                      child: FloatingActionButton(
-                        heroTag: 'floating-button',
-                        elevation: 10,
-                        onPressed: () {
-                          if (context.read<HFGlobalState>().rootScreenState ==
-                              RootScreens.home) {
-                            setState(() {
-                              floatingButtonShowEvent =
-                                  !floatingButtonShowEvent;
-                            });
-
-                            Timer(
-                              const Duration(milliseconds: 50),
-                              () => setState(() {
-                                floatingButtonShowNews =
-                                    !floatingButtonShowNews;
-                              }),
-                            );
-
-                            Timer(
-                              const Duration(milliseconds: 100),
-                              () => setState(() {
-                                floatingButtonShowExercise =
-                                    !floatingButtonShowExercise;
-                              }),
-                            );
-                          }
-
-                          if (context.read<HFGlobalState>().rootScreenState ==
-                              RootScreens.calendar) {
-                            Navigator.pushNamed(
-                              context,
-                              addEventRoute,
-                              arguments: {
-                                'date': context
-                                    .read<HFGlobalState>()
-                                    .calendarSelectedDay,
-                                'title': '',
-                                'id': '',
-                                'startTime': '',
-                                'endTime': '',
-                                'location': '',
-                                'client': {'name': '', 'id': ''},
-                                'exercises': [],
-                                'note': '',
-                                'color': '',
-                                'isEdit': false,
-                                'isDuplicate': false,
-                              },
-                            );
-                          }
-                        },
-                        backgroundColor: HFColors().primaryColor(),
-                        mini: true,
-                        child: Icon(
-                          CupertinoIcons.add,
-                          size: 20,
-                          color: HFColors().secondaryColor(),
-                        ),
-                      ),
-                    ),
-                  ),
-                // Floating menu
-                AnimatedPositioned(
-                  duration: Duration(milliseconds: 300),
-                  curve: Curves.easeInOut,
-                  bottom: context.watch<HFGlobalState>().rootScreenState !=
-                              RootScreens.login &&
-                          context.watch<HFGlobalState>().rootScreenState !=
-                              RootScreens.welcome
-                      ? 32
-                      : -74,
-                  left: 32,
-                  right: 32,
+                    if (details.primaryVelocity! > -sensitivity) {
+                      if (context.read<HFGlobalState>().rootScreenState !=
+                          RootScreens.home) {
+                        switch (context.read<HFGlobalState>().rootScreenState) {
+                          case RootScreens.settings:
+                            context
+                                .read<HFGlobalState>()
+                                .setRootScreenState(RootScreens.chat);
+                            break;
+                          case RootScreens.chat:
+                            context
+                                .read<HFGlobalState>()
+                                .setRootScreenState(RootScreens.calendar);
+                            break;
+                          case RootScreens.calendar:
+                            context
+                                .read<HFGlobalState>()
+                                .setRootScreenState(RootScreens.home);
+                            break;
+                          default:
+                        }
+                      }
+                    }
+                  },
                   child: Container(
-                    height: barHeight,
-                    width: MediaQuery.of(context).size.width,
-                    alignment: Alignment.topCenter,
-                    padding:
-                        const EdgeInsets.only(top: (barHeight - iconSize) / 2),
-                    decoration: BoxDecoration(
-                      color: HFColors().secondaryLightColor(),
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(24),
+                    color: HFColors().backgroundColor(),
+                    child: Scaffold(
+                      resizeToAvoidBottomInset: false,
+                      backgroundColor: HFColors().backgroundColor(),
+                      body: SizedBox(
+                        height: MediaQuery.of(context).size.height,
+                        width: MediaQuery.of(context).size.width,
+                        child: Stack(
+                          children: [
+                            // Home screen
+                            AnimatedPositioned(
+                              curve: Curves.easeInOut,
+                              top: 0,
+                              left: context
+                                          .watch<HFGlobalState>()
+                                          .rootScreenState !=
+                                      RootScreens.home
+                                  ? -20
+                                  : 0,
+                              height: MediaQuery.of(context).size.height,
+                              width: MediaQuery.of(context).size.width,
+                              duration: const Duration(milliseconds: 200),
+                              child: AnimatedOpacity(
+                                opacity: context
+                                            .watch<HFGlobalState>()
+                                            .rootScreenState ==
+                                        RootScreens.home
+                                    ? 1
+                                    : 0,
+                                duration: const Duration(milliseconds: 100),
+                                child: IgnorePointer(
+                                  ignoring: context
+                                          .watch<HFGlobalState>()
+                                          .rootScreenState !=
+                                      RootScreens.home,
+                                  child: const Home(),
+                                ),
+                              ),
+                            ),
+
+                            // Calendar screen
+                            AnimatedPositioned(
+                              curve: Curves.easeInOut,
+                              top: 0,
+                              left: context
+                                          .watch<HFGlobalState>()
+                                          .rootScreenState ==
+                                      RootScreens.home
+                                  ? 20
+                                  : context
+                                              .watch<HFGlobalState>()
+                                              .rootScreenState ==
+                                          RootScreens.chat
+                                      ? -20
+                                      : 0,
+                              height: MediaQuery.of(context).size.height,
+                              width: MediaQuery.of(context).size.width,
+                              duration: const Duration(milliseconds: 200),
+                              child: AnimatedOpacity(
+                                opacity: context
+                                            .watch<HFGlobalState>()
+                                            .rootScreenState ==
+                                        RootScreens.calendar
+                                    ? 1
+                                    : 0,
+                                duration: const Duration(milliseconds: 100),
+                                child: IgnorePointer(
+                                  ignoring: context
+                                          .watch<HFGlobalState>()
+                                          .rootScreenState !=
+                                      RootScreens.calendar,
+                                  child: const CalendarPage(),
+                                ),
+                              ),
+                            ),
+
+                            // Chat screen
+                            AnimatedPositioned(
+                              curve: Curves.easeInOut,
+                              top: 0,
+                              left: context
+                                          .watch<HFGlobalState>()
+                                          .rootScreenState ==
+                                      RootScreens.calendar
+                                  ? 20
+                                  : context
+                                              .watch<HFGlobalState>()
+                                              .rootScreenState ==
+                                          RootScreens.settings
+                                      ? -20
+                                      : 0,
+                              height: MediaQuery.of(context).size.height,
+                              width: MediaQuery.of(context).size.width,
+                              duration: const Duration(milliseconds: 200),
+                              child: AnimatedOpacity(
+                                opacity: context
+                                            .watch<HFGlobalState>()
+                                            .rootScreenState ==
+                                        RootScreens.chat
+                                    ? 1
+                                    : 0,
+                                duration: const Duration(milliseconds: 100),
+                                child: IgnorePointer(
+                                  ignoring: context
+                                          .watch<HFGlobalState>()
+                                          .rootScreenState !=
+                                      RootScreens.chat,
+                                  child: const Chat(),
+                                ),
+                              ),
+                            ),
+
+                            // Settings screen
+                            AnimatedPositioned(
+                              curve: Curves.easeInOut,
+                              top: 0,
+                              left: context
+                                          .watch<HFGlobalState>()
+                                          .rootScreenState !=
+                                      RootScreens.settings
+                                  ? 20
+                                  : 0,
+                              height: MediaQuery.of(context).size.height,
+                              width: MediaQuery.of(context).size.width,
+                              duration: const Duration(milliseconds: 200),
+                              child: AnimatedOpacity(
+                                opacity: context
+                                            .watch<HFGlobalState>()
+                                            .rootScreenState ==
+                                        RootScreens.settings
+                                    ? 1
+                                    : 0,
+                                duration: const Duration(milliseconds: 100),
+                                child: IgnorePointer(
+                                  ignoring: context
+                                          .watch<HFGlobalState>()
+                                          .rootScreenState !=
+                                      RootScreens.settings,
+                                  child: const SettingsPage(),
+                                ),
+                              ),
+                            ),
+
+                            // Welcome screen
+                            AnimatedPositioned(
+                              curve: Curves.easeInOut,
+                              left: 0,
+                              top: context
+                                          .watch<HFGlobalState>()
+                                          .rootScreenState !=
+                                      RootScreens.welcome
+                                  ? -20
+                                  : 0,
+                              height: MediaQuery.of(context).size.height,
+                              width: MediaQuery.of(context).size.width,
+                              duration: const Duration(milliseconds: 200),
+                              child: AnimatedOpacity(
+                                opacity: context
+                                            .watch<HFGlobalState>()
+                                            .rootScreenState ==
+                                        RootScreens.welcome
+                                    ? 1
+                                    : 0,
+                                duration: const Duration(milliseconds: 100),
+                                child: IgnorePointer(
+                                  ignoring: context
+                                          .watch<HFGlobalState>()
+                                          .rootScreenState !=
+                                      RootScreens.welcome,
+                                  child: const WelcomePage(),
+                                ),
+                              ),
+                            ),
+
+                            // Floating event button
+                            AnimatedPositioned(
+                              curve: floatingButtonShowEvent
+                                  ? Curves.easeOutBack
+                                  : Curves.easeInOut,
+                              bottom: floatingButtonShowEvent ? 180 : 120,
+                              right: floatingButtonShowEvent ? 20 : 30,
+                              duration: const Duration(milliseconds: 300),
+                              child: AnimatedOpacity(
+                                curve: floatingButtonShowEvent
+                                    ? Curves.easeOutBack
+                                    : Curves.easeInOut,
+                                opacity: floatingButtonShowEvent ? 1 : 0,
+                                duration: const Duration(milliseconds: 300),
+                                child: AnimatedScale(
+                                  curve: floatingButtonShowEvent
+                                      ? Curves.easeOutBack
+                                      : Curves.easeInOut,
+                                  scale: floatingButtonShowEvent ? 1 : 0,
+                                  duration: const Duration(milliseconds: 300),
+                                  child: IgnorePointer(
+                                    ignoring: !floatingButtonShowEvent,
+                                    child: HFButton(
+                                      useIcon: true,
+                                      icon: Icon(
+                                        CupertinoIcons.calendar_badge_plus,
+                                        size: 20,
+                                        color: HFColors().secondaryColor(),
+                                      ),
+                                      padding: const EdgeInsets.all(10),
+                                      text: 'Workout',
+                                      onPressed: () {
+                                        hideFloatingButtonOptions();
+
+                                        Navigator.pushNamed(
+                                            context, addEventRoute,
+                                            arguments: {
+                                              'v2': true,
+                                              'date': DateTime.parse(
+                                                  '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 00:00:00.000Z'),
+                                              'title': '',
+                                              'id': '',
+                                              'startTime': '',
+                                              'endTime': '',
+                                              'location': '',
+                                              'client': {
+                                                'name': '',
+                                                'id': '',
+                                              },
+                                              'exercises': [
+                                                {'exercises': []}
+                                              ],
+                                              'note': '',
+                                              'color': '',
+                                              'isEdit': false,
+                                              'isDuplicate': false,
+                                            });
+                                      },
+                                      backgroundColor:
+                                          HFColors().primaryColor(),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            // Floating news button
+                            AnimatedPositioned(
+                              curve: floatingButtonShowNews
+                                  ? Curves.easeOutBack
+                                  : Curves.easeInOut,
+                              bottom: floatingButtonShowNews ? 160 : 120,
+                              right: floatingButtonShowNews ? 70 : 30,
+                              duration: const Duration(milliseconds: 300),
+                              child: AnimatedOpacity(
+                                curve: floatingButtonShowNews
+                                    ? Curves.easeOutBack
+                                    : Curves.easeInOut,
+                                opacity: floatingButtonShowNews ? 1 : 0,
+                                duration: const Duration(milliseconds: 300),
+                                child: AnimatedScale(
+                                  curve: floatingButtonShowNews
+                                      ? Curves.easeOutBack
+                                      : Curves.easeInOut,
+                                  scale: floatingButtonShowNews ? 1 : 0,
+                                  duration: const Duration(milliseconds: 300),
+                                  child: IgnorePointer(
+                                    ignoring: !floatingButtonShowNews,
+                                    child: HFButton(
+                                      useIcon: true,
+                                      icon: Icon(
+                                        CupertinoIcons.news_solid,
+                                        size: 20,
+                                        color: HFColors().secondaryColor(),
+                                      ),
+                                      padding: const EdgeInsets.all(10),
+                                      text: 'News',
+                                      onPressed: () {
+                                        hideFloatingButtonOptions();
+                                        Navigator.pushNamed(
+                                            context, addNewsRoute);
+                                      },
+                                      backgroundColor:
+                                          HFColors().primaryColor(),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            // Floating exercise button
+                            AnimatedPositioned(
+                              curve: floatingButtonShowExercise
+                                  ? Curves.easeOutBack
+                                  : Curves.easeInOut,
+                              bottom: floatingButtonShowExercise ? 110 : 120,
+                              right: floatingButtonShowExercise ? 90 : 30,
+                              duration: const Duration(milliseconds: 300),
+                              child: AnimatedOpacity(
+                                curve: floatingButtonShowExercise
+                                    ? Curves.easeOutBack
+                                    : Curves.easeInOut,
+                                opacity: floatingButtonShowExercise ? 1 : 0,
+                                duration: const Duration(milliseconds: 300),
+                                child: AnimatedScale(
+                                  curve: floatingButtonShowExercise
+                                      ? Curves.easeOutBack
+                                      : Curves.easeInOut,
+                                  scale: floatingButtonShowExercise ? 1 : 0,
+                                  duration: const Duration(milliseconds: 300),
+                                  child: IgnorePointer(
+                                    ignoring: !floatingButtonShowExercise,
+                                    child: HFButton(
+                                      useIcon: true,
+                                      icon: SvgPicture.asset(
+                                        'assets/icon-gym.svg',
+                                        color: HFColors().secondaryColor(),
+                                        width: 20,
+                                      ),
+                                      padding: const EdgeInsets.all(10),
+                                      text: 'Exercise',
+                                      onPressed: () {
+                                        hideFloatingButtonOptions();
+                                        Navigator.pushNamed(
+                                            context, addTrainingRoute);
+                                      },
+                                      backgroundColor:
+                                          HFColors().primaryColor(),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            // Main floating button
+                            if (context
+                                    .watch<HFGlobalState>()
+                                    .userAccessLevel ==
+                                accessLevels.trainer)
+                              AnimatedPositioned(
+                                curve: Curves.easeInOut,
+                                bottom: 120,
+                                right: context
+                                                .watch<HFGlobalState>()
+                                                .rootScreenState !=
+                                            RootScreens.login &&
+                                        context
+                                                .watch<HFGlobalState>()
+                                                .rootScreenState !=
+                                            RootScreens.welcome &&
+                                        context
+                                                .watch<HFGlobalState>()
+                                                .rootScreenState !=
+                                            RootScreens.chat &&
+                                        context
+                                                .watch<HFGlobalState>()
+                                                .rootScreenState !=
+                                            RootScreens.settings
+                                    ? 30
+                                    : -60,
+                                duration: const Duration(milliseconds: 200),
+                                child: AnimatedOpacity(
+                                  opacity: context
+                                                  .watch<HFGlobalState>()
+                                                  .rootPageIndex ==
+                                              0 ||
+                                          context
+                                                  .watch<HFGlobalState>()
+                                                  .rootPageIndex ==
+                                              1
+                                      ? 1
+                                      : 0,
+                                  duration: const Duration(milliseconds: 100),
+                                  child: FloatingActionButton(
+                                    heroTag: 'floating-button',
+                                    elevation: 10,
+                                    onPressed: () {
+                                      if (context
+                                              .read<HFGlobalState>()
+                                              .rootScreenState ==
+                                          RootScreens.home) {
+                                        setState(() {
+                                          floatingButtonShowEvent =
+                                              !floatingButtonShowEvent;
+                                        });
+
+                                        Timer(
+                                          const Duration(milliseconds: 50),
+                                          () => setState(() {
+                                            floatingButtonShowNews =
+                                                !floatingButtonShowNews;
+                                          }),
+                                        );
+
+                                        Timer(
+                                          const Duration(milliseconds: 100),
+                                          () => setState(() {
+                                            floatingButtonShowExercise =
+                                                !floatingButtonShowExercise;
+                                          }),
+                                        );
+                                      }
+
+                                      if (context
+                                              .read<HFGlobalState>()
+                                              .rootScreenState ==
+                                          RootScreens.calendar) {
+                                        Navigator.pushNamed(
+                                          context,
+                                          addEventRoute,
+                                          arguments: {
+                                            'v2': true,
+                                            'clientFeedack': '',
+                                            'date': context
+                                                .read<HFGlobalState>()
+                                                .calendarSelectedDay,
+                                            'title': '',
+                                            'id': '',
+                                            'startTime': '',
+                                            'endTime': '',
+                                            'location': '',
+                                            'client': {'name': '', 'id': ''},
+                                            'exercises': [
+                                              {'exercises': []}
+                                            ],
+                                            'note': '',
+                                            'color': '',
+                                            'isEdit': false,
+                                            'isDuplicate': false,
+                                          },
+                                        );
+                                      }
+                                    },
+                                    backgroundColor: HFColors().primaryColor(),
+                                    mini: true,
+                                    child: Icon(
+                                      CupertinoIcons.add,
+                                      size: 20,
+                                      color: HFColors().secondaryColor(),
+                                    ),
+                                  ),
+                                ),
+                              ),
+
+                            // Floating menu
+                            AnimatedPositioned(
+                              duration: Duration(milliseconds: 300),
+                              curve: Curves.easeInOut,
+                              bottom: context
+                                              .watch<HFGlobalState>()
+                                              .rootScreenState !=
+                                          RootScreens.login &&
+                                      context
+                                              .watch<HFGlobalState>()
+                                              .rootScreenState !=
+                                          RootScreens.welcome
+                                  ? 32
+                                  : -74,
+                              left: 32,
+                              right: 32,
+                              child: Material(
+                                elevation: 10,
+                                color: Colors.transparent,
+                                child: Container(
+                                  height: barHeight,
+                                  width: MediaQuery.of(context).size.width,
+                                  alignment: Alignment.topCenter,
+                                  padding: const EdgeInsets.only(
+                                      top: (barHeight - iconSize) / 2),
+                                  decoration: BoxDecoration(
+                                    color: HFColors().secondaryLightColor(),
+                                    borderRadius: const BorderRadius.all(
+                                      Radius.circular(24),
+                                    ),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      menuBarIcon(
+                                          context,
+                                          RootScreens.home,
+                                          setState,
+                                          CupertinoIcons.home,
+                                          hideFloatingButtonOptions),
+                                      menuBarIcon(
+                                          context,
+                                          RootScreens.calendar,
+                                          setState,
+                                          CupertinoIcons.calendar,
+                                          hideFloatingButtonOptions),
+                                      menuBarIcon(
+                                          context,
+                                          RootScreens.chat,
+                                          setState,
+                                          CupertinoIcons.chat_bubble_2,
+                                          hideFloatingButtonOptions),
+                                      menuBarIcon(
+                                          context,
+                                          RootScreens.settings,
+                                          setState,
+                                          CupertinoIcons.settings,
+                                          hideFloatingButtonOptions),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
                       ),
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        menuBarIcon(context, RootScreens.home, setState,
-                            CupertinoIcons.home, hideFloatingButtonOptions),
-                        menuBarIcon(context, RootScreens.calendar, setState,
-                            CupertinoIcons.calendar, hideFloatingButtonOptions),
-                        menuBarIcon(
-                            context,
-                            RootScreens.chat,
-                            setState,
-                            CupertinoIcons.chat_bubble_2,
-                            hideFloatingButtonOptions),
-                        menuBarIcon(context, RootScreens.settings, setState,
-                            CupertinoIcons.settings, hideFloatingButtonOptions),
-                      ],
-                    ),
                   ),
-                )
-              ],
-            ),
-          ),
+                ),
+              ),
+            if (!context.watch<HFGlobalState>().userLoggedIn)
+              // Login screen
+              AnimatedPositioned(
+                curve: Curves.easeInOut,
+                left: 0,
+                top: context.watch<HFGlobalState>().rootScreenState ==
+                        SplashScreens.login
+                    ? -20
+                    : 0,
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+                duration: const Duration(milliseconds: 200),
+                child: AnimatedOpacity(
+                  opacity: context.watch<HFGlobalState>().rootScreenState ==
+                          RootScreens.login
+                      ? 1
+                      : 0,
+                  duration: const Duration(milliseconds: 100),
+                  child: IgnorePointer(
+                    ignoring: context.watch<HFGlobalState>().rootScreenState !=
+                        RootScreens.login,
+                    child: const SplashScreen(),
+                  ),
+                ),
+              ),
+          ],
         ),
       ),
     );
@@ -642,9 +746,21 @@ fetchCalendarEvents(
             List<Event> events = [];
 
             value.docs.forEach((event) {
-              var query = event;
+              var query = event.data();
+              var eventV2 = false;
+              var eventClientFeedback = '';
+
+              if (query.containsKey('v2')) {
+                eventV2 = query['v2'];
+              }
+
+              if (query.containsKey('clientFeedback')) {
+                eventClientFeedback = query['clientFeedback'];
+              }
 
               events.add(Event(
+                v2: eventV2,
+                clientFeedback: eventClientFeedback,
                 title: query['title'],
                 id: query['id'],
                 startTime: query['startTime'],

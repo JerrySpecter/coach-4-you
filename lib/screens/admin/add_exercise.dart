@@ -330,6 +330,7 @@ class _AddExerciseFormState extends State<AddExerciseForm> {
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 8.0),
                               child: HFSelectListViewTile(
+                                key: Key(video['id']),
                                 name: video['name'],
                                 imageUrl: video['thumbnail'],
                                 showAvailable: false,

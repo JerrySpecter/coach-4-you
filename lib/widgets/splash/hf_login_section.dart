@@ -31,6 +31,7 @@ class _LoginSectionState extends State<LoginSection> {
   final _formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -117,12 +118,16 @@ class _LoginSectionState extends State<LoginSection> {
               height: 10,
             ),
             HFButton(
-              text: 'Log in',
+              text: isLoading ? 'Loading...' : 'Log in',
               padding: const EdgeInsets.symmetric(vertical: 20),
               onPressed: () async {
                 FocusScope.of(context).requestFocus(FocusNode());
 
                 if (_formKey.currentState!.validate()) {
+                  setState(() {
+                    isLoading = true;
+                  });
+
                   try {
                     await widget.authInstance
                         .signInWithEmailAndPassword(
@@ -149,9 +154,17 @@ class _LoginSectionState extends State<LoginSection> {
                           HFFirebaseFunctions()
                               .initTrainerData(value.user!.uid, context);
                         }
+
+                        setState(() {
+                          isLoading = false;
+                        });
                       });
                     });
                   } catch (e) {
+                    setState(() {
+                      isLoading = false;
+                    });
+
                     ScaffoldMessenger.of(context).showSnackBar(
                       getSnackBar(
                           text: e.toString(), color: HFColors().primaryColor()),

@@ -45,8 +45,6 @@ class TrainerProfile extends StatefulWidget {
 }
 
 class _TrainerProfileState extends State<TrainerProfile> {
-  final SnappingSheetController snappingSheetController =
-      SnappingSheetController();
   final TextEditingController emailAddressController = TextEditingController();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController contentController = TextEditingController();
@@ -210,14 +208,13 @@ class _TrainerProfileState extends State<TrainerProfile> {
                             ),
                             child: InkWell(
                               onTap: () {
-                                snappingSheetController.snapToPosition(
-                                  const SnappingPosition.factor(
-                                      positionFactor: 1),
-                                );
-
-                                setState(() {
-                                  pullUpOpen = true;
-                                });
+                                showModalBottomSheet(
+                                    context: context,
+                                    backgroundColor: Colors.transparent,
+                                    isScrollControlled: true,
+                                    builder: ((context) {
+                                      return modalBottomSheetContent();
+                                    }));
                               },
                               child: Row(
                                 children: [
@@ -255,7 +252,7 @@ class _TrainerProfileState extends State<TrainerProfile> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Container(
-                            padding: EdgeInsets.only(
+                            padding: const EdgeInsets.only(
                                 top: 4, left: 4, right: 8, bottom: 4),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(12),
@@ -272,7 +269,7 @@ class _TrainerProfileState extends State<TrainerProfile> {
                                       : HFColors().redColor(),
                                   size: 16,
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 6,
                                 ),
                                 HFParagrpah(
@@ -287,7 +284,7 @@ class _TrainerProfileState extends State<TrainerProfile> {
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 20,
                       ),
                       Row(
@@ -373,243 +370,182 @@ class _TrainerProfileState extends State<TrainerProfile> {
               ],
             ),
           ),
-          if (widget.name != '')
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: AnimatedOpacity(
-                opacity: pullUpOpen ? 1 : 0,
-                duration: const Duration(milliseconds: 200),
-                child: IgnorePointer(
-                  ignoring: !pullUpOpen,
-                  child: InkWell(
-                    onTap: () {
-                      snappingSheetController.snapToPosition(
-                        const SnappingPosition.factor(positionFactor: 0),
-                      );
-
-                      setState(() {
-                        pullUpOpen = false;
-                      });
-                    },
-                    child: Container(
-                      color: HFColors().primaryColor(opacity: 0.6),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          if (widget.name != '')
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: SizedBox(
-                height: MediaQuery.of(context).size.height * 0.65,
-                child: SnappingSheet(
-                  onSnapCompleted: (positionData, snappingPosition) {
-                    if (positionData.relativeToSnappingPositions == 0.0) {
-                      setState(() {
-                        pullUpOpen = false;
-                      });
-                    }
-                  },
-                  lockOverflowDrag: true,
-                  controller: snappingSheetController,
-                  snappingPositions: const [
-                    SnappingPosition.factor(
-                      positionFactor: 0.0,
-                      snappingCurve: Curves.easeOutExpo,
-                      snappingDuration: Duration(milliseconds: 100),
-                      grabbingContentOffset: GrabbingContentOffset.top,
-                    ),
-                    SnappingPosition.factor(
-                      grabbingContentOffset: GrabbingContentOffset.bottom,
-                      snappingCurve: Curves.easeInOut,
-                      snappingDuration: Duration(milliseconds: 200),
-                      positionFactor: 1,
-                    ),
-                  ],
-                  grabbingHeight: 0,
-                  sheetAbove: null,
-                  sheetBelow: SnappingSheetContent(
-                    draggable: true,
-                    child: Container(
-                      padding:
-                          const EdgeInsets.only(top: 24, left: 24, right: 24),
-                      decoration: BoxDecoration(
-                        color: HFColors().secondaryLightColor(),
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(16),
-                          topRight: Radius.circular(16),
-                        ),
-                      ),
-                      width: MediaQuery.of(context).size.width,
-                      child: SingleChildScrollView(
-                        child: Form(
-                          key: _formKey,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              const HFHeading(
-                                text: 'Send a request to trainer.',
-                                size: 7,
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              HFInput(
-                                hintText: 'Full name',
-                                controller: nameController,
-                                keyboardType: TextInputType.text,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter your name.';
-                                  }
-                                  return null;
-                                },
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              const HFParagrpah(
-                                text: 'Enter your email address.',
-                                size: 7,
-                              ),
-                              HFInput(
-                                hintText: 'Email address',
-                                controller: emailAddressController,
-                                keyboardType: TextInputType.emailAddress,
-                                textCapitalization: TextCapitalization.none,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter email.';
-                                  }
-
-                                  if (!EmailValidator.validate(value)) {
-                                    return 'Please enter valid email address.';
-                                  }
-
-                                  return null;
-                                },
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              const HFParagrpah(
-                                text: 'Compose a message for your trainer.',
-                                size: 7,
-                              ),
-                              const SizedBox(
-                                height: 6,
-                              ),
-                              TextFormField(
-                                toolbarOptions: const ToolbarOptions(
-                                  copy: true,
-                                  cut: true,
-                                  paste: true,
-                                  selectAll: true,
-                                ),
-                                minLines: 3,
-                                maxLines: 4,
-                                keyboardType: TextInputType.multiline,
-                                controller: contentController,
-                                style:
-                                    TextStyle(color: HFColors().whiteColor()),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter a message.';
-                                  }
-                                  return null;
-                                },
-                              ),
-                              const SizedBox(
-                                height: 30,
-                              ),
-                              HFButton(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 16),
-                                text: isLoading ? 'Loading...' : 'Apply',
-                                onPressed: () {
-                                  FocusManager.instance.primaryFocus?.unfocus();
-
-                                  if (_formKey.currentState!.validate()) {
-                                    setState(() {
-                                      isLoading = true;
-                                    });
-
-                                    FirebaseFirestore.instance
-                                        .collection('trainers')
-                                        .doc(widget.id)
-                                        .collection('requests')
-                                        .doc(emailAddressController.text)
-                                        .set({
-                                      'name': nameController.text,
-                                      'email': emailAddressController.text,
-                                      'dateCreated': DateTime.now(),
-                                      'content': contentController.text,
-                                    }).then((value) {
-                                      http
-                                          .post(
-                                        Uri.parse(
-                                            'https://hf.specter.design/wp-json/hfapp/v1/send-request-email'),
-                                        headers: <String, String>{
-                                          'Content-Type':
-                                              'application/json; charset=UTF-8',
-                                        },
-                                        body: jsonEncode(<String, String>{
-                                          'trainerName': initialname,
-                                          'trainerEmail': initialemail,
-                                          'clientEmail':
-                                              emailAddressController.text,
-                                          'clientName': nameController.text,
-                                          'clientContent':
-                                              contentController.text,
-                                        }),
-                                      )
-                                          .then((value) {
-                                        snappingSheetController.snapToPosition(
-                                          const SnappingPosition.factor(
-                                              positionFactor: 0),
-                                        );
-
-                                        setState(() {
-                                          pullUpOpen = false;
-                                          isLoading = false;
-                                        });
-
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(getSnackBar(
-                                          text: 'Request has been sent',
-                                          color: HFColors()
-                                              .primaryColor(opacity: 1),
-                                        ));
-                                      }).catchError((error) => print(error));
-                                    });
-                                  } else {
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(getSnackBar(
-                                      text: 'Fill in required fields',
-                                      color: HFColors().redColor(opacity: 1),
-                                    ));
-                                  }
-                                },
-                              ),
-                              const SizedBox(
-                                height: 40,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            )
         ],
+      ),
+    );
+  }
+
+  Widget modalBottomSheetContent() {
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.7,
+      padding: EdgeInsets.only(
+        top: 24,
+        left: 24,
+        right: 24,
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
+      decoration: BoxDecoration(
+        color: HFColors().secondaryLightColor(),
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(16),
+          topRight: Radius.circular(16),
+        ),
+      ),
+      width: MediaQuery.of(context).size.width,
+      child: SingleChildScrollView(
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const HFHeading(
+                text: 'Send a request to trainer.',
+                size: 7,
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              HFInput(
+                hintText: 'Full name',
+                controller: nameController,
+                keyboardType: TextInputType.text,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your name.';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              const HFParagrpah(
+                text: 'Enter your email address.',
+                size: 7,
+              ),
+              HFInput(
+                hintText: 'Email address',
+                controller: emailAddressController,
+                keyboardType: TextInputType.emailAddress,
+                textCapitalization: TextCapitalization.none,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter email.';
+                  }
+
+                  if (!EmailValidator.validate(value)) {
+                    return 'Please enter valid email address.';
+                  }
+
+                  return null;
+                },
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              const HFParagrpah(
+                text: 'Compose a message for your trainer.',
+                size: 7,
+              ),
+              const SizedBox(
+                height: 6,
+              ),
+              TextFormField(
+                toolbarOptions: const ToolbarOptions(
+                  copy: true,
+                  cut: true,
+                  paste: true,
+                  selectAll: true,
+                ),
+                minLines: 3,
+                maxLines: 4,
+                keyboardType: TextInputType.multiline,
+                controller: contentController,
+                style: TextStyle(color: HFColors().whiteColor()),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a message.';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              HFButton(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                text: isLoading ? 'Loading...' : 'Apply',
+                onPressed: () {
+                  FocusManager.instance.primaryFocus?.unfocus();
+
+                  if (_formKey.currentState!.validate()) {
+                    setState(() {
+                      isLoading = true;
+                    });
+
+                    FirebaseFirestore.instance
+                        .collection('trainers')
+                        .doc(widget.id)
+                        .get()
+                        .then((trainerDocRef) {
+                      trainerDocRef.reference
+                          .collection('requests')
+                          .doc(emailAddressController.text)
+                          .set({
+                        'name': nameController.text,
+                        'email': emailAddressController.text,
+                        'dateCreated': DateTime.now(),
+                        'content': contentController.text,
+                      });
+
+                      trainerDocRef.reference
+                          .collection('notifications')
+                          .doc()
+                          .set({
+                        'date': '${DateTime.now()}',
+                        'read': false,
+                        'trainerImage': '',
+                        'trainerName': '',
+                        'type': 'new-request',
+                        'token': trainerDocRef.data()!['notificationToken'],
+                        'data': {
+                          'name': nameController.text,
+                          'email': emailAddressController.text,
+                          'dateCreated': DateTime.now(),
+                          'content': contentController.text,
+                        }
+                      });
+
+                      trainerDocRef.reference.update({
+                        'unreadNotifications':
+                            trainerDocRef.data()!['unreadNotifications'] + 1
+                      }).then((value) {
+                        setState(() {
+                          isLoading = false;
+                        });
+
+                        Navigator.pop(context);
+
+                        ScaffoldMessenger.of(context).showSnackBar(getSnackBar(
+                          text: 'Request has been sent',
+                          color: HFColors().primaryColor(opacity: 1),
+                        ));
+                      });
+                    });
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(getSnackBar(
+                      text: 'Fill in required fields',
+                      color: HFColors().redColor(opacity: 1),
+                    ));
+                  }
+                },
+              ),
+              const SizedBox(
+                height: 40,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -642,7 +578,7 @@ Widget ProfileDataListTile(context, text, value) {
                           fontWeight: FontWeight.w400,
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 20,
                       ),
                       Flexible(
@@ -679,17 +615,17 @@ Widget TrainerInformation(context, intro, locations, education, birthday) {
   }
 
   return Padding(
-    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 40),
+    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 40),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (intro != '')
-          HFHeading(
+          const HFHeading(
             text: 'Introduction:',
             size: 5,
           ),
         if (intro != '')
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
         if (intro != '')
@@ -700,14 +636,14 @@ Widget TrainerInformation(context, intro, locations, education, birthday) {
             maxLines: 30,
           ),
         if (intro != '')
-          SizedBox(
+          const SizedBox(
             height: 30,
           ),
-        HFHeading(
+        const HFHeading(
           text: 'About your trainer:',
           size: 4,
         ),
-        SizedBox(
+        const SizedBox(
           height: 10,
         ),
         Container(
@@ -719,16 +655,16 @@ Widget TrainerInformation(context, intro, locations, education, birthday) {
             ],
           ),
         ),
-        SizedBox(
+        const SizedBox(
           height: 30,
         ),
         if (education != '')
-          HFHeading(
+          const HFHeading(
             text: 'Education:',
             size: 4,
           ),
         if (education != '')
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
         if (education != '')
@@ -739,7 +675,7 @@ Widget TrainerInformation(context, intro, locations, education, birthday) {
             maxLines: 30,
           ),
         if (education != '')
-          SizedBox(
+          const SizedBox(
             height: 30,
           ),
       ],

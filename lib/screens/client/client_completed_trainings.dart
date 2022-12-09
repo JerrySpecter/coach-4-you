@@ -75,8 +75,6 @@ class ClientsCompletedTrainings extends StatelessWidget {
                     );
                   }
 
-                  var dataReversed = data.docs.reversed;
-
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -88,6 +86,18 @@ class ClientsCompletedTrainings extends StatelessWidget {
                       ),
                       ...data.docs.map(
                         (event) {
+                          var eventData = event.data() as dynamic;
+                          var eventV2 = false;
+                          var eventClientFeedback = '';
+
+                          if (eventData.containsKey('v2')) {
+                            eventV2 = eventData['v2'];
+                          }
+
+                          if (eventData.containsKey('clientFeedback')) {
+                            eventClientFeedback = eventData['clientFeedback'];
+                          }
+
                           return HFListViewTile(
                             showAvailable: false,
                             useImage: false,
@@ -95,6 +105,8 @@ class ClientsCompletedTrainings extends StatelessWidget {
                             onTap: () {
                               Navigator.pushNamed(context, completedEventRoute,
                                   arguments: {
+                                    'v2': eventV2,
+                                    'clientFeedback': eventClientFeedback,
                                     'title': event['title'],
                                     'id': event['id'],
                                     'date': event['date'],

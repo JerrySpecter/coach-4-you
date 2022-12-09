@@ -24,7 +24,7 @@ class HFHeading extends StatelessWidget {
   double _getSize(int size) {
     List<double> sizes = [
       0, // 0
-      12.0, // 1
+      11.0, // 1
       14.0, // 2
       16.0, // 3
       18.0, // 4

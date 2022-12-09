@@ -57,8 +57,9 @@ class HFInput extends StatelessWidget {
         child: TextFormField(
           validator: validator,
           controller: controller,
-          style: TextStyle(color: Colors.transparent),
+          style: const TextStyle(color: Colors.transparent),
           decoration: InputDecoration(
+            fillColor: Colors.transparent,
             border: InputBorder.none,
             focusedBorder: InputBorder.none,
             enabledBorder: InputBorder.none,
@@ -91,32 +92,37 @@ class HFInput extends StatelessWidget {
           const SizedBox(
             height: 2,
           ),
-          TextFormField(
-            toolbarOptions: toolbarOptions,
-            maxLines: maxLines,
-            minLines: minLines,
-            validator: validator,
-            controller: controller,
-            decoration: InputDecoration(
-              contentPadding: EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: verticalContentPadding,
+          Material(
+            elevation: 6,
+            borderRadius: BorderRadius.circular(16),
+            color: Colors.transparent,
+            child: TextFormField(
+              toolbarOptions: toolbarOptions,
+              maxLines: maxLines,
+              minLines: minLines,
+              validator: validator,
+              controller: controller,
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: verticalContentPadding,
+                ),
+                hintText: hintText,
               ),
-              hintText: hintText,
-            ),
-            keyboardType: keyboardType,
-            textCapitalization: textCapitalization,
-            obscureText: obscureText,
-            onChanged: onChanged,
-            onTap: onTap,
-            onEditingComplete: onEditingComplete,
-            showCursor: showCursor,
-            readOnly: readOnly,
-            style: GoogleFonts.getFont(
-              'Manrope',
-              textStyle: TextStyle(
-                color: HFColors().whiteColor(),
-                fontSize: 16,
+              keyboardType: keyboardType,
+              textCapitalization: textCapitalization,
+              obscureText: obscureText,
+              onChanged: onChanged,
+              onTap: onTap,
+              onEditingComplete: onEditingComplete,
+              showCursor: showCursor,
+              readOnly: readOnly,
+              style: GoogleFonts.getFont(
+                'Manrope',
+                textStyle: TextStyle(
+                  color: HFColors().whiteColor(),
+                  fontSize: 16,
+                ),
               ),
             ),
           ),

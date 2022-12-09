@@ -13,14 +13,16 @@ class HFTrainingListViewTile extends StatefulWidget {
     this.useImage = true,
     this.imageSize = 72,
     this.headingMargin = 8,
-    this.amount = 15,
-    this.repetitions = 15,
+    this.amount = '',
+    this.repetitions = '',
     this.showDelete = true,
     this.onTap,
     this.onDelete,
     this.type = '',
-    this.series = 0.0,
+    this.pauseTime = '',
+    this.series = '',
     this.note = '',
+    this.warmups = const [],
     this.icon = CupertinoIcons.chevron_right,
     this.imageUrl = '',
     this.id = '',
@@ -33,12 +35,13 @@ class HFTrainingListViewTile extends StatefulWidget {
   final String imageUrl;
   final String id;
   final String type;
-  final double series;
+  final dynamic pauseTime;
+  final String series;
   final String note;
   final double imageSize;
   final double headingMargin;
-  final double amount;
-  final double repetitions;
+  final dynamic amount;
+  final String repetitions;
   final bool useSpacerBottom;
   final bool useImage;
   final bool showDelete;
@@ -47,6 +50,7 @@ class HFTrainingListViewTile extends StatefulWidget {
   final VoidCallback? onDelete;
   final Color backgroundColor;
   final Color longPressColor;
+  final List<dynamic> warmups;
 
   @override
   State<HFTrainingListViewTile> createState() => _HFTrainingListViewTileState();
@@ -62,10 +66,6 @@ class _HFTrainingListViewTileState extends State<HFTrainingListViewTile> {
 
   @override
   Widget build(BuildContext context) {
-    widget.series.toString().replaceAll(',', '.');
-    widget.amount.toString().replaceAll(',', '.');
-    widget.repetitions.toString().replaceAll(',', '.');
-
     return Column(
       children: [
         const SizedBox(
@@ -122,101 +122,157 @@ class _HFTrainingListViewTileState extends State<HFTrainingListViewTile> {
                   maxLines: 2,
                   color: HFColors().whiteColor(opacity: 0.7),
                 ),
-                const SizedBox(
-                  height: 8,
-                ),
-                Container(
-                  padding: const EdgeInsets.all(6),
-                  decoration: BoxDecoration(
-                      color: HFColors().whiteColor(opacity: 0.1),
-                      borderRadius: BorderRadius.circular(12)),
-                  child: Flex(
-                    direction: Axis.horizontal,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        flex: 1,
-                        child: Column(
-                          children: [
-                            HFParagrpah(
-                              size: 6,
-                              text: widget.type == 'weight'
-                                  ? 'kg'
-                                  : widget.type == 'time'
-                                      ? 'Minutes'
-                                      : '',
-                            ),
-                            const SizedBox(height: 5),
-                            HFHeading(
-                              text:
-                                  widget.amount.toString().split('.')[1] == '0'
-                                      ? widget.amount.toString().split('.')[0]
-                                      : '${widget.amount}',
-                              size: 4,
-                              color: HFColors().whiteColor(),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        color: HFColors().whiteColor(opacity: 0.3),
-                        child: const SizedBox(
-                          height: 20,
-                          width: 1,
-                        ),
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: Column(
-                          children: [
-                            const HFParagrpah(
-                              size: 6,
-                              text: 'Reps.',
-                            ),
-                            const SizedBox(height: 5),
-                            HFHeading(
-                              text: widget.repetitions
-                                          .toString()
-                                          .split('.')[1] ==
-                                      '0'
-                                  ? widget.repetitions.toString().split('.')[0]
-                                  : '${widget.repetitions}',
-                              size: 4,
-                              color: HFColors().whiteColor(),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        color: HFColors().whiteColor(opacity: 0.3),
-                        child: const SizedBox(
-                          height: 20,
-                          width: 1,
-                        ),
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: Column(
-                          children: [
-                            const HFParagrpah(
-                              size: 6,
-                              text: 'Series',
-                            ),
-                            const SizedBox(height: 5),
-                            HFHeading(
-                              text:
-                                  widget.series.toString().split('.')[1] == '0'
-                                      ? widget.series.toString().split('.')[0]
-                                      : '${widget.series}',
-                              size: 4,
-                              color: HFColors().whiteColor(),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                if (widget.warmups.isEmpty)
+                  const SizedBox(
+                    height: 20,
                   ),
+                Column(
+                  children: [
+                    if (widget.warmups.isNotEmpty)
+                      Transform.translate(
+                        offset: const Offset(0.0, 20.0),
+                        child: Container(
+                          padding: const EdgeInsets.only(
+                              left: 8, right: 8, bottom: 24, top: 8),
+                          decoration: BoxDecoration(
+                              color: HFColors().grey3(),
+                              borderRadius: BorderRadius.circular(12)),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              const HFHeading(
+                                text: 'Warmup:',
+                                size: 2,
+                              ),
+                              const SizedBox(
+                                height: 8,
+                              ),
+                              for (var index = 0;
+                                  index < widget.warmups.length;
+                                  index += 1)
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 4.0),
+                                  child: Flex(
+                                    direction: Axis.horizontal,
+                                    children: [
+                                      SizedBox(
+                                        width: 30,
+                                        child: Center(
+                                          child: HFHeading(
+                                            text: '${index + 1}.',
+                                            size: 2,
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Container(
+                                          padding: const EdgeInsets.all(4),
+                                          decoration: BoxDecoration(
+                                            color: HFColors()
+                                                .whiteColor(opacity: 0.1),
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                          ),
+                                          child: Flex(
+                                            direction: Axis.horizontal,
+                                            children: [
+                                              Expanded(
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    HFParagrpah(
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      text:
+                                                          widget.type == 'time'
+                                                              ? 'Time'
+                                                              : 'Weight (kg)',
+                                                    ),
+                                                    HFHeading(
+                                                      text: widget.type ==
+                                                              'time'
+                                                          ? widget.warmups[
+                                                                      index]
+                                                                  ['amount']
+                                                              ['durationString']
+                                                          : widget.warmups[
+                                                              index]['amount'],
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      size: 3,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Container(
+                                                width: 1,
+                                                height: 16,
+                                                color: HFColors()
+                                                    .whiteColor(opacity: 0.4),
+                                              ),
+                                              Expanded(
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    const HFParagrpah(
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      text: 'Reps.',
+                                                    ),
+                                                    HFHeading(
+                                                      text:
+                                                          widget.warmups[index]
+                                                              ['reps'],
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      size: 3,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                            ],
+                          ),
+                        ),
+                      ),
+                    Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                          color: HFColors().grey4(),
+                          borderRadius: BorderRadius.circular(12)),
+                      child: Flex(
+                        direction: Axis.horizontal,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          getField(
+                              widget.type == 'weight'
+                                  ? 'Weight (kg)'
+                                  : widget.type == 'time'
+                                      ? 'Time'
+                                      : '',
+                              '${widget.amount}'),
+                          const FieldDivider(),
+                          getField('Series', widget.series),
+                          if (widget.type == 'weight') const FieldDivider(),
+                          if (widget.type == 'weight')
+                            getField('Reps.', widget.repetitions),
+                          if (widget.pauseTime != '') const FieldDivider(),
+                          if (widget.pauseTime != '')
+                            getField('Rest', '${widget.pauseTime}')
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -226,6 +282,41 @@ class _HFTrainingListViewTileState extends State<HFTrainingListViewTile> {
           height: 5,
         )
       ],
+    );
+  }
+
+  Widget getField(text, value) {
+    return Expanded(
+      flex: 1,
+      child: Column(
+        children: [
+          HFParagrpah(
+            size: 5,
+            text: text,
+          ),
+          const SizedBox(height: 5),
+          HFHeading(
+            text: value,
+            size: 3,
+            color: HFColors().whiteColor(),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class FieldDivider extends StatelessWidget {
+  const FieldDivider({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: HFColors().whiteColor(opacity: 0.3),
+      child: const SizedBox(
+        height: 20,
+        width: 1,
+      ),
     );
   }
 }

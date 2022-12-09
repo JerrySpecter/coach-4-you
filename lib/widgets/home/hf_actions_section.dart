@@ -17,24 +17,24 @@ class ActionsSection extends StatelessWidget {
           height: 30,
         ),
         HFArchiveTile(
-          image: 'assets/trainings.svg',
-          title: 'Sets',
-          primaryColor: HFColors().blueColor(opacity: 0.1),
-          secondaryColor: HFColors().blueColor(opacity: 0.6),
-          onTap: () {
-            Navigator.pushNamed(context, trainingsRoute);
-          },
-        ),
-        const SizedBox(
-          height: 20,
-        ),
-        HFArchiveTile(
           image: 'assets/clients.svg',
           title: 'Clients',
           primaryColor: HFColors().pinkColor(opacity: 0.1),
           secondaryColor: HFColors().pinkColor(opacity: 0.6),
           onTap: () {
             Navigator.pushNamed(context, clientsRoute);
+          },
+        ),
+        const SizedBox(
+          height: 20,
+        ),
+        HFArchiveTile(
+          image: 'assets/trainings.svg',
+          title: 'Sets',
+          primaryColor: HFColors().blueColor(opacity: 0.1),
+          secondaryColor: HFColors().blueColor(opacity: 0.6),
+          onTap: () {
+            Navigator.pushNamed(context, trainingsRoute);
           },
         ),
         const SizedBox(

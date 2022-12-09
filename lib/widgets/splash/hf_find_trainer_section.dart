@@ -120,102 +120,117 @@ class _FindTrainerSectionState extends State<FindTrainerSection> {
               ],
             ),
           ),
-          if (showLocationsFilter) SizedBox(height: 10),
-          if (showLocationsFilter)
-            StreamBuilder<Object>(
-              stream: FirebaseFirestore.instance
-                  .collection('locations')
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return Center(
+          AnimatedOpacity(
+            opacity: showLocationsFilter ? 1 : 0,
+            duration: Duration(milliseconds: 200),
+            curve: Curves.easeInOut,
+            child: AnimatedContainer(
+              duration: Duration(milliseconds: 200),
+              clipBehavior: Clip.hardEdge,
+              decoration: BoxDecoration(),
+              curve: Curves.easeInOut,
+              height: showLocationsFilter ? 50 : 0,
+              child: StreamBuilder<Object>(
+                stream: FirebaseFirestore.instance
+                    .collection('locations')
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return Center(
+                        child: HFParagrpah(
+                      text: 'No locations',
+                    ));
+                  }
+
+                  var data = snapshot.data as QuerySnapshot;
+
+                  if (data.docs.isEmpty) {
+                    return const Center(
                       child: HFParagrpah(
-                    text: 'No locations',
-                  ));
-                }
-
-                var data = snapshot.data as QuerySnapshot;
-
-                if (data.docs.isEmpty) {
-                  return const Center(
-                    child: HFParagrpah(
-                      text: 'No Locations.',
-                      size: 10,
-                      textAlign: TextAlign.center,
-                    ),
-                  );
-                }
-
-                return SizedBox(
-                  width: MediaQuery.of(context).size.width - 32,
-                  height: 40,
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    children: [
-                      SizedBox(
-                        width: 16,
+                        text: 'No Locations.',
+                        size: 10,
+                        textAlign: TextAlign.center,
                       ),
-                      ...data.docs.map(
-                        (location) {
-                          return Row(
-                            children: [
-                              Center(
-                                child: InkWell(
-                                  splashColor: Colors.transparent,
-                                  onTap: () {
-                                    setState(() {
-                                      if (selectedLocations ==
-                                          location['name']) {
-                                        selectedLocations = '';
-                                      } else {
-                                        selectedLocations = location['name'];
-                                      }
-                                    });
-                                  },
-                                  child: Container(
-                                    padding:
-                                        EdgeInsets.only(right: 10, bottom: 10),
-                                    child: AnimatedContainer(
-                                      duration: Duration(milliseconds: 100),
-                                      curve: Curves.easeInOut,
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: 12,
-                                        vertical: 6,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: selectedLocations ==
-                                                location['name']
-                                            ? HFColors().primaryColor()
-                                            : HFColors().secondaryLightColor(),
-                                        border: Border.all(
-                                          color: HFColors().primaryColor(),
+                    );
+                  }
+
+                  return OverflowBox(
+                    minWidth: MediaQuery.of(context).size.width,
+                    maxWidth: MediaQuery.of(context).size.width,
+                    minHeight: 40,
+                    maxHeight: 40,
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: [
+                        SizedBox(
+                          width: 16,
+                        ),
+                        ...data.docs.map(
+                          (location) {
+                            return Row(
+                              children: [
+                                Center(
+                                  child: InkWell(
+                                    splashColor: Colors.transparent,
+                                    onTap: () {
+                                      setState(() {
+                                        if (selectedLocations ==
+                                            location['name']) {
+                                          selectedLocations = '';
+                                        } else {
+                                          selectedLocations = location['name'];
+                                        }
+                                      });
+                                    },
+                                    child: Container(
+                                      height: 40,
+                                      padding: EdgeInsets.only(
+                                          right: 10, bottom: 10),
+                                      child: AnimatedContainer(
+                                        duration: Duration(milliseconds: 100),
+                                        curve: Curves.easeInOut,
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 12,
+                                          vertical: 6,
                                         ),
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: HFParagrpah(
-                                        text: location['name'],
-                                        size: 8,
-                                        color: selectedLocations ==
-                                                location['name']
-                                            ? HFColors().secondaryLightColor()
-                                            : HFColors().primaryColor(),
+                                        decoration: BoxDecoration(
+                                          color: selectedLocations ==
+                                                  location['name']
+                                              ? HFColors().primaryColor()
+                                              : HFColors()
+                                                  .secondaryLightColor(),
+                                          border: Border.all(
+                                            color: HFColors().primaryColor(),
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                        child: HFParagrpah(
+                                          text: location['name'],
+                                          size: 8,
+                                          color: selectedLocations ==
+                                                  location['name']
+                                              ? HFColors().secondaryLightColor()
+                                              : HFColors().primaryColor(),
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              )
-                            ],
-                          );
-                        },
-                      ),
-                      SizedBox(
-                        width: 16,
-                      )
-                    ],
-                  ),
-                );
-              },
+                                )
+                              ],
+                            );
+                          },
+                        ),
+                        SizedBox(
+                          width: 16,
+                        )
+                      ],
+                    ),
+                  );
+                },
+              ),
             ),
+          ),
           SizedBox(
             height: 10,
           ),
@@ -285,6 +300,7 @@ class _FindTrainerSectionState extends State<FindTrainerSection> {
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 8.0),
                                 child: HFListViewTile(
+                                  key: Key(trainer['id']),
                                   name:
                                       "${trainer['firstName']} ${trainer['lastName']}",
                                   email: trainer['email'],

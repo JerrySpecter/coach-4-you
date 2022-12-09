@@ -237,7 +237,7 @@ class CalendarPageState extends State<CalendarPage> {
               children: [
                 ...events[context.watch<HFGlobalState>().calendarSelectedDay]!
                     .map(
-                  (Event event) {
+                  (event) {
                     return HFEventTile(
                       title: event.title,
                       startTime: event.startTime,

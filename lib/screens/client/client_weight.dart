@@ -195,7 +195,18 @@ class ClientWeight extends StatelessWidget {
                                       barWidth: 2,
                                       isStrokeCapRound: true,
                                       dotData: FlDotData(show: false),
-                                      belowBarData: BarAreaData(show: false),
+                                      belowBarData: BarAreaData(
+                                        show: true,
+                                        color: HFColors().pinkColor(),
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            HFColors().pinkColor(opacity: 0.3),
+                                            Colors.transparent
+                                          ],
+                                          transform:
+                                              const GradientRotation(1.4),
+                                        ),
+                                      ),
                                       spots: [
                                         ...dataReversed
                                             .toList()

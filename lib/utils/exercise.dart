@@ -1,9 +1,7 @@
 import 'dart:convert';
 import 'package:uuid/uuid.dart';
 
-class Event {
-  final bool v2;
-  final String clientFeedback;
+class Exercise {
   final String title;
   final String id;
   final DateTime date;
@@ -16,9 +14,7 @@ class Event {
   final String notes;
   final bool isDone;
 
-  Event({
-    this.v2 = false,
-    this.clientFeedback = '',
+  Exercise({
     required this.title,
     required this.id,
     required this.date,
@@ -46,8 +42,6 @@ class Event {
           "location": "$location",
           "notes": "$notes",
           "isDone": "$isDone",
-          "v2": v2,
-          "clientFeedback": "$clientFeedback",
         },
       );
 }

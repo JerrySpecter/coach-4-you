@@ -37,6 +37,7 @@ class HFInputNumber extends StatelessWidget {
   final double verticalContentPadding;
   final int minLines;
   final int maxLines;
+
   final ToolbarOptions toolbarOptions;
   final void Function(String)? onChanged;
   final void Function()? onTap;
@@ -50,7 +51,7 @@ class HFInputNumber extends StatelessWidget {
         child: TextFormField(
           validator: validator,
           controller: controller,
-          style: TextStyle(color: Colors.transparent),
+          style: const TextStyle(color: Colors.transparent),
           decoration: InputDecoration(
             border: InputBorder.none,
             focusedBorder: InputBorder.none,
@@ -73,49 +74,54 @@ class HFInputNumber extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (labelText != '')
-            Padding(
-              padding: const EdgeInsets.only(left: 13.0),
-              child: HFHeading(
-                text: '$labelText:',
-                size: 2,
-              ),
+          Padding(
+            padding: const EdgeInsets.only(left: 13.0),
+            child: HFHeading(
+              text: labelText != '' ? '$labelText:' : ' ',
+              size: 1,
             ),
+          ),
           const SizedBox(
             height: 2,
           ),
-          TextFormField(
-            toolbarOptions: toolbarOptions,
-            maxLines: maxLines,
-            minLines: minLines,
-            validator: validator,
-            controller: controller,
-            decoration: InputDecoration(
-              contentPadding: EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: verticalContentPadding,
-              ),
-              hintText: hintText,
-            ),
-            keyboardType: TextInputType.numberWithOptions(decimal: true),
-            onChanged: onChanged,
-            onTap: onTap,
-            showCursor: showCursor,
-            readOnly: readOnly,
-            inputFormatters: <TextInputFormatter>[
-              FilteringTextInputFormatter.allow(
-                  RegExp(r'[0-9]+[,.]{0,1}[0-9]*')),
-              TextInputFormatter.withFunction(
-                (oldValue, newValue) => newValue.copyWith(
-                  text: newValue.text.replaceAll(',', '.'),
+          Material(
+            elevation: 6,
+            borderRadius: BorderRadius.circular(16),
+            color: Colors.transparent,
+            child: TextFormField(
+              toolbarOptions: toolbarOptions,
+              maxLines: maxLines,
+              minLines: minLines,
+              validator: validator,
+              controller: controller,
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: verticalContentPadding,
                 ),
+                hintText: hintText,
               ),
-            ],
-            style: GoogleFonts.getFont(
-              'Manrope',
-              textStyle: TextStyle(
-                color: HFColors().whiteColor(),
-                fontSize: 16,
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
+              onChanged: onChanged,
+              onTap: onTap,
+              showCursor: showCursor,
+              readOnly: readOnly,
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.allow(
+                    RegExp(r'[0-9]+[,.]{0,1}[0-9]*')),
+                TextInputFormatter.withFunction(
+                  (oldValue, newValue) => newValue.copyWith(
+                    text: newValue.text.replaceAll(',', '.'),
+                  ),
+                ),
+              ],
+              style: GoogleFonts.getFont(
+                'Manrope',
+                textStyle: TextStyle(
+                  color: HFColors().whiteColor(),
+                  fontSize: 16,
+                ),
               ),
             ),
           ),

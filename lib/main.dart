@@ -99,14 +99,16 @@ class _HFAppState extends State<HFApp> {
         theme: ThemeData(
           scaffoldBackgroundColor: HFColors().backgroundColor(),
           inputDecorationTheme: InputDecorationTheme(
+            fillColor: HFColors().secondaryLightColor(opacity: 0.5),
+            filled: true,
             hintStyle: GoogleFonts.getFont(
               'Manrope',
               textStyle:
                   TextStyle(color: HFColors().primaryColor(opacity: 0.5)),
             ),
             enabledBorder: OutlineInputBorder(
-              borderSide:
-                  BorderSide(width: 1, color: HFColors().primaryColor()),
+              borderSide: BorderSide(
+                  width: 1, color: HFColors().primaryColor(opacity: 0.2)),
               borderRadius: const BorderRadius.all(Radius.circular(16)),
             ),
             focusedBorder: OutlineInputBorder(

@@ -84,6 +84,9 @@ class Trainers extends StatelessWidget {
 
                     return Column(
                       children: [
+                        HFParagrpah(
+                          text: 'trainers ${data.docs.length}',
+                        ),
                         ...data.docs.map(
                           (trainer) {
                             return HFListViewTile(

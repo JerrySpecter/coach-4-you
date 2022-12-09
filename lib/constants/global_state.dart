@@ -20,7 +20,7 @@ class HFGlobalState with ChangeNotifier, DiagnosticableTreeMixin {
     notifyListeners();
   }
 
-  var _splashScreenState = SplashScreens.splash;
+  var _splashScreenState = SplashScreens.init;
   get splashScreenState => _splashScreenState;
 
   void setSplashScreenState(state) {
@@ -222,6 +222,14 @@ class HFGlobalState with ChangeNotifier, DiagnosticableTreeMixin {
     notifyListeners();
   }
 
+  var _measurementsViewGrid = false;
+  get measurementsViewGrid => _measurementsViewGrid;
+
+  void setMeasurementsViewGrid(view) {
+    _measurementsViewGrid = view;
+    notifyListeners();
+  }
+
   Map<DateTime, List<Event>> _calendarEvents = {};
   Map<DateTime, List<Event>> get calendarEvents => _calendarEvents;
 
@@ -247,6 +255,7 @@ class HFGlobalState with ChangeNotifier, DiagnosticableTreeMixin {
 }
 
 enum SplashScreens {
+  init,
   splash,
   login,
   reset,

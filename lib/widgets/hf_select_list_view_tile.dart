@@ -26,6 +26,7 @@ class HFSelectListViewTile extends StatefulWidget {
     this.tags = const [],
     this.showTags = false,
     this.icon = CupertinoIcons.check_mark_circled,
+    this.iconSelected = CupertinoIcons.check_mark_circled_solid,
     this.imageUrl = '',
     this.videoRef = '',
     this.id = '',
@@ -51,6 +52,7 @@ class HFSelectListViewTile extends StatefulWidget {
   final bool showTags;
   final List<dynamic> tags;
   final IconData icon;
+  final IconData iconSelected;
   final VoidCallback? onTap;
   final Color backgroundColor;
   final Widget child;
@@ -119,7 +121,10 @@ class _HFSelectListViewTileState extends State<HFSelectListViewTile> {
                           width: 12,
                         ),
                       SizedBox(
-                        width: MediaQuery.of(context).size.width - 32 - 130,
+                        width: MediaQuery.of(context).size.width -
+                            32 -
+                            80 -
+                            widget.imageSize,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -158,7 +163,7 @@ class _HFSelectListViewTileState extends State<HFSelectListViewTile> {
                             widget.child,
                             if (widget.tags.isNotEmpty)
                               SizedBox(
-                                height: 20,
+                                height: 5,
                               ),
                             if (widget.tags.isNotEmpty)
                               Wrap(
@@ -193,8 +198,8 @@ class _HFSelectListViewTileState extends State<HFSelectListViewTile> {
                               ))
                           : Icon(
                               widget.isSelected
-                                  ? CupertinoIcons.check_mark_circled_solid
-                                  : CupertinoIcons.check_mark_circled,
+                                  ? widget.iconSelected
+                                  : widget.icon,
                               color: HFColors().primaryColor(),
                             ),
                     ),

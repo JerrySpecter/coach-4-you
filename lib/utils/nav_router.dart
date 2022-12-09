@@ -7,6 +7,7 @@ import 'package:health_factory/screens/admin/single_videos.dart';
 import 'package:health_factory/screens/admin/trainers.dart';
 import 'package:health_factory/screens/admin/videos.dart';
 import 'package:health_factory/screens/client/client_arm.dart';
+import 'package:health_factory/screens/client/client_body_fat.dart';
 import 'package:health_factory/screens/client/client_profile.dart';
 import 'package:health_factory/screens/client/client_shoulders.dart';
 import 'package:health_factory/screens/client/client_thigh.dart';
@@ -36,8 +37,11 @@ import '../screens/admin/locations.dart';
 import '../screens/admin/single_exercise.dart';
 import '../screens/chat_screen.dart';
 import '../screens/client/client_add_measurement.dart';
+import '../screens/client/client_bmi.dart';
 import '../screens/client/client_chest.dart';
 import '../screens/client/client_completed_trainings.dart';
+import '../screens/client/client_muscle_mass.dart';
+import '../screens/client/client_visceral_fat.dart';
 import '../screens/clients/clients.dart';
 import '../screens/clients/single_client.dart';
 import '../screens/edit_profile.dart';
@@ -53,6 +57,8 @@ Route<dynamic>? genRoute(RouteSettings settings) {
 
       return MaterialPageRoute(
         builder: (_) => EventScreen(
+          v2: data.v2,
+          clientFeedback: data.clientFeedback,
           title: data.title,
           id: data.id,
           date: data.date,
@@ -72,6 +78,8 @@ Route<dynamic>? genRoute(RouteSettings settings) {
 
       return MaterialPageRoute(
         builder: (_) => EventScreen(
+          v2: data['v2'],
+          clientFeedback: data['clientFeedback'],
           title: data['title'],
           id: data['id'],
           date: DateTime.parse(data['date']),
@@ -91,6 +99,7 @@ Route<dynamic>? genRoute(RouteSettings settings) {
 
       return MaterialPageRoute(
         builder: (_) => AddEventScreen(
+          v2: data['v2'],
           title: data['title'],
           date: data['date'],
           startTime: data['startTime'],
@@ -388,6 +397,66 @@ Route<dynamic>? genRoute(RouteSettings settings) {
       return MaterialPageRoute(
         builder: (_) => ClientWeight(
           clientId: data['clientId'],
+        ),
+      );
+    case clientBmiRoute:
+      var data = settings.arguments as Map;
+
+      return MaterialPageRoute(
+        builder: (_) => ClientBmi(
+          clientId: data['clientId'],
+        ),
+      );
+    case clientAddBmiRoute:
+      return MaterialPageRoute(
+        builder: (_) => ClientAddMeasurement(
+          collection: 'bmi',
+          hintText: 'BMI',
+        ),
+      );
+    case clientMuscleMassRoute:
+      var data = settings.arguments as Map;
+
+      return MaterialPageRoute(
+        builder: (_) => ClientMuscleMass(
+          clientId: data['clientId'],
+        ),
+      );
+    case clientAddMuscleMassRoute:
+      return MaterialPageRoute(
+        builder: (_) => ClientAddMeasurement(
+          collection: 'muscle-mass',
+          hintText: 'Muscle mass',
+        ),
+      );
+    case clientVisceralFatRoute:
+      var data = settings.arguments as Map;
+
+      return MaterialPageRoute(
+        builder: (_) => ClientVisceralFat(
+          clientId: data['clientId'],
+        ),
+      );
+    case clientAddVisceralFatRoute:
+      return MaterialPageRoute(
+        builder: (_) => ClientAddMeasurement(
+          collection: 'visceral-fat',
+          hintText: 'Visceral fat',
+        ),
+      );
+    case clientBodyFatRoute:
+      var data = settings.arguments as Map;
+
+      return MaterialPageRoute(
+        builder: (_) => ClientBodyFat(
+          clientId: data['clientId'],
+        ),
+      );
+    case clientAddBodyFatRoute:
+      return MaterialPageRoute(
+        builder: (_) => ClientAddMeasurement(
+          collection: 'body-fat',
+          hintText: 'Body fat',
         ),
       );
     case clientAddWeightRoute:

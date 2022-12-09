@@ -1,3 +1,5 @@
+// ignore_for_file: depend_on_referenced_packages
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +8,7 @@ import 'package:health_factory/constants/routes.dart';
 import 'package:health_factory/utils/helpers.dart';
 import 'package:health_factory/widgets/hf_button.dart';
 import 'package:health_factory/widgets/hf_heading.dart';
+import 'package:health_factory/widgets/hf_input_field.dart';
 import 'package:health_factory/widgets/hf_paragraph.dart';
 import 'package:health_factory/widgets/hf_snackbar.dart';
 import 'package:intl/intl.dart';
@@ -15,10 +18,13 @@ import '../../constants/firebase_functions.dart';
 import '../../constants/global_state.dart';
 import '../../widgets/hf_dialog.dart';
 import '../../widgets/hf_training_list_view_tile.dart';
+import 'add_event.dart';
 
 class EventScreen extends StatefulWidget {
-  EventScreen({
+  const EventScreen({
     Key? key,
+    this.v2 = false,
+    this.clientFeedback = '',
     required this.title,
     required this.id,
     required this.date,
@@ -43,6 +49,8 @@ class EventScreen extends StatefulWidget {
   final String location;
   final String notes;
   final String color;
+  final String clientFeedback;
+  final bool v2;
   final bool isDone;
   final bool completedEventRoute;
 
@@ -52,6 +60,7 @@ class EventScreen extends StatefulWidget {
 
 class _EventScreenState extends State<EventScreen> {
   bool isLoading = false;
+  int selectedSet = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +106,7 @@ class _EventScreenState extends State<EventScreen> {
                         });
                       }).then((value) {
                         ScaffoldMessenger.of(context).showSnackBar(getSnackBar(
-                          text: 'Set removed!',
+                          text: 'Workout removed!',
                           color: HFColors().primaryColor(opacity: 1),
                         ));
 
@@ -122,10 +131,19 @@ class _EventScreenState extends State<EventScreen> {
               !widget.completedEventRoute)
             IconButton(
               onPressed: () {
+                var exercises = widget.exercises;
+
+                if (!widget.v2) {
+                  exercises = [
+                    {'exercises': []}
+                  ];
+                }
+
                 Navigator.pushNamed(
                   context,
                   addEventRoute,
                   arguments: {
+                    'v2': widget.v2,
                     'id': widget.id,
                     'date': widget.date,
                     'title': widget.title,
@@ -133,7 +151,7 @@ class _EventScreenState extends State<EventScreen> {
                     'endTime': widget.endTime,
                     'location': widget.location,
                     'client': widget.client,
-                    'exercises': widget.exercises,
+                    'exercises': exercises,
                     'note': widget.notes,
                     'color': widget.color,
                     'isEdit': false,
@@ -148,10 +166,19 @@ class _EventScreenState extends State<EventScreen> {
               !widget.isDone)
             IconButton(
               onPressed: () {
+                var exercises = widget.exercises;
+
+                if (!widget.v2) {
+                  exercises = [
+                    {'exercises': exercises}
+                  ];
+                }
+
                 Navigator.pushNamed(
                   context,
                   addEventRoute,
                   arguments: {
+                    'v2': widget.v2,
                     'id': widget.id,
                     'date': widget.date,
                     'title': widget.title,
@@ -159,7 +186,7 @@ class _EventScreenState extends State<EventScreen> {
                     'endTime': widget.endTime,
                     'location': widget.location,
                     'client': widget.client,
-                    'exercises': widget.exercises,
+                    'exercises': exercises,
                     'note': widget.notes,
                     'color': widget.color,
                     'isEdit': true,
@@ -186,7 +213,7 @@ class _EventScreenState extends State<EventScreen> {
                 text: widget.title,
                 size: 7,
               ),
-              SizedBox(
+              const SizedBox(
                 height: 5,
               ),
               if (widget.isDone)
@@ -196,10 +223,10 @@ class _EventScreenState extends State<EventScreen> {
                       CupertinoIcons.check_mark_circled,
                       color: HFColors().greenColor(),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 10,
                     ),
-                    HFParagrpah(
+                    const HFParagrpah(
                       text: 'Workout completed',
                       size: 6,
                     )
@@ -214,7 +241,7 @@ class _EventScreenState extends State<EventScreen> {
                   Row(
                     children: [
                       Container(
-                        padding: EdgeInsets.all(8),
+                        padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           color: HFColors().primaryColor(),
                           borderRadius: BorderRadius.circular(16),
@@ -224,7 +251,7 @@ class _EventScreenState extends State<EventScreen> {
                           color: HFColors().secondaryColor(),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 20,
                       ),
                       Column(
@@ -233,7 +260,7 @@ class _EventScreenState extends State<EventScreen> {
                           HFHeading(
                             text: DateFormat('EEE, d/M/y').format(widget.date),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 5,
                           ),
                           HFParagrpah(
@@ -245,13 +272,13 @@ class _EventScreenState extends State<EventScreen> {
                       )
                     ],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 15,
                   ),
                   Row(
                     children: [
                       Container(
-                        padding: EdgeInsets.all(8),
+                        padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           color: HFColors().primaryColor(),
                           borderRadius: BorderRadius.circular(16),
@@ -261,16 +288,16 @@ class _EventScreenState extends State<EventScreen> {
                           color: HFColors().secondaryColor(),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 20,
                       ),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          HFHeading(
+                          const HFHeading(
                             text: 'Location:',
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 5,
                           ),
                           HFParagrpah(
@@ -282,7 +309,7 @@ class _EventScreenState extends State<EventScreen> {
                       )
                     ],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 15,
                   ),
                   if (context.read<HFGlobalState>().userAccessLevel ==
@@ -290,7 +317,7 @@ class _EventScreenState extends State<EventScreen> {
                     Row(
                       children: [
                         Container(
-                          padding: EdgeInsets.all(8),
+                          padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
                             color: HFColors().primaryColor(),
                             borderRadius: BorderRadius.circular(16),
@@ -300,16 +327,16 @@ class _EventScreenState extends State<EventScreen> {
                             color: HFColors().secondaryColor(),
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 20,
                         ),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            HFHeading(
+                            const HFHeading(
                               text: 'Client:',
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 5,
                             ),
                             HFParagrpah(
@@ -324,7 +351,7 @@ class _EventScreenState extends State<EventScreen> {
                   const SizedBox(
                     height: 30,
                   ),
-                  HFHeading(
+                  const HFHeading(
                     size: 5,
                     text: 'Exercises:',
                   ),
@@ -344,30 +371,129 @@ class _EventScreenState extends State<EventScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        ...widget.exercises.map((exercise) {
-                          return HFTrainingListViewTile(
-                            showDelete: false,
-                            name: exercise['name'],
-                            note: exercise['note'],
-                            type: exercise['repetitionType'],
-                            amount: double.parse(exercise['amount']),
-                            repetitions: double.parse(exercise['repetitions']),
-                            series: double.parse(exercise['series']),
-                            onTap: () {
-                              if (widget.isDone) {
-                                return;
-                              }
-
-                              Navigator.pushNamed(context, adminExerciseSingle,
-                                  arguments: {
-                                    ...exerciseData(exercise),
-                                    'note': exercise['note'],
-                                    'author': '',
-                                    'isFromEvent': true,
+                        if (widget.v2 && widget.exercises.length > 1)
+                          const SizedBox(
+                            height: 6,
+                          ),
+                        if (widget.v2 && widget.exercises.length > 1)
+                          Flex(
+                            direction: Axis.horizontal,
+                            children: [
+                              for (int index = 0;
+                                  index < widget.exercises.length;
+                                  index += 1)
+                                getExerciseTab(index + 1, selectedSet == index,
+                                    () {
+                                  setState(() {
+                                    selectedSet = index;
                                   });
+                                }, widget.exercises),
+                            ],
+                          ),
+                        if (widget.v2 && widget.exercises.length > 1)
+                          const SizedBox(
+                            height: 6,
+                          ),
+                        if (widget.v2)
+                          for (int index = 0;
+                              index < widget.exercises[selectedSet].length;
+                              index += 1)
+                            Builder(builder: (context) {
+                              List<dynamic> set =
+                                  widget.exercises[selectedSet]['exercises'];
+
+                              if (set.isNotEmpty) {
+                                return Column(
+                                  children: [
+                                    for (int exerciseIndex = 0;
+                                        exerciseIndex < set.length;
+                                        exerciseIndex += 1)
+                                      Builder(builder: (context) {
+                                        var eventV2 = false;
+
+                                        if (set[exerciseIndex]
+                                            .containsKey('v2')) {
+                                          eventV2 = true;
+                                        }
+
+                                        return HFTrainingListViewTile(
+                                          showDelete: false,
+                                          name: set[exerciseIndex]['name'],
+                                          note: set[exerciseIndex]['note'],
+                                          type: set[exerciseIndex]
+                                              ['repetitionType'],
+                                          amount: set[exerciseIndex]
+                                                      ['repetitionType'] ==
+                                                  'time'
+                                              ? eventV2
+                                                  ? set[exerciseIndex]['amount']
+                                                      ['durationString']
+                                                  : set[exerciseIndex]['amount']
+                                              : set[exerciseIndex]['amount'],
+                                          repetitions: set[exerciseIndex]
+                                              ['repetitions'],
+                                          pauseTime: eventV2
+                                              ? set[exerciseIndex]['pauseTime']
+                                                  ['durationString']
+                                              : '',
+                                          series: set[exerciseIndex]['series'],
+                                          warmups: eventV2
+                                              ? set[exerciseIndex]['warmups']
+                                              : [],
+                                          onTap: () {
+                                            if (widget.isDone) {
+                                              return;
+                                            }
+
+                                            Navigator.pushNamed(
+                                                context, adminExerciseSingle,
+                                                arguments: {
+                                                  ...exerciseData(
+                                                      set[exerciseIndex]),
+                                                  'note': set[exerciseIndex]
+                                                      ['note'],
+                                                  'author': '',
+                                                  'isFromEvent': true,
+                                                });
+                                          },
+                                        );
+                                      })
+                                  ],
+                                );
+                              } else {
+                                return const HFHeading(
+                                  text: '',
+                                );
+                              }
+                            }),
+                        if (!widget.v2)
+                          ...widget.exercises.map(
+                            (exercise) {
+                              return HFTrainingListViewTile(
+                                showDelete: false,
+                                name: exercise['name'],
+                                note: exercise['note'],
+                                type: exercise['repetitionType'],
+                                amount: exercise['amount'],
+                                repetitions: exercise['repetitions'],
+                                series: exercise['series'],
+                                onTap: () {
+                                  if (widget.isDone) {
+                                    return;
+                                  }
+
+                                  Navigator.pushNamed(
+                                      context, adminExerciseSingle,
+                                      arguments: {
+                                        ...exerciseData(exercise),
+                                        'note': exercise['note'],
+                                        'author': '',
+                                        'isFromEvent': true,
+                                      });
+                                },
+                              );
                             },
-                          );
-                        })
+                          )
                       ],
                     ),
                   ),
@@ -388,6 +514,23 @@ class _EventScreenState extends State<EventScreen> {
                       lineHeight: 1.4,
                       maxLines: 999,
                     ),
+                  if (context.read<HFGlobalState>().userAccessLevel ==
+                          accessLevels.trainer &&
+                      widget.clientFeedback != '')
+                    const HFHeading(
+                      text: 'Client feedback:',
+                      size: 6,
+                      lineHeight: 2,
+                    ),
+                  if (context.read<HFGlobalState>().userAccessLevel ==
+                          accessLevels.trainer &&
+                      widget.clientFeedback != '')
+                    HFParagrpah(
+                      text: widget.clientFeedback,
+                      size: 8,
+                      lineHeight: 1.4,
+                      maxLines: 999,
+                    ),
                   const SizedBox(
                     height: 50,
                   ),
@@ -395,26 +538,10 @@ class _EventScreenState extends State<EventScreen> {
                       context.read<HFGlobalState>().userAccessLevel ==
                           accessLevels.client)
                     HFButton(
-                      text: isLoading ? 'Processing...' : 'Mark as done',
-                      padding: EdgeInsets.symmetric(vertical: 16),
+                      text: 'Complete workout',
+                      padding: const EdgeInsets.symmetric(vertical: 16),
                       onPressed: () {
-                        showAlertDialog(
-                          context,
-                          'Are you sure you want to mark this event as done?',
-                          () {
-                            Navigator.pop(context);
-                            completeTraining(context);
-
-                            setState(() {
-                              isLoading = true;
-                            });
-                          },
-                          'Yes',
-                          () {
-                            Navigator.pop(context);
-                          },
-                          'No',
-                        );
+                        showExerciseModal();
                       },
                     ),
                 ],
@@ -429,14 +556,94 @@ class _EventScreenState extends State<EventScreen> {
     );
   }
 
-  completeTraining(BuildContext context) {
+  void showExerciseModal() {
+    final TextEditingController clientFeedbackController =
+        TextEditingController();
+    // edit exercise modal
+    showModalBottomSheet(
+        isScrollControlled: true,
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.8,
+          minHeight: MediaQuery.of(context).size.height * 0.5,
+        ),
+        backgroundColor: Colors.transparent,
+        context: context,
+        builder: (context) {
+          return Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 32,
+            ),
+            decoration: BoxDecoration(
+              color: HFColors().secondaryColor(),
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(16),
+                topRight: Radius.circular(16),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                HFHeading(
+                  size: 6,
+                  text: 'Leave feedback about your workout',
+                ),
+                const SizedBox(
+                  height: 30,
+                ),
+                HFInput(
+                  controller: clientFeedbackController,
+                  hintText: 'Type your feedback message here',
+                  minLines: 6,
+                  maxLines: 10,
+                ),
+                const SizedBox(
+                  height: 30,
+                ),
+                HFButton(
+                  text: isLoading ? 'Processing...' : 'Complete',
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  onPressed: () {
+                    showAlertDialog(
+                      context,
+                      'Are you sure you want to mark this event as done?',
+                      () {
+                        Navigator.pop(context);
+                        completeTraining(
+                            context, clientFeedbackController.text);
+
+                        setState(() {
+                          isLoading = true;
+                        });
+                      },
+                      'Yes',
+                      () {
+                        Navigator.pop(context);
+                      },
+                      'No',
+                    );
+                  },
+                ),
+                SizedBox(
+                  height: MediaQuery.of(context).viewInsets.bottom < 40
+                      ? 40
+                      : MediaQuery.of(context).viewInsets.bottom,
+                ),
+              ],
+            ),
+          );
+        });
+  }
+
+  completeTraining(BuildContext context, clientFeedback) {
     HFFirebaseFunctions()
         .getFirebaseAuthUser(context)
         .collection('days')
         .doc('${widget.date}')
         .collection('events')
         .doc(widget.id)
-        .update({'isDone': true}).then((value) {
+        .update({'isDone': true, 'clientFeedback': clientFeedback}).then(
+            (value) {
       HFFirebaseFunctions().getFirebaseAuthUser(context).update({
         'changed': '${DateTime.now()}',
       }).then((value) {
@@ -447,7 +654,8 @@ class _EventScreenState extends State<EventScreen> {
             .doc('${widget.date}')
             .collection('events')
             .doc(widget.id)
-            .update({'isDone': true}).then((value) {
+            .update({'isDone': true, 'clientFeedback': clientFeedback}).then(
+                (value) {
           FirebaseFirestore.instance
               .collection('trainers')
               .doc(context.read<HFGlobalState>().userTrainerId)
@@ -459,6 +667,8 @@ class _EventScreenState extends State<EventScreen> {
                 .collection('completed')
                 .doc(widget.id)
                 .set({
+              'v2': widget.v2,
+              'clientFeedback': clientFeedback,
               'title': widget.title,
               'id': widget.id,
               'date': '${widget.date}',
@@ -478,6 +688,8 @@ class _EventScreenState extends State<EventScreen> {
                 trainerRef.reference.collection('notifications').doc().set({
                   'token': trainerRef['notificationToken'],
                   'data': {
+                    'v2': widget.v2,
+                    'clientFeedback': clientFeedback,
                     'title': widget.title,
                     'id': widget.id,
                     'date': '${widget.date}',

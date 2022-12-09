@@ -1,7 +1,10 @@
+import 'dart:ui';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:health_factory/constants/collections.dart';
 import 'package:health_factory/constants/firebase_functions.dart';
 import 'package:health_factory/constants/global_state.dart';
 import 'package:health_factory/utils/helpers.dart';
@@ -66,7 +69,7 @@ class _ClientProfileState extends State<ClientProfile> {
 
     if (widget.asTrainer) {
       FirebaseFirestore.instance
-          .collection('clients')
+          .collection(COLLECTION_CLIENTS)
           .doc(widget.id)
           .get()
           .then((value) {
@@ -147,7 +150,7 @@ class _ClientProfileState extends State<ClientProfile> {
                                   () {
                                     HFFirebaseFunctions()
                                         .getFirebaseAuthUser(context)
-                                        .collection('clients')
+                                        .collection(COLLECTION_CLIENTS)
                                         .doc(widget.email)
                                         .delete()
                                         .then((value) {
@@ -190,6 +193,8 @@ class _ClientProfileState extends State<ClientProfile> {
                                   addEventRoute,
                                   arguments: {
                                     'id': '',
+                                    'v2': true,
+                                    'clientFeedack': '',
                                     'date': DateTime.parse(
                                         '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 00:00:00.000Z'),
                                     'title': '',
@@ -200,7 +205,9 @@ class _ClientProfileState extends State<ClientProfile> {
                                       'name': widget.name,
                                       'id': widget.id,
                                     },
-                                    'exercises': [],
+                                    'exercises': [
+                                      {'exercises': []}
+                                    ],
                                     'note': '',
                                     'color': '',
                                     'isEdit': false,
@@ -286,103 +293,311 @@ class _ClientProfileState extends State<ClientProfile> {
                   textAlign: TextAlign.center,
                 ),
                 ClientInformation(context, initialHeight),
-                CarouselSlider(
-                  options: CarouselOptions(
-                    aspectRatio: 2.0,
-                    enlargeCenterPage: true,
-                    autoPlay: false,
-                    initialPage: 0,
-                    enableInfiniteScroll: false,
-                    viewportFraction: 0.7,
-                    disableCenter: true,
+                if (context.watch<HFGlobalState>().measurementsViewGrid)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Wrap(
+                      direction: Axis.horizontal,
+                      spacing: 16,
+                      runSpacing: 16,
+                      children: [
+                        SliderBox(
+                          context,
+                          FirebaseFirestore.instance
+                              .collection(COLLECTION_CLIENTS)
+                              .doc(widget.id)
+                              .collection(COLLECTION_WEIGHT)
+                              .limit(10)
+                              .orderBy('date', descending: true)
+                              .snapshots(),
+                          'Weight',
+                          'kg',
+                          clientWeightRoute,
+                          widget.id,
+                        ),
+                        SliderBox(
+                          context,
+                          FirebaseFirestore.instance
+                              .collection(COLLECTION_CLIENTS)
+                              .doc(widget.id)
+                              .collection('bmi')
+                              .limit(10)
+                              .orderBy('date', descending: true)
+                              .snapshots(),
+                          'BMI',
+                          '',
+                          clientBmiRoute,
+                          widget.id,
+                        ),
+                        SliderBox(
+                          context,
+                          FirebaseFirestore.instance
+                              .collection(COLLECTION_CLIENTS)
+                              .doc(widget.id)
+                              .collection('body-fat')
+                              .limit(10)
+                              .orderBy('date', descending: true)
+                              .snapshots(),
+                          'Body fat',
+                          '%',
+                          clientBodyFatRoute,
+                          widget.id,
+                        ),
+                        SliderBox(
+                          context,
+                          FirebaseFirestore.instance
+                              .collection(COLLECTION_CLIENTS)
+                              .doc(widget.id)
+                              .collection('muscle-mass')
+                              .limit(10)
+                              .orderBy('date', descending: true)
+                              .snapshots(),
+                          'Muscle mass',
+                          '%',
+                          clientMuscleMassRoute,
+                          widget.id,
+                        ),
+                        SliderBox(
+                          context,
+                          FirebaseFirestore.instance
+                              .collection(COLLECTION_CLIENTS)
+                              .doc(widget.id)
+                              .collection('visceral-fat')
+                              .limit(10)
+                              .orderBy('date', descending: true)
+                              .snapshots(),
+                          'Visceral fat',
+                          '%',
+                          clientVisceralFatRoute,
+                          widget.id,
+                        ),
+                        SliderBox(
+                          context,
+                          FirebaseFirestore.instance
+                              .collection(COLLECTION_CLIENTS)
+                              .doc(widget.id)
+                              .collection('chest')
+                              .limit(10)
+                              .orderBy('date', descending: true)
+                              .snapshots(),
+                          'Chest circumference',
+                          'cm',
+                          clientChestRoute,
+                          widget.id,
+                        ),
+                        SliderBox(
+                          context,
+                          FirebaseFirestore.instance
+                              .collection(COLLECTION_CLIENTS)
+                              .doc(widget.id)
+                              .collection('shoulders')
+                              .limit(10)
+                              .orderBy('date', descending: true)
+                              .snapshots(),
+                          'Shoulder circ.',
+                          'cm',
+                          clientShouldersRoute,
+                          widget.id,
+                        ),
+                        SliderBox(
+                          context,
+                          FirebaseFirestore.instance
+                              .collection(COLLECTION_CLIENTS)
+                              .doc(widget.id)
+                              .collection(COLLECTION_ARM)
+                              .limit(10)
+                              .orderBy('date', descending: true)
+                              .snapshots(),
+                          'Arm circumference',
+                          'cm',
+                          clientUpperArmRoute,
+                          widget.id,
+                        ),
+                        SliderBox(
+                          context,
+                          FirebaseFirestore.instance
+                              .collection(COLLECTION_CLIENTS)
+                              .doc(widget.id)
+                              .collection(COLLECTION_WAIST)
+                              .limit(10)
+                              .orderBy('date', descending: true)
+                              .snapshots(),
+                          'Waist circumference',
+                          'cm',
+                          clientWaistRoute,
+                          widget.id,
+                        ),
+                        SliderBox(
+                          context,
+                          FirebaseFirestore.instance
+                              .collection(COLLECTION_CLIENTS)
+                              .doc(widget.id)
+                              .collection(COLLECTION_THIGH)
+                              .limit(10)
+                              .orderBy('date', descending: true)
+                              .snapshots(),
+                          'Thigh circumference',
+                          'cm',
+                          clientMidThighRoute,
+                          widget.id,
+                        ),
+                      ],
+                    ),
                   ),
-                  items: [
-                    SliderBox(
-                      context,
-                      FirebaseFirestore.instance
-                          .collection('clients')
-                          .doc(widget.id)
-                          .collection('weight')
-                          .limit(10)
-                          .orderBy('date', descending: true)
-                          .snapshots(),
-                      'Weight',
-                      'kg',
-                      clientWeightRoute,
-                      widget.id,
+                if (!context.watch<HFGlobalState>().measurementsViewGrid)
+                  CarouselSlider(
+                    options: CarouselOptions(
+                      aspectRatio: 2.0,
+                      enlargeCenterPage: true,
+                      autoPlay: false,
+                      initialPage: 0,
+                      enableInfiniteScroll: false,
+                      viewportFraction: 0.7,
+                      disableCenter: true,
                     ),
-                    SliderBox(
-                      context,
-                      FirebaseFirestore.instance
-                          .collection('clients')
-                          .doc(widget.id)
-                          .collection('chest')
-                          .limit(10)
-                          .orderBy('date', descending: true)
-                          .snapshots(),
-                      'Chest circumference',
-                      'cm',
-                      clientChestRoute,
-                      widget.id,
-                    ),
-                    SliderBox(
-                      context,
-                      FirebaseFirestore.instance
-                          .collection('clients')
-                          .doc(widget.id)
-                          .collection('shoulders')
-                          .limit(10)
-                          .orderBy('date', descending: true)
-                          .snapshots(),
-                      'Shoulder circ.',
-                      'cm',
-                      clientShouldersRoute,
-                      widget.id,
-                    ),
-                    SliderBox(
-                      context,
-                      FirebaseFirestore.instance
-                          .collection('clients')
-                          .doc(widget.id)
-                          .collection('arm')
-                          .limit(10)
-                          .orderBy('date', descending: true)
-                          .snapshots(),
-                      'Arm circumference',
-                      'cm',
-                      clientUpperArmRoute,
-                      widget.id,
-                    ),
-                    SliderBox(
-                      context,
-                      FirebaseFirestore.instance
-                          .collection('clients')
-                          .doc(widget.id)
-                          .collection('waist')
-                          .limit(10)
-                          .orderBy('date', descending: true)
-                          .snapshots(),
-                      'Waist circumference',
-                      'cm',
-                      clientWaistRoute,
-                      widget.id,
-                    ),
-                    SliderBox(
-                      context,
-                      FirebaseFirestore.instance
-                          .collection('clients')
-                          .doc(widget.id)
-                          .collection('thigh')
-                          .limit(10)
-                          .orderBy('date', descending: true)
-                          .snapshots(),
-                      'Thigh circumference',
-                      'cm',
-                      clientMidThighRoute,
-                      widget.id,
-                    ),
-                  ],
-                ),
+                    items: [
+                      SliderBox(
+                        context,
+                        FirebaseFirestore.instance
+                            .collection(COLLECTION_CLIENTS)
+                            .doc(widget.id)
+                            .collection(COLLECTION_WEIGHT)
+                            .limit(10)
+                            .orderBy('date', descending: true)
+                            .snapshots(),
+                        'Weight',
+                        'kg',
+                        clientWeightRoute,
+                        widget.id,
+                      ),
+                      SliderBox(
+                        context,
+                        FirebaseFirestore.instance
+                            .collection(COLLECTION_CLIENTS)
+                            .doc(widget.id)
+                            .collection('bmi')
+                            .limit(10)
+                            .orderBy('date', descending: true)
+                            .snapshots(),
+                        'BMI',
+                        '',
+                        clientBmiRoute,
+                        widget.id,
+                      ),
+                      SliderBox(
+                        context,
+                        FirebaseFirestore.instance
+                            .collection(COLLECTION_CLIENTS)
+                            .doc(widget.id)
+                            .collection('body-fat')
+                            .limit(10)
+                            .orderBy('date', descending: true)
+                            .snapshots(),
+                        'Body fat',
+                        '%',
+                        clientBodyFatRoute,
+                        widget.id,
+                      ),
+                      SliderBox(
+                        context,
+                        FirebaseFirestore.instance
+                            .collection(COLLECTION_CLIENTS)
+                            .doc(widget.id)
+                            .collection('muscle-mass')
+                            .limit(10)
+                            .orderBy('date', descending: true)
+                            .snapshots(),
+                        'Muscle mass',
+                        '%',
+                        clientMuscleMassRoute,
+                        widget.id,
+                      ),
+                      SliderBox(
+                        context,
+                        FirebaseFirestore.instance
+                            .collection(COLLECTION_CLIENTS)
+                            .doc(widget.id)
+                            .collection('visceral-fat')
+                            .limit(10)
+                            .orderBy('date', descending: true)
+                            .snapshots(),
+                        'Visceral fat',
+                        '%',
+                        clientVisceralFatRoute,
+                        widget.id,
+                      ),
+                      SliderBox(
+                        context,
+                        FirebaseFirestore.instance
+                            .collection(COLLECTION_CLIENTS)
+                            .doc(widget.id)
+                            .collection('chest')
+                            .limit(10)
+                            .orderBy('date', descending: true)
+                            .snapshots(),
+                        'Chest circumference',
+                        'cm',
+                        clientChestRoute,
+                        widget.id,
+                      ),
+                      SliderBox(
+                        context,
+                        FirebaseFirestore.instance
+                            .collection(COLLECTION_CLIENTS)
+                            .doc(widget.id)
+                            .collection('shoulders')
+                            .limit(10)
+                            .orderBy('date', descending: true)
+                            .snapshots(),
+                        'Shoulder circ.',
+                        'cm',
+                        clientShouldersRoute,
+                        widget.id,
+                      ),
+                      SliderBox(
+                        context,
+                        FirebaseFirestore.instance
+                            .collection(COLLECTION_CLIENTS)
+                            .doc(widget.id)
+                            .collection(COLLECTION_ARM)
+                            .limit(10)
+                            .orderBy('date', descending: true)
+                            .snapshots(),
+                        'Arm circumference',
+                        'cm',
+                        clientUpperArmRoute,
+                        widget.id,
+                      ),
+                      SliderBox(
+                        context,
+                        FirebaseFirestore.instance
+                            .collection(COLLECTION_CLIENTS)
+                            .doc(widget.id)
+                            .collection(COLLECTION_WAIST)
+                            .limit(10)
+                            .orderBy('date', descending: true)
+                            .snapshots(),
+                        'Waist circumference',
+                        'cm',
+                        clientWaistRoute,
+                        widget.id,
+                      ),
+                      SliderBox(
+                        context,
+                        FirebaseFirestore.instance
+                            .collection(COLLECTION_CLIENTS)
+                            .doc(widget.id)
+                            .collection(COLLECTION_THIGH)
+                            .limit(10)
+                            .orderBy('date', descending: true)
+                            .snapshots(),
+                        'Thigh circumference',
+                        'cm',
+                        clientMidThighRoute,
+                        widget.id,
+                      ),
+                    ],
+                  ),
                 const SizedBox(
                   height: 60,
                 ),
@@ -433,21 +648,6 @@ class _ClientProfileState extends State<ClientProfile> {
                       image: 'assets/clients.svg',
                       hideTitle: true,
                       useChildren: true,
-                      children: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          HFHeading(
-                            text: 'Trainer',
-                            size: 8,
-                            color: HFColors().whiteColor(opacity: 1),
-                          ),
-                          HFHeading(
-                            text: 'profile',
-                            size: 8,
-                            color: HFColors().whiteColor(opacity: 1),
-                          ),
-                        ],
-                      ),
                       primaryColor: HFColors().yellowColor(opacity: 0.1),
                       secondaryColor: HFColors().yellowColor(opacity: 0.6),
                       onTap: () {
@@ -465,6 +665,21 @@ class _ClientProfileState extends State<ClientProfile> {
                               'profileBackgroundImageUrl': '',
                             });
                       },
+                      children: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          HFHeading(
+                            text: 'Trainer',
+                            size: 8,
+                            color: HFColors().whiteColor(opacity: 1),
+                          ),
+                          HFHeading(
+                            text: 'profile',
+                            size: 8,
+                            color: HFColors().whiteColor(opacity: 1),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 const SizedBox(
@@ -534,15 +749,71 @@ Widget ProfileDataListTile(context, text, value) {
   );
 }
 
-Widget ClientInformation(context, height) {
+Widget ClientInformation(BuildContext context, height) {
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 40),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const HFHeading(
-          text: 'Measurements:',
-          size: 6,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const HFHeading(
+              text: 'Measurements:',
+              size: 6,
+            ),
+            Row(
+              children: [
+                InkWell(
+                  onTap: () {
+                    context.read<HFGlobalState>().setMeasurementsViewGrid(true);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: context.watch<HFGlobalState>().measurementsViewGrid
+                          ? HFColors().primaryColor()
+                          : HFColors().secondaryLightColor(),
+                    ),
+                    child: Icon(
+                      CupertinoIcons.square_grid_2x2_fill,
+                      color: context.watch<HFGlobalState>().measurementsViewGrid
+                          ? HFColors().secondaryLightColor()
+                          : HFColors().primaryColor(),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  width: 8,
+                ),
+                InkWell(
+                  onTap: () {
+                    context
+                        .read<HFGlobalState>()
+                        .setMeasurementsViewGrid(false);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color:
+                          !context.watch<HFGlobalState>().measurementsViewGrid
+                              ? HFColors().primaryColor()
+                              : HFColors().secondaryLightColor(),
+                    ),
+                    child: Icon(
+                      CupertinoIcons.square_stack_3d_down_right,
+                      color:
+                          !context.watch<HFGlobalState>().measurementsViewGrid
+                              ? HFColors().secondaryLightColor()
+                              : HFColors().primaryColor(),
+                    ),
+                  ),
+                ),
+              ],
+            )
+          ],
         ),
         const SizedBox(
           height: 10,
@@ -586,8 +857,12 @@ Widget SliderBox(BuildContext context, data, title, measure, route, clientId) {
                     color: HFColors().secondaryLightColor(),
                     boxShadow: getShadow()),
                 child: SizedBox(
-                  height: 150,
-                  width: 250,
+                  height: context.watch<HFGlobalState>().measurementsViewGrid
+                      ? 80
+                      : 150,
+                  width: context.watch<HFGlobalState>().measurementsViewGrid
+                      ? (MediaQuery.of(context).size.width / 2) - 56
+                      : 250,
                   child: Builder(builder: (context) {
                     if (!snapshot.hasData || snapshot.hasError) {
                       return const SizedBox(
@@ -624,7 +899,17 @@ Widget SliderBox(BuildContext context, data, title, measure, route, clientId) {
                             barWidth: 2,
                             isStrokeCapRound: true,
                             dotData: FlDotData(show: false),
-                            belowBarData: BarAreaData(show: false),
+                            belowBarData: BarAreaData(
+                              show: true,
+                              color: HFColors().pinkColor(),
+                              gradient: LinearGradient(
+                                colors: [
+                                  HFColors().pinkColor(opacity: 0.3),
+                                  Colors.transparent
+                                ],
+                                transform: const GradientRotation(1.4),
+                              ),
+                            ),
                             spots: [
                               ...dotData.docs.reversed
                                   .toList()
@@ -678,7 +963,9 @@ Widget SliderBox(BuildContext context, data, title, measure, route, clientId) {
                   children: [
                     HFHeading(
                       text: title,
-                      size: 6,
+                      size: context.watch<HFGlobalState>().measurementsViewGrid
+                          ? 3
+                          : 6,
                       lineHeight: 1,
                       color: HFColors().whiteColor(opacity: 1),
                     ),

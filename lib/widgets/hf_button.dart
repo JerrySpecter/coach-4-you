@@ -32,7 +32,7 @@ class HFButton extends StatelessWidget {
         backgroundColor: MaterialStateProperty.all<Color>(
           backgroundColor,
         ),
-        elevation: MaterialStateProperty.all<double>(4),
+        elevation: MaterialStateProperty.all<double>(6),
         padding: MaterialStateProperty.all<EdgeInsets>(padding),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         minimumSize: MaterialStateProperty.all<Size>(Size.zero),

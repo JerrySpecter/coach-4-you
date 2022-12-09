@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:health_factory/constants/collections.dart';
 import 'package:health_factory/utils/helpers.dart';
 import 'package:health_factory/widgets/hf_dialog.dart';
 import 'package:health_factory/widgets/hf_heading.dart';
@@ -112,26 +113,26 @@ class _SingleExerciseState extends State<SingleExercise> {
               !widget.isFromEvent)
             IconButton(
               onPressed: () {
-                showAlertDialog(
-                  context,
-                  'Are you sure you want to delete video: $_nameState',
-                  () {
-                    FirebaseFirestore.instance
-                        .collection('exercises')
-                        .doc(widget.id)
-                        .delete()
-                        .then((value) {
-                      Navigator.pop(context);
-                    }).then((value) {
-                      Navigator.pop(context);
-                    });
-                  },
-                  'Yes',
-                  () {
-                    Navigator.pop(context);
-                  },
-                  'No',
-                );
+                // showAlertDialog(
+                //   context,
+                //   'Are you sure you want to delete video: $_nameState',
+                //   () {
+                //     FirebaseFirestore.instance
+                //         .collection(COLLECTION_EXERCISES)
+                //         .doc(widget.id)
+                //         .delete()
+                //         .then((value) {
+                //       Navigator.pop(context);
+                //     }).then((value) {
+                //       Navigator.pop(context);
+                //     });
+                //   },
+                //   'Yes',
+                //   () {
+                //     Navigator.pop(context);
+                //   },
+                //   'No',
+                // );
               },
               icon: Icon(
                 CupertinoIcons.trash,

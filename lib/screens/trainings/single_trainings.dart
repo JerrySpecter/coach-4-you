@@ -159,9 +159,9 @@ class _SingleTrainingState extends State<SingleTraining> {
                         name: exercise['name'],
                         note: exercise['note'],
                         type: exercise['repetitionType'],
-                        amount: double.parse(exercise['amount']),
-                        repetitions: double.parse(exercise['repetitions']),
-                        series: double.parse(exercise['series']),
+                        amount: exercise['amount'],
+                        repetitions: exercise['repetitions'],
+                        series: exercise['series'],
                       );
                     })
                   ],

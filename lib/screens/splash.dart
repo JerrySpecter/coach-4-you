@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -21,10 +23,28 @@ class _SplashScreenState extends State<SplashScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final FirebaseAuth _authInstance = FirebaseAuth.instance;
+  var animationDuration = 400;
+  var smallAnimationDuration = 200;
+  late Timer _timer;
+
+  @override
+  void initState() {
+    _timer = Timer(Duration(milliseconds: 2000), () {
+      context.read<HFGlobalState>().setSplashScreenState(SplashScreens.splash);
+    });
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    double contentHeight = MediaQuery.of(context).size.height - 420;
+    double contentHeight = MediaQuery.of(context).size.height;
     double imageSize = 250;
 
     return ConstrainedBox(
@@ -42,18 +62,22 @@ class _SplashScreenState extends State<SplashScreen> {
               children: [
                 AnimatedPositioned(
                   top: context.watch<HFGlobalState>().splashScreenState ==
-                          SplashScreens.findTrainer
-                      ? -10
-                      : (contentHeight / 2) - (imageSize / 2) + 20,
+                          SplashScreens.init
+                      ? (contentHeight / 2) - (imageSize / 2) + 20
+                      : context.watch<HFGlobalState>().splashScreenState ==
+                              SplashScreens.findTrainer
+                          ? -10
+                          : 100,
                   left: 0,
                   right: 0,
-                  duration: const Duration(milliseconds: 200),
+                  curve: Curves.easeInOut,
+                  duration: Duration(milliseconds: animationDuration),
                   child: AnimatedScale(
                     scale: context.watch<HFGlobalState>().splashScreenState ==
                             SplashScreens.findTrainer
                         ? 0.4
                         : 1,
-                    duration: const Duration(milliseconds: 200),
+                    duration: Duration(milliseconds: smallAnimationDuration),
                     curve: Curves.easeInOut,
                     child: Image(
                       image: const AssetImage(
@@ -71,14 +95,17 @@ class _SplashScreenState extends State<SplashScreen> {
             bottom: context.watch<HFGlobalState>().splashScreenState ==
                     SplashScreens.findTrainer
                 ? -70
-                : -250 +
-                    (MediaQuery.of(context).viewInsets.bottom >= 80
-                        ? MediaQuery.of(context).viewInsets.bottom - 80
-                        : 0),
+                : context.watch<HFGlobalState>().splashScreenState ==
+                        SplashScreens.init
+                    ? -(MediaQuery.of(context).size.height)
+                    : -250 +
+                        (MediaQuery.of(context).viewInsets.bottom >= 80
+                            ? MediaQuery.of(context).viewInsets.bottom - 80
+                            : 0),
             left: 0,
             right: 0,
-            duration: const Duration(milliseconds: 100),
-            curve: Curves.linear,
+            duration: Duration(milliseconds: animationDuration),
+            curve: Curves.easeInOut,
             child: SizedBox(
               height: MediaQuery.of(context).size.height - 120,
               child: Container(
@@ -98,10 +125,11 @@ class _SplashScreenState extends State<SplashScreen> {
                           : 100,
                       left: 0,
                       right: 0,
-                      duration: const Duration(milliseconds: 300),
+                      duration: Duration(milliseconds: animationDuration),
                       curve: Curves.easeInOut,
                       child: AnimatedOpacity(
-                        duration: const Duration(milliseconds: 150),
+                        duration:
+                            Duration(milliseconds: smallAnimationDuration),
                         curve: Curves.easeInOut,
                         opacity:
                             context.watch<HFGlobalState>().splashScreenState ==
@@ -123,10 +151,11 @@ class _SplashScreenState extends State<SplashScreen> {
                           : -100,
                       left: 0,
                       right: 0,
-                      duration: const Duration(milliseconds: 300),
+                      duration: Duration(milliseconds: animationDuration),
                       curve: Curves.easeInOut,
                       child: AnimatedOpacity(
-                        duration: const Duration(milliseconds: 150),
+                        duration:
+                            Duration(milliseconds: smallAnimationDuration),
                         curve: Curves.easeInOut,
                         opacity:
                             context.watch<HFGlobalState>().splashScreenState ==
@@ -151,10 +180,11 @@ class _SplashScreenState extends State<SplashScreen> {
                               : 10,
                       left: 0,
                       right: 0,
-                      duration: const Duration(milliseconds: 300),
+                      duration: Duration(milliseconds: animationDuration),
                       curve: Curves.easeInOut,
                       child: AnimatedOpacity(
-                        duration: const Duration(milliseconds: 150),
+                        duration:
+                            Duration(milliseconds: smallAnimationDuration),
                         curve: Curves.easeInOut,
                         opacity:
                             context.watch<HFGlobalState>().splashScreenState ==
@@ -182,10 +212,11 @@ class _SplashScreenState extends State<SplashScreen> {
                               : 10,
                       left: 0,
                       right: 0,
-                      duration: const Duration(milliseconds: 300),
+                      duration: Duration(milliseconds: animationDuration),
                       curve: Curves.easeInOut,
                       child: AnimatedOpacity(
-                        duration: const Duration(milliseconds: 150),
+                        duration:
+                            Duration(milliseconds: smallAnimationDuration),
                         curve: Curves.easeInOut,
                         opacity:
                             context.watch<HFGlobalState>().splashScreenState ==

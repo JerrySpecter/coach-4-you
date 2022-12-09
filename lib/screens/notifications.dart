@@ -2,14 +2,17 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:health_factory/constants/colors.dart';
+import 'package:health_factory/constants/global_state.dart';
 import 'package:health_factory/constants/routes.dart';
 import 'package:health_factory/utils/event.dart';
 import 'package:health_factory/widgets/hf_appbar.dart';
 import 'package:health_factory/widgets/hf_paragraph.dart';
 import 'package:health_factory/widgets/hf_snackbar.dart';
+import 'package:provider/provider.dart';
 import '../constants/firebase_functions.dart';
 import '../main.dart';
 import '../widgets/hf_notification_tile.dart';
+import 'package:intl/intl.dart';
 
 class Notifications extends StatefulWidget {
   Notifications({Key? key}) : super(key: key);
@@ -60,12 +63,12 @@ class _NotificationsState extends State<Notifications> {
                     var data = snapshot.data as QuerySnapshot;
 
                     if (data.docs.isEmpty) {
-                      if (!snapshot.hasData || snapshot.hasError) {
-                        return const HFParagrpah(
+                      return const Center(
+                        child: HFParagrpah(
                           text: 'No new notifications',
                           size: 8,
-                        );
-                      }
+                        ),
+                      );
                     }
 
                     return Column(
@@ -112,6 +115,8 @@ String getNotificationHeading(notification) {
       return '${notification['trainerName']}';
     case 'new-news':
       return 'New post';
+    case 'new-request':
+      return 'New client request';
     default:
       return '';
   }
@@ -127,12 +132,18 @@ String getNotificationText(notification) {
       return '${notification['data']['message']}';
     case 'new-news':
       return '${notification['trainerName']} published a new post. Click to see it.';
+    case 'new-request':
+      return 'You just got a new request! Click to see it.';
     default:
       return '';
   }
 }
 
-void handleNotificationTap(context, type, data) {
+void handleNotificationTap(BuildContext context, type, data) {
+  if (!context.read<HFGlobalState>().userLoggedIn) {
+    return;
+  }
+
   switch (type) {
     case 'new-workout':
     case 'completed-workout':
@@ -145,6 +156,8 @@ void handleNotificationTap(context, type, data) {
           .get()
           .then((value) {
         var event = Event(
+          v2: value['v2'],
+          clientFeedback: value['clientFeedback'],
           title: value['title'],
           id: value['id'],
           date: DateTime.parse(value['date']),
@@ -159,7 +172,6 @@ void handleNotificationTap(context, type, data) {
         );
 
         navigatorKey.currentState?.pushNamed(eventRoute, arguments: event);
-        // Navigator.pushNamed(context, eventRoute, arguments: event);
       }).onError((error, stackTrace) {
         ScaffoldMessenger.of(context).showSnackBar(getSnackBar(
             text: 'Workout no longer available', color: HFColors().redColor()));
@@ -176,12 +188,7 @@ void handleNotificationTap(context, type, data) {
         'name': data['senderName'],
         'imageUrl': data['senderImageUrl']
       });
-      // Navigator.pushNamed(context, chatScreen, arguments: {
-      //   'id': data['senderId'],
-      //   'email': data['senderEmail'],
-      //   'name': data['senderName'],
-      //   'imageUrl': data['senderImageUrl']
-      // });
+
       break;
     case 'new-news':
       navigatorKey.currentState?.pushNamed(singleNewsRoute, arguments: {
@@ -191,13 +198,21 @@ void handleNotificationTap(context, type, data) {
         'imageUrl': data['imageUrl'],
         'id': data['id'],
       });
-      // Navigator.pushNamed(context, singleNewsRoute, arguments: {
-      //   'title': data['title'],
-      //   'excerpt': data['excerpt'],
-      //   'date': data['date'],
-      //   'imageUrl': data['imageUrl'],
-      //   'id': data['id'],
-      // });
+
+      break;
+    case 'new-request':
+      var date = data['dateCreated'].runtimeType == Timestamp
+          ? data['dateCreated']
+          : Timestamp(data['dateCreated']['_seconds'],
+              data['dateCreated']['_nanoseconds']);
+
+      navigatorKey.currentState?.pushNamed(singleRequestRoute, arguments: {
+        'content': data['content'],
+        'dateCreated': DateFormat('EEE, d/M/y').format(date.toDate()),
+        'email': data['email'],
+        'name': data['name']
+      });
+
       break;
     default:
       return print('handleNotificationTap');

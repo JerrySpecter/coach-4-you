@@ -48,6 +48,22 @@ class HFColors {
   Color purpleColor({double opacity = 1}) {
     return Color.fromRGBO(61, 8, 123, opacity);
   }
+
+  Color grey3({double opacity = 1}) {
+    return Color.fromRGBO(51, 51, 51, opacity);
+  }
+
+  Color grey4({double opacity = 1}) {
+    return Color.fromRGBO(68, 68, 68, opacity);
+  }
+
+  Color grey5({double opacity = 1}) {
+    return Color.fromRGBO(85, 85, 85, opacity);
+  }
+
+  Color grey6({double opacity = 1}) {
+    return Color.fromRGBO(102, 102, 102, opacity);
+  }
 }
 
 List<BoxShadow> getShadow() {

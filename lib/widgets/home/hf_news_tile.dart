@@ -54,43 +54,47 @@ class HFNewsTile extends StatelessWidget {
                   Positioned(
                     bottom: 6,
                     left: 6,
-                    child: Container(
-                      width: (MediaQuery.of(context).size.width * 0.7) - 12,
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(12)),
-                        color: HFColors().secondaryLightColor(),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              HFParagrpah(
-                                text: author,
-                                size: 6,
-                                color: HFColors().whiteColor(),
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              HFParagrpah(
-                                text: DateFormat('dd.MM.yyyy.')
-                                    .format(DateTime.parse(date)),
-                                size: 6,
-                                color: HFColors().whiteColor(),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          HFHeading(
-                            text: title,
-                            size: 5,
-                            color: HFColors().whiteColor(),
-                          )
-                        ],
+                    child: Material(
+                      color: Colors.transparent,
+                      elevation: 6,
+                      child: Container(
+                        width: (MediaQuery.of(context).size.width * 0.7) - 12,
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(12)),
+                          color: HFColors().secondaryLightColor(),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                HFParagrpah(
+                                  text: author,
+                                  size: 6,
+                                  color: HFColors().whiteColor(),
+                                ),
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                HFParagrpah(
+                                  text: DateFormat('dd.MM.yyyy.')
+                                      .format(DateTime.parse(date)),
+                                  size: 6,
+                                  color: HFColors().whiteColor(),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+                            HFHeading(
+                              text: title,
+                              size: 5,
+                              color: HFColors().whiteColor(),
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ),

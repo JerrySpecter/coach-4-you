@@ -1,21 +1,22 @@
+import 'dart:ui';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:health_factory/constants/firebase_functions.dart';
+import 'package:health_factory/constants/global_state.dart';
 import 'package:health_factory/widgets/hf_heading.dart';
 import 'package:health_factory/widgets/hf_paragraph.dart';
+import 'package:health_factory/widgets/hf_snackbar.dart';
 import 'package:provider/provider.dart';
 import '../../../constants/colors.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 
-import '../../constants/global_state.dart';
 import '../../constants/routes.dart';
-import 'client_weight.dart';
 
-class ClientWaist extends StatelessWidget {
-  ClientWaist({super.key, required this.clientId});
+class ClientMuscleMass extends StatelessWidget {
+  ClientMuscleMass({super.key, required this.clientId});
 
   String clientId = '';
 
@@ -29,7 +30,7 @@ class ClientWaist extends StatelessWidget {
         shadowColor: Colors.transparent,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         title: const HFHeading(
-          text: 'Waist size progress:',
+          text: 'Muscle mass progress:',
           size: 5,
         ),
       ),
@@ -43,7 +44,7 @@ class ClientWaist extends StatelessWidget {
                   child: IconButton(
                     icon: const Icon(CupertinoIcons.add),
                     onPressed: () {
-                      Navigator.pushNamed(context, clientAddWaistRoute);
+                      Navigator.pushNamed(context, clientAddMuscleMassRoute);
                     },
                   ),
                 )
@@ -62,7 +63,7 @@ class ClientWaist extends StatelessWidget {
                   stream: FirebaseFirestore.instance
                       .collection('clients')
                       .doc(clientId)
-                      .collection('waist')
+                      .collection('muscle-mass')
                       .limit(30)
                       .orderBy('date', descending: true)
                       .snapshots(),
@@ -70,7 +71,7 @@ class ClientWaist extends StatelessWidget {
                     if (!snapshot.hasData) {
                       return const Center(
                         child: HFParagrpah(
-                          text: 'No measurements.',
+                          text: 'No measurements yet.',
                           size: 10,
                           textAlign: TextAlign.center,
                         ),
@@ -82,7 +83,7 @@ class ClientWaist extends StatelessWidget {
                     if (data.docs.isEmpty) {
                       return const Center(
                         child: HFParagrpah(
-                          text: 'No measurements.',
+                          text: 'No measurements yet.',
                           size: 10,
                           textAlign: TextAlign.center,
                         ),
@@ -233,17 +234,33 @@ class ClientWaist extends StatelessWidget {
                           padding: const EdgeInsets.all(16),
                           child: Column(
                             children: [
+                              const HFHeading(
+                                text: 'What is muscle mass?',
+                                size: 6,
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              const HFParagrpah(
+                                text:
+                                    'Muscle mass is the amount of muscle in your body, including skeletal muscles, smooth muscles, and cardiac muscles.',
+                                maxLines: 99,
+                                size: 10,
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              ),
                               if (data.docs.isNotEmpty)
                                 ClientDataListTile(
                                     context,
-                                    'Current waist circumference:',
-                                    '${data.docs[0]['value']}cm',
+                                    'Current Muscle mass:',
+                                    '${data.docs[0]['value']}%',
                                     () {}),
                               const SizedBox(
                                 height: 30,
                               ),
                               const HFHeading(
-                                  text: 'Past measurements', size: 6),
+                                  text: 'Past Muscle mass', size: 6),
                               const SizedBox(
                                 height: 10,
                               ),
@@ -274,20 +291,21 @@ class ClientWaist extends StatelessWidget {
                                                   : const EdgeInsets.symmetric(
                                                       horizontal: 8),
                                               child: ClientDataListTile(
-                                                  context,
-                                                  DateFormat('d/M/y').format(
-                                                      DateTime.parse(data.docs
-                                                              .toList()[index]
-                                                          ['date'])),
-                                                  '${data.docs.toList()[index]['value']}cm',
-                                                  () {
-                                                showMeasurementActionSheet(
-                                                    context,
-                                                    '${data.docs.toList()[index]['value']}cm',
-                                                    data.docs
-                                                        .toList()[index]
-                                                        .reference);
-                                              }),
+                                                context,
+                                                DateFormat('d/M/y').format(
+                                                    DateTime.parse(data.docs
+                                                            .toList()[index]
+                                                        ['date'])),
+                                                '${data.docs.toList()[index]['value']}%',
+                                                () {
+                                                  showMeasurementActionSheet(
+                                                      context,
+                                                      '${data.docs.toList()[index]['value']}%',
+                                                      data.docs
+                                                          .toList()[index]
+                                                          .reference);
+                                                },
+                                              ),
                                             );
                                           },
                                           itemCount: data.docs.length,
@@ -306,7 +324,7 @@ class ClientWaist extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(
+            const SizedBox(
               height: 40,
             )
           ],
@@ -314,4 +332,118 @@ class ClientWaist extends StatelessWidget {
       ),
     );
   }
+}
+
+Widget ClientDataListTile(context, text, value, onTap) {
+  return Column(
+    children: [
+      InkWell(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(14),
+            color: HFColors().secondaryLightColor(),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+            child: Row(
+              children: [
+                Flexible(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Flexible(
+                          flex: 3,
+                          child: HFHeading(
+                            text: text,
+                            size: 4,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 20,
+                        ),
+                        Flexible(
+                          flex: 1,
+                          child: HFHeading(
+                            text: value,
+                            textAlign: TextAlign.right,
+                            size: 4,
+                            fontWeight: FontWeight.w700,
+                            maxLines: 9,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
+      const SizedBox(
+        height: 10,
+      ),
+    ],
+  );
+}
+
+void showMeasurementActionSheet(
+    BuildContext context, title, DocumentReference<Object?> docRef) {
+  showCupertinoModalPopup<void>(
+    context: context,
+    builder: (BuildContext context) => CupertinoActionSheet(
+      title: HFParagrpah(
+        text: 'Selected:',
+        size: 10,
+        textAlign: TextAlign.center,
+        color: HFColors().secondaryColor(),
+      ),
+      message: HFHeading(
+        text: title,
+        size: 4,
+        color: HFColors().secondaryColor(),
+        textAlign: TextAlign.center,
+      ),
+      actions: <CupertinoActionSheetAction>[
+        CupertinoActionSheetAction(
+          /// This parameter indicates the action would perform
+          /// a destructive action such as delete or exit and turns
+          /// the action's text color to red.
+          isDestructiveAction: true,
+          onPressed: () {
+            docRef.delete().then((value) {
+              Navigator.pop(context);
+
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(getSnackBar(text: 'Muscle mass deleted'));
+            });
+          },
+          child: HFParagrpah(
+            text: 'Delete',
+            size: 10,
+            color: HFColors().redColor(),
+          ),
+        ),
+      ],
+      cancelButton: CupertinoActionSheetAction(
+        /// This parameter indicates the action would perform
+        /// a destructive action such as delete or exit and turns
+        /// the action's text color to red.
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        child: HFParagrpah(
+          text: 'Cancel',
+          size: 10,
+          color: HFColors().secondaryColor(),
+        ),
+      ),
+    ),
+    filter: ImageFilter.blur(sigmaX: 1.4, sigmaY: 1.4),
+  );
 }
