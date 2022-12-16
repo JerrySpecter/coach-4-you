@@ -193,7 +193,7 @@ class _TrainerProfileState extends State<TrainerProfile> {
                           ),
                         ),
                       ),
-                      if (widget.name != '')
+                      if (widget.name != '' && widget.available)
                         Positioned(
                           top: topOffset,
                           right: 16,
