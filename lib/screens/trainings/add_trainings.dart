@@ -497,6 +497,49 @@ class _AddTrainingState extends State<AddTraining> {
   }
 
   void showExerciseModal(isEdit, [exercise]) {
+    List<String> selectedTypes = [];
+    String exerciseSelected = '';
+    ScrollController modalSheetScrollController = ScrollController();
+    final TextEditingController exerciseSearchFieldController =
+        TextEditingController();
+
+    final TextEditingController exerciseTypeNumberController =
+        TextEditingController();
+    final TextEditingController editAdditionalExerciseAmountController =
+        TextEditingController();
+
+    final TextEditingController editAdditionalExerciseRepetitionsController =
+        TextEditingController();
+    Duration editAdditionalExerciseBreakDuration =
+        const Duration(seconds: 0, minutes: 0);
+    Duration editAdditionalExerciseAmountDuration =
+        const Duration(seconds: 0, minutes: 0);
+    Duration editAdditionalWarmupAmountDuration =
+        const Duration(seconds: 0, minutes: 0);
+    final TextEditingController editAdditionalExerciseBreakController =
+        TextEditingController();
+    final TextEditingController editAdditionalExerciseSeriesController =
+        TextEditingController();
+    final TextEditingController editAdditionalExerciseNoteController =
+        TextEditingController();
+    final TextEditingController editAdditionalExerciseWarmupAmountController =
+        TextEditingController();
+    final TextEditingController editAdditionalExerciseWarmupRepsController =
+        TextEditingController();
+    List<dynamic> editAdditionalExerciseWarmups = [];
+    int editAdditionalExerciseWarmupselected = -1;
+
+    String modalExerciseSearchText = '';
+    Stream modalExerciseStream = getStream(true,
+        context.read<HFGlobalState>().userDisplayName, modalExerciseSearchText);
+
+    String exerciseDescription = '';
+    String exerciseVideo = '';
+    String exerciseThumbnail = '';
+    String exerciseIdSelected = '';
+    String exerciseRepetitionType = '';
+    var defaultSet = false;
+
     // edit exercise modal
     showModalBottomSheet(
       isScrollControlled: true,
@@ -506,53 +549,6 @@ class _AddTrainingState extends State<AddTraining> {
       backgroundColor: Colors.transparent,
       context: context,
       builder: (context) {
-        List<String> selectedTypes = [];
-        String exerciseSelected = '';
-        ScrollController modalSheetScrollController = ScrollController();
-        final TextEditingController exerciseSearchFieldController =
-            TextEditingController();
-
-        final TextEditingController exerciseTypeNumberController =
-            TextEditingController();
-        final TextEditingController editAdditionalExerciseAmountController =
-            TextEditingController();
-
-        final TextEditingController
-            editAdditionalExerciseRepetitionsController =
-            TextEditingController();
-        Duration editAdditionalExerciseBreakDuration =
-            const Duration(seconds: 0, minutes: 0);
-        Duration editAdditionalExerciseAmountDuration =
-            const Duration(seconds: 0, minutes: 0);
-        Duration editAdditionalWarmupAmountDuration =
-            const Duration(seconds: 0, minutes: 0);
-        final TextEditingController editAdditionalExerciseBreakController =
-            TextEditingController();
-        final TextEditingController editAdditionalExerciseSeriesController =
-            TextEditingController();
-        final TextEditingController editAdditionalExerciseNoteController =
-            TextEditingController();
-        final TextEditingController
-            editAdditionalExerciseWarmupAmountController =
-            TextEditingController();
-        final TextEditingController editAdditionalExerciseWarmupRepsController =
-            TextEditingController();
-        List<dynamic> editAdditionalExerciseWarmups = [];
-        int editAdditionalExerciseWarmupselected = -1;
-
-        String modalExerciseSearchText = '';
-        Stream modalExerciseStream = getStream(
-            true,
-            context.read<HFGlobalState>().userDisplayName,
-            modalExerciseSearchText);
-
-        String exerciseDescription = '';
-        String exerciseVideo = '';
-        String exerciseThumbnail = '';
-        String exerciseIdSelected = '';
-        String exerciseRepetitionType = '';
-        var defaultSet = false;
-
         return SingleChildScrollView(
           controller: modalSheetScrollController,
           child: StatefulBuilder(builder: (context, editModalSetState) {
