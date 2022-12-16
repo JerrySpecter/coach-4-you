@@ -1379,8 +1379,6 @@ class AddEventScreenState extends State<AddEventScreen> {
       backgroundColor: Colors.transparent,
       context: context,
       builder: (context) {
-        print('build modal');
-
         return SingleChildScrollView(
           controller: modalSheetScrollController,
           child: StatefulBuilder(builder: (context, editModalSetState) {
@@ -1590,6 +1588,8 @@ class AddEventScreenState extends State<AddEventScreen> {
                           readOnly: exerciseRepetitionType == 'time',
                           onTap: () {
                             if (exerciseRepetitionType != 'time') {
+                              scrollByDistance(modalSheetScrollController, 190);
+
                               editAdditionalExerciseAmountController.selection =
                                   TextSelection(
                                       baseOffset: 0,
@@ -1636,6 +1636,7 @@ class AddEventScreenState extends State<AddEventScreen> {
                           labelText: 'Series',
                           controller: editAdditionalExerciseSeriesController,
                           onTap: (() {
+                            scrollByDistance(modalSheetScrollController, 190);
                             editAdditionalExerciseSeriesController.selection =
                                 TextSelection(
                                     baseOffset: 0,
@@ -1656,6 +1657,7 @@ class AddEventScreenState extends State<AddEventScreen> {
                             controller:
                                 editAdditionalExerciseRepetitionsController,
                             onTap: (() {
+                              scrollByDistance(modalSheetScrollController, 190);
                               editAdditionalExerciseRepetitionsController
                                       .selection =
                                   TextSelection(
@@ -1758,6 +1760,9 @@ class AddEventScreenState extends State<AddEventScreen> {
                                     },
                                   );
                                 }
+
+                                scrollByDistance(
+                                    modalSheetScrollController, 315);
                               },
                             ),
                           ),
@@ -1769,6 +1774,10 @@ class AddEventScreenState extends State<AddEventScreen> {
                               labelText: 'Reps',
                               controller:
                                   editAdditionalExerciseWarmupRepsController,
+                              onTap: () {
+                                scrollByDistance(
+                                    modalSheetScrollController, 315);
+                              },
                             ),
                           ),
                           const SizedBox(
@@ -2038,6 +2047,9 @@ class AddEventScreenState extends State<AddEventScreen> {
                     hintText: 'Exercise notes',
                     minLines: 3,
                     maxLines: 3,
+                    onTap: () {
+                      scrollByDistance(modalSheetScrollController, 600);
+                    },
                   ),
                   const SizedBox(
                     height: 40,
@@ -2472,5 +2484,13 @@ Widget getExerciseTab(int number, isActive, onTap, List sets) {
         ),
       ),
     ),
+  );
+}
+
+scrollByDistance(ScrollController controller, double distance) {
+  controller.animateTo(
+    distance,
+    curve: Curves.easeInOut,
+    duration: const Duration(milliseconds: 200),
   );
 }

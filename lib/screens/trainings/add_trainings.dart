@@ -20,6 +20,7 @@ import '../../constants/collections.dart';
 import '../../constants/global_state.dart';
 import '../../widgets/hf_input_number_field.dart';
 import '../../widgets/hf_select_list_view_tile.dart';
+import '../events/add_event.dart';
 
 class AddTraining extends StatefulWidget {
   AddTraining({
@@ -758,6 +759,7 @@ class _AddTrainingState extends State<AddTraining> {
                           readOnly: exerciseRepetitionType == 'time',
                           onTap: () {
                             if (exerciseRepetitionType != 'time') {
+                              scrollByDistance(modalSheetScrollController, 190);
                               editAdditionalExerciseAmountController.selection =
                                   TextSelection(
                                       baseOffset: 0,
@@ -804,6 +806,8 @@ class _AddTrainingState extends State<AddTraining> {
                           labelText: 'Series',
                           controller: editAdditionalExerciseSeriesController,
                           onTap: (() {
+                            scrollByDistance(modalSheetScrollController, 190);
+
                             editAdditionalExerciseSeriesController.selection =
                                 TextSelection(
                                     baseOffset: 0,
@@ -824,6 +828,8 @@ class _AddTrainingState extends State<AddTraining> {
                             controller:
                                 editAdditionalExerciseRepetitionsController,
                             onTap: (() {
+                              scrollByDistance(modalSheetScrollController, 190);
+
                               editAdditionalExerciseRepetitionsController
                                       .selection =
                                   TextSelection(
@@ -926,6 +932,9 @@ class _AddTrainingState extends State<AddTraining> {
                                     },
                                   );
                                 }
+
+                                scrollByDistance(
+                                    modalSheetScrollController, 315);
                               },
                             ),
                           ),
@@ -937,6 +946,10 @@ class _AddTrainingState extends State<AddTraining> {
                               labelText: 'Reps',
                               controller:
                                   editAdditionalExerciseWarmupRepsController,
+                              onTap: () {
+                                scrollByDistance(
+                                    modalSheetScrollController, 315);
+                              },
                             ),
                           ),
                           const SizedBox(
@@ -1206,6 +1219,9 @@ class _AddTrainingState extends State<AddTraining> {
                     hintText: 'Exercise notes',
                     minLines: 3,
                     maxLines: 3,
+                    onTap: () {
+                      scrollByDistance(modalSheetScrollController, 600);
+                    },
                   ),
                   const SizedBox(
                     height: 40,
