@@ -595,9 +595,37 @@ class _AddTrainingState extends State<AddTraining> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  HFHeading(
-                    size: 6,
-                    text: isEdit ? 'Edit ${exercise['name']}' : 'Add exercise',
+                  Flex(
+                    direction: Axis.horizontal,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(
+                        child: HFHeading(
+                          size: 6,
+                          maxLines: 2,
+                          text: isEdit
+                              ? 'Edit ${exercise['name']}'
+                              : 'Add exercise',
+                        ),
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      InkWell(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                          width: 30,
+                          height: 30,
+                          child: Icon(
+                            CupertinoIcons.multiply,
+                            color: HFColors().primaryColor(),
+                          ),
+                        ),
+                      )
+                    ],
                   ),
                   const SizedBox(
                     height: 10,

@@ -901,10 +901,11 @@ class AddEventScreenState extends State<AddEventScreen> {
                                             });
                                           },
                                           child: AnimatedContainer(
-                                              duration:
-                                                  Duration(milliseconds: 200),
+                                              duration: const Duration(
+                                                  milliseconds: 200),
                                               curve: Curves.easeInOut,
-                                              padding: EdgeInsets.symmetric(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
                                                 horizontal: 12,
                                                 vertical: 6,
                                               ),
@@ -1142,14 +1143,13 @@ class AddEventScreenState extends State<AddEventScreen> {
                                       color:
                                           HFColors().primaryColor(opacity: 1),
                                     ));
-                                  }).catchError((error) =>
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            getSnackBar(
+                                  }).catchError((error) => {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(getSnackBar(
                                               text: 'There was an error',
                                               color: HFColors().redColor(),
-                                            ),
-                                          ));
+                                            ))
+                                          });
                                 } else {
                                   HFFirebaseFunctions()
                                       .getFirebaseAuthUser(context)
@@ -1424,9 +1424,37 @@ class AddEventScreenState extends State<AddEventScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  HFHeading(
-                    size: 6,
-                    text: isEdit ? 'Edit ${exercise['name']}' : 'Add exercise',
+                  Flex(
+                    direction: Axis.horizontal,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(
+                        child: HFHeading(
+                          size: 6,
+                          maxLines: 2,
+                          text: isEdit
+                              ? 'Edit ${exercise['name']}'
+                              : 'Add exercise',
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      InkWell(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                          width: 30,
+                          height: 30,
+                          child: Icon(
+                            CupertinoIcons.multiply,
+                            color: HFColors().primaryColor(),
+                          ),
+                        ),
+                      )
+                    ],
                   ),
                   const SizedBox(
                     height: 10,
