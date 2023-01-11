@@ -1099,29 +1099,32 @@ class AddEventScreenState extends State<AddEventScreen> {
                                 });
 
                                 if (widget.isEdit) {
-                                  HFFirebaseFunctions()
-                                      .getFirebaseAuthUser(context)
-                                      .collection(COLLECTION_DAYS)
-                                      .doc('${selectedEventDate}')
-                                      .collection(COLLECTION_EVENTS)
-                                      .doc(newId)
-                                      .update(eventData)
-                                      .then((value) {
+                                  Future<void> updateEvent =
+                                      updateEventFunction(newId, eventData);
+
+                                  if (widget.date != selectedEventDate) {
+                                    updateEvent =
+                                        changeEventFunction(newId, eventData);
+                                  }
+
+                                  updateEvent.then((value) {
                                     var newDate = DateTime.now();
                                     HFFirebaseFunctions()
                                         .getFirebaseAuthUser(context)
                                         .update({
                                       'changed': '$newDate',
                                     }).then((value) {
-                                      FirebaseFirestore.instance
-                                          .collection(COLLECTION_CLIENTS)
-                                          .doc(selectedClient)
-                                          .collection(COLLECTION_DAYS)
-                                          .doc('${selectedEventDate}')
-                                          .collection(COLLECTION_EVENTS)
-                                          .doc(newId)
-                                          .update(eventData)
-                                          .then((value) {
+                                      Future<void> updateClientEvent =
+                                          updateClientEventFunction(
+                                              newId, eventData);
+
+                                      if (widget.date != selectedEventDate) {
+                                        updateClientEvent =
+                                            changeClientEventFunction(
+                                                newId, eventData);
+                                      }
+
+                                      updateClientEvent.then((value) {
                                         FirebaseFirestore.instance
                                             .collection(COLLECTION_CLIENTS)
                                             .doc(selectedClient)
@@ -1143,13 +1146,13 @@ class AddEventScreenState extends State<AddEventScreen> {
                                       color:
                                           HFColors().primaryColor(opacity: 1),
                                     ));
-                                  }).catchError((error) => {
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(getSnackBar(
-                                              text: 'There was an error',
-                                              color: HFColors().redColor(),
-                                            ))
-                                          });
+                                  }).catchError((error) {
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(getSnackBar(
+                                      text: 'There was an error',
+                                      color: HFColors().redColor(),
+                                    ));
+                                  });
                                 } else {
                                   HFFirebaseFunctions()
                                       .getFirebaseAuthUser(context)
@@ -1288,6 +1291,71 @@ class AddEventScreenState extends State<AddEventScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> updateEventFunction(id, data) {
+    return HFFirebaseFunctions()
+        .getFirebaseAuthUser(context)
+        .collection(COLLECTION_DAYS)
+        .doc('${widget.date}')
+        .collection(COLLECTION_EVENTS)
+        .doc(id)
+        .update(data);
+  }
+
+  Future<void> changeEventFunction(id, data) {
+    HFFirebaseFunctions()
+        .getFirebaseAuthUser(context)
+        .collection(COLLECTION_DAYS)
+        .doc('${widget.date}')
+        .collection(COLLECTION_EVENTS)
+        .doc(id)
+        .delete();
+
+    return HFFirebaseFunctions()
+        .getFirebaseAuthUser(context)
+        .collection(COLLECTION_DAYS)
+        .doc('${selectedEventDate}')
+        .collection(COLLECTION_EVENTS)
+        .doc(id)
+        .set(data)
+        .then((value) {
+      initDay(selectedEventDate);
+    });
+  }
+
+  Future<void> updateClientEventFunction(id, data) {
+    return FirebaseFirestore.instance
+        .collection(COLLECTION_CLIENTS)
+        .doc(selectedClient)
+        .collection(COLLECTION_DAYS)
+        .doc('${widget.date}')
+        .collection(COLLECTION_EVENTS)
+        .doc(id)
+        .update(data);
+  }
+
+  Future<void> changeClientEventFunction(id, data) {
+    FirebaseFirestore.instance
+        .collection(COLLECTION_CLIENTS)
+        .doc(selectedClient)
+        .collection(COLLECTION_DAYS)
+        .doc('${widget.date}')
+        .collection(COLLECTION_EVENTS)
+        .doc(id)
+        .delete();
+
+    return FirebaseFirestore.instance
+        .collection(COLLECTION_CLIENTS)
+        .doc(selectedClient)
+        .collection(COLLECTION_DAYS)
+        .doc('${selectedEventDate}')
+        .collection(COLLECTION_EVENTS)
+        .doc(id)
+        .set(data)
+        .then((value) {
+      initClientDay(selectedEventDate, selectedClient);
+    });
   }
 
   getTrainingsStream(searchText) {
