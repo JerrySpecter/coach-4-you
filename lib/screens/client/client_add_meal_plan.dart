@@ -68,7 +68,9 @@ class _ClientAddMealPlanState extends State<ClientAddMealPlan> {
 
   @override
   void dispose() {
-    _pdfController.dispose();
+    if (_directoryPath != '') {
+      _pdfController.dispose();
+    }
     super.dispose();
   }
 
