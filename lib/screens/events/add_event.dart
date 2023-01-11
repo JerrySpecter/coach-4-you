@@ -730,21 +730,21 @@ class AddEventScreenState extends State<AddEventScreen> {
                                             amount: exerciseModel[
                                                             'repetitionType'] ==
                                                         'time' &&
-                                                    widget.v2
+                                                    exerciseModel['v2']
                                                 ? exerciseModel['amount']
                                                     ['durationString']
                                                 : exerciseModel['amount'],
                                             repetitions:
                                                 exerciseModel['repetitions'],
                                             series: exerciseModel['series'],
-                                            pauseTime: widget.v2
+                                            pauseTime: exerciseModel['v2']
                                                 ? exerciseModel['pauseTime']
                                                     ['durationString']
                                                 : '',
                                             type:
                                                 exerciseModel['repetitionType'],
                                             note: exerciseModel['note'],
-                                            warmups: widget.v2
+                                            warmups: exerciseModel['v2']
                                                 ? exerciseModel['warmups']
                                                 : [],
                                             useImage: false,

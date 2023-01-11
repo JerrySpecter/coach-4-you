@@ -604,6 +604,43 @@ class _ClientProfileState extends State<ClientProfile> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: HFArchiveTile(
+                    image: 'assets/trainings.svg',
+                    hideTitle: true,
+                    useChildren: true,
+                    primaryColor: HFColors().pinkColor(opacity: 0.1),
+                    secondaryColor: HFColors().pinkColor(opacity: 0.6),
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        clientUpcomingTrainingsRoute,
+                        arguments: {
+                          'id': widget.id,
+                        },
+                      );
+                    },
+                    children: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        HFHeading(
+                          text: 'Upcoming',
+                          size: 8,
+                          color: HFColors().whiteColor(opacity: 1),
+                        ),
+                        HFHeading(
+                          text: 'workouts',
+                          size: 8,
+                          color: HFColors().whiteColor(opacity: 1),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: HFArchiveTile(
                     image: 'assets/exercises.svg',
                     hideTitle: true,
                     useChildren: true,
@@ -635,6 +672,39 @@ class _ClientProfileState extends State<ClientProfile> {
                     ),
                   ),
                 ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: HFArchiveTile(
+                    image: 'assets/meal-plan.png',
+                    isSvg: false,
+                    hideTitle: true,
+                    useChildren: true,
+                    primaryColor: HFColors().yellowColor(opacity: 0.1),
+                    secondaryColor: HFColors().yellowColor(opacity: 0.6),
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        clientMealPlan,
+                        arguments: {
+                          'id': widget.id,
+                        },
+                      );
+                    },
+                    children: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        HFHeading(
+                          text: 'Meal plan',
+                          size: 8,
+                          color: HFColors().whiteColor(opacity: 1),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
                 if (context.read<HFGlobalState>().userAccessLevel ==
                     accessLevels.client)
                   const SizedBox(
@@ -648,8 +718,8 @@ class _ClientProfileState extends State<ClientProfile> {
                       image: 'assets/clients.svg',
                       hideTitle: true,
                       useChildren: true,
-                      primaryColor: HFColors().yellowColor(opacity: 0.1),
-                      secondaryColor: HFColors().yellowColor(opacity: 0.6),
+                      primaryColor: HFColors().blueColor(opacity: 0.1),
+                      secondaryColor: HFColors().blueColor(opacity: 0.6),
                       onTap: () {
                         Navigator.pushNamed(context, trainerProfileRoute,
                             arguments: {

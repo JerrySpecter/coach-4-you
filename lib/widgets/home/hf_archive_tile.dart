@@ -14,6 +14,7 @@ class HFArchiveTile extends StatelessWidget {
     this.onTap,
     this.onButtonTap,
     this.useChildren = false,
+    this.isSvg = true,
     this.hideTitle = false,
     this.children = const Text(''),
     this.secondaryColor = Colors.amber,
@@ -26,6 +27,7 @@ class HFArchiveTile extends StatelessWidget {
   Color primaryColor;
   bool hideTitle;
   bool useChildren;
+  bool isSvg;
   Widget children;
   Function()? onTap;
   Function()? onButtonTap;
@@ -66,10 +68,16 @@ class HFArchiveTile extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      SvgPicture.asset(
-                        image,
-                        width: MediaQuery.of(context).size.width * 0.3,
-                      ),
+                      if (!isSvg)
+                        Image.asset(
+                          image,
+                          width: MediaQuery.of(context).size.width * 0.3,
+                        )
+                      else
+                        SvgPicture.asset(
+                          image,
+                          width: MediaQuery.of(context).size.width * 0.3,
+                        ),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         mainAxisAlignment: MainAxisAlignment.center,

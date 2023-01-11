@@ -413,7 +413,7 @@ class _EventScreenState extends State<EventScreen> {
 
                                         if (set[exerciseIndex]
                                             .containsKey('v2')) {
-                                          eventV2 = true;
+                                          eventV2 = set[exerciseIndex]['v2'];
                                         }
 
                                         return HFTrainingListViewTile(

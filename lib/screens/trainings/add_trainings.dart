@@ -95,7 +95,7 @@ class _AddTrainingState extends State<AddTraining> {
         shadowColor: Colors.transparent,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         title: HFHeading(
-          text: widget.isEdit ? 'Edit ${_initialName}' : 'Add new Set',
+          text: widget.isEdit ? 'Edit ${_initialName}' : 'Add new training',
         ),
       ),
       backgroundColor: HFColors().backgroundColor(),
@@ -123,7 +123,7 @@ class _AddTrainingState extends State<AddTraining> {
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
                               HFInput(
-                                hintText: 'Set name',
+                                hintText: 'Training name',
                                 controller: _trainingNameController,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
@@ -261,7 +261,7 @@ class _AddTrainingState extends State<AddTraining> {
                               //   height: 30,
                               // ),
                               // const HFHeading(
-                              //   text: 'Set notes:',
+                              //   text: 'Training notes:',
                               //   size: 5,
                               // ),
                               // const SizedBox(
@@ -270,7 +270,7 @@ class _AddTrainingState extends State<AddTraining> {
                               // HFInput(
                               //   controller: _trainingNoteController,
                               //   keyboardType: TextInputType.multiline,
-                              //   hintText: 'Set notes',
+                              //   hintText: 'Training notes',
                               //   minLines: 3,
                               //   maxLines: 9,
                               // ),
@@ -283,8 +283,8 @@ class _AddTrainingState extends State<AddTraining> {
                                         ? 'Updating...'
                                         : 'Creating...'
                                     : widget.isEdit && !widget.isDuplicate
-                                        ? 'Update set'
-                                        : 'Create set',
+                                        ? 'Update training'
+                                        : 'Create training',
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 16),
                                 onPressed: () {
@@ -333,7 +333,7 @@ class _AddTrainingState extends State<AddTraining> {
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(
                                             getSnackBar(
-                                              text: 'Set updated',
+                                              text: 'Training updated',
                                             ),
                                           );
                                         },
@@ -359,7 +359,7 @@ class _AddTrainingState extends State<AddTraining> {
 
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(getSnackBar(
-                                                text: 'Set created'));
+                                                text: 'Training created'));
                                       });
                                     }
                                   } else {

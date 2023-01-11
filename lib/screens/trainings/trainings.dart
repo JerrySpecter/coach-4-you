@@ -30,7 +30,7 @@ class _TrainingsState extends State<Trainings> {
         shadowColor: Colors.transparent,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         title: const HFHeading(
-          text: 'Sets',
+          text: 'Trainings',
         ),
       ),
       floatingActionButton: Container(

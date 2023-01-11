@@ -60,7 +60,7 @@ class _SingleTrainingState extends State<SingleTraining> {
             onPressed: () {
               showAlertDialog(
                 context,
-                'Are you sure you want to delete video: $_nameState',
+                'Are you sure you want to delete this training: $_nameState',
                 () {
                   HFFirebaseFunctions()
                       .getFirebaseAuthUser(context)

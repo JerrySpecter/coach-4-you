@@ -1,11 +1,8 @@
 import 'package:chewie/chewie.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:health_factory/constants/collections.dart';
 import 'package:health_factory/utils/helpers.dart';
-import 'package:health_factory/widgets/hf_dialog.dart';
 import 'package:health_factory/widgets/hf_heading.dart';
 import 'package:health_factory/widgets/hf_image.dart';
 import 'package:health_factory/widgets/hf_paragraph.dart';
@@ -60,8 +57,10 @@ class _SingleExerciseState extends State<SingleExercise> {
 
   @override
   void dispose() {
-    _videoPlayerController.dispose();
-    _chewieController?.dispose();
+    if (widget.video != '') {
+      _videoPlayerController.dispose();
+      _chewieController?.dispose();
+    }
     super.dispose();
   }
 
@@ -93,9 +92,11 @@ class _SingleExerciseState extends State<SingleExercise> {
     _typesState = widget.types;
     _repetitionTypeState = widget.repetitionType;
 
-    getVideoById(widget.video).get().then((value) {
-      initializePlayer(value['url']);
-    });
+    if (widget.video != '') {
+      getVideoById(widget.video).get().then((value) {
+        initializePlayer(value['url']);
+      });
+    }
 
     super.initState();
   }
@@ -202,28 +203,30 @@ class _SingleExerciseState extends State<SingleExercise> {
                     )
                   ],
                 ),
-              const SizedBox(
-                height: 20,
-              ),
-              SizedBox(
-                height: (MediaQuery.of(context).size.width - 32) / (16 / 9),
-                width: MediaQuery.of(context).size.width - 32,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(16.0),
-                  child: Stack(
-                    fit: StackFit.passthrough,
-                    children: [
-                      _chewieController != null &&
-                              _chewieController!
-                                  .videoPlayerController.value.isInitialized
-                          ? Chewie(
-                              controller: _chewieController!,
-                            )
-                          : const HFImage()
-                    ],
+              if (widget.video != '')
+                const SizedBox(
+                  height: 20,
+                ),
+              if (widget.video != '')
+                SizedBox(
+                  height: (MediaQuery.of(context).size.width - 32) / (16 / 9),
+                  width: MediaQuery.of(context).size.width - 32,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(16.0),
+                    child: Stack(
+                      fit: StackFit.passthrough,
+                      children: [
+                        _chewieController != null &&
+                                _chewieController!
+                                    .videoPlayerController.value.isInitialized
+                            ? Chewie(
+                                controller: _chewieController!,
+                              )
+                            : const HFImage()
+                      ],
+                    ),
                   ),
                 ),
-              ),
               if (widget.note != '')
                 const SizedBox(
                   height: 30,

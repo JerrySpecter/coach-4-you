@@ -8,6 +8,7 @@ import 'package:health_factory/screens/admin/trainers.dart';
 import 'package:health_factory/screens/admin/videos.dart';
 import 'package:health_factory/screens/client/client_arm.dart';
 import 'package:health_factory/screens/client/client_body_fat.dart';
+import 'package:health_factory/screens/client/client_meal_plan.dart';
 import 'package:health_factory/screens/client/client_profile.dart';
 import 'package:health_factory/screens/client/client_shoulders.dart';
 import 'package:health_factory/screens/client/client_thigh.dart';
@@ -36,11 +37,13 @@ import '../screens/admin/exercise.dart';
 import '../screens/admin/locations.dart';
 import '../screens/admin/single_exercise.dart';
 import '../screens/chat_screen.dart';
+import '../screens/client/client_add_meal_plan.dart';
 import '../screens/client/client_add_measurement.dart';
 import '../screens/client/client_bmi.dart';
 import '../screens/client/client_chest.dart';
 import '../screens/client/client_completed_trainings.dart';
 import '../screens/client/client_muscle_mass.dart';
+import '../screens/client/client_upcoming_trainings.dart';
 import '../screens/client/client_visceral_fat.dart';
 import '../screens/clients/clients.dart';
 import '../screens/clients/single_client.dart';
@@ -181,6 +184,14 @@ Route<dynamic>? genRoute(RouteSettings settings) {
 
       return MaterialPageRoute(
         builder: (_) => ClientsCompletedTrainings(
+          id: data['id'],
+        ),
+      );
+    case clientUpcomingTrainingsRoute:
+      var data = settings.arguments as Map;
+
+      return MaterialPageRoute(
+        builder: (_) => ClientsUpcomingTrainings(
           id: data['id'],
         ),
       );
@@ -551,6 +562,22 @@ Route<dynamic>? genRoute(RouteSettings settings) {
     case addClient:
       return MaterialPageRoute(
         builder: (_) => AddClientScreen(),
+      );
+    case clientMealPlan:
+      var data = settings.arguments as Map;
+      return MaterialPageRoute(
+        builder: (_) => ClientMealPlan(
+          clientId: data['id'],
+        ),
+      );
+    case clientAddMealPlan:
+      var data = settings.arguments as Map;
+
+      return MaterialPageRoute(
+        builder: (_) => ClientAddMealPlan(
+          filepath: data['filepath'],
+          clientId: data['id'],
+        ),
       );
     default:
       return MaterialPageRoute(
