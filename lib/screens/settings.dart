@@ -81,14 +81,14 @@ class _SettingsPageState extends State<SettingsPage> {
                   });
                 }
               }),
-              SizedBox(
+              const SizedBox(
                 height: 40,
               ),
-              HFHeading(
+              const HFHeading(
                 text: 'About Coach 4 You',
                 size: 5,
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               SettingsListTile(context, CupertinoIcons.globe, 'Website',
@@ -139,14 +139,19 @@ class _SettingsPageState extends State<SettingsPage> {
                       text: 'Url not working', color: HFColors().redColor()));
                 }
               }),
-              SizedBox(
+              SettingsListTile(context, CupertinoIcons.question, 'FAQ', () {
+                Navigator.pushNamed(context, adminFaqsRoute, arguments: {
+                  'isAdmin': context.read<HFGlobalState>().userIsAdmin
+                });
+              }),
+              const SizedBox(
                 height: 40,
               ),
-              HFHeading(
+              const HFHeading(
                 text: 'Feedback',
                 size: 5,
               ),
-              SizedBox(
+              const SizedBox(
                 height: 5,
               ),
               HFParagrpah(
@@ -155,7 +160,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 size: 8,
                 color: HFColors().whiteColor(opacity: 0.7),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               SettingsListTile(

@@ -49,6 +49,9 @@ import '../screens/clients/clients.dart';
 import '../screens/clients/single_client.dart';
 import '../screens/edit_profile.dart';
 import '../screens/events/add_event.dart';
+import '../screens/faqs/add_faq.dart';
+import '../screens/faqs/faqs.dart';
+import '../screens/faqs/single_faq.dart';
 import '../screens/trainings/add_trainings.dart';
 
 Route<dynamic>? genRoute(RouteSettings settings) {
@@ -340,6 +343,49 @@ Route<dynamic>? genRoute(RouteSettings settings) {
           description: data['description'],
           id: data['id'],
           author: data['author'],
+        ),
+      );
+    case adminFaqsEdit:
+      var data = settings.arguments as Map;
+
+      return MaterialPageRoute(
+        builder: (context) => AddFaq(
+          parentContext: context,
+          name: data['name'],
+          videoThumbnailUrl: data['videoThumbnailUrl'],
+          videoUrl: data['videoUrl'],
+          description: data['description'],
+          id: data['id'],
+          sectionId: data['sectionId'],
+          isDraft: data['isDraft'],
+          isEdit: true,
+        ),
+      );
+    case adminFaqsRoute:
+      var data = settings.arguments as Map;
+
+      return MaterialPageRoute(
+        builder: (_) => Faqs(isAdmin: data['isAdmin']),
+      );
+    case adminFaqsAddRoute:
+      var data = settings.arguments as Map;
+
+      return MaterialPageRoute(
+        builder: (context) =>
+            AddFaq(parentContext: context, isAdmin: data['isAdmin']),
+      );
+    case adminFaqsSingle:
+      var data = settings.arguments as Map;
+
+      return MaterialPageRoute(
+        builder: (_) => SingleFaq(
+          name: data['name'],
+          videoThumbnailUrl: data['videoThumbnailUrl'],
+          videoUrl: data['videoUrl'],
+          description: data['description'],
+          sectionId: data['sectionId'],
+          isDraft: data['isDraft'],
+          id: data['id'],
         ),
       );
     case adminVideosEdit:
