@@ -155,7 +155,7 @@ class _ClientAddMealPlanState extends State<ClientAddMealPlan> {
                         const Center(child: CircularProgressIndicator()),
                     pageBuilder: pageBuilder,
                     errorBuilder: (p0, error) {
-                      return HFParagrpah(
+                      return const HFParagrpah(
                         text: 'Error. Please reload.',
                       );
                     },
@@ -163,7 +163,7 @@ class _ClientAddMealPlanState extends State<ClientAddMealPlan> {
                   controller: _pdfController,
                 ),
               ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             if (_fileName.isNotEmpty)
@@ -172,19 +172,19 @@ class _ClientAddMealPlanState extends State<ClientAddMealPlan> {
                 size: 8,
                 textAlign: TextAlign.center,
               ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             HFButton(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               text: 'Select a meal plan',
               onPressed: () => _pickFiles(),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             HFButton(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               text: _isLoading ? 'Loading...' : 'Upload',
               onPressed: () {
                 setState(() {

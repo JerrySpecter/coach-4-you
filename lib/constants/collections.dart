@@ -21,3 +21,4 @@ const String COLLECTION_COMPLETED = 'completed';
 const String COLLECTION_THIGH = 'thigh';
 const String COLLECTION_WAIST = 'waist';
 const String COLLECTION_WEIGHT = 'weight';
+const String COLLECTION_NOTES = 'notes';

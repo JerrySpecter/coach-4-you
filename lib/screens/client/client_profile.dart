@@ -752,6 +752,40 @@ class _ClientProfileState extends State<ClientProfile> {
                       ),
                     ),
                   ),
+                if (context.read<HFGlobalState>().userAccessLevel ==
+                    accessLevels.trainer)
+                  const SizedBox(
+                    height: 20,
+                  ),
+                if (context.read<HFGlobalState>().userAccessLevel ==
+                    accessLevels.trainer)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: HFArchiveTile(
+                      image: 'assets/notes-illustration.png',
+                      hideTitle: true,
+                      useChildren: true,
+                      isSvg: false,
+                      primaryColor: HFColors().blueColor(opacity: 0.1),
+                      secondaryColor: HFColors().blueColor(opacity: 0.6),
+                      onTap: () {
+                        Navigator.pushNamed(context, clientNotes, arguments: {
+                          'clientEmail': widget.email,
+                          'clientId': widget.id,
+                        });
+                      },
+                      children: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          HFHeading(
+                            text: 'Notes',
+                            size: 8,
+                            color: HFColors().whiteColor(opacity: 1),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
                 const SizedBox(
                   height: 60,
                 ),

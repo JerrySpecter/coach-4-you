@@ -6,9 +6,11 @@ import 'package:health_factory/screens/admin/admin.dart';
 import 'package:health_factory/screens/admin/single_videos.dart';
 import 'package:health_factory/screens/admin/trainers.dart';
 import 'package:health_factory/screens/admin/videos.dart';
+import 'package:health_factory/screens/client/client_add_note.dart';
 import 'package:health_factory/screens/client/client_arm.dart';
 import 'package:health_factory/screens/client/client_body_fat.dart';
 import 'package:health_factory/screens/client/client_meal_plan.dart';
+import 'package:health_factory/screens/client/client_notes.dart';
 import 'package:health_factory/screens/client/client_profile.dart';
 import 'package:health_factory/screens/client/client_shoulders.dart';
 import 'package:health_factory/screens/client/client_thigh.dart';
@@ -43,6 +45,7 @@ import '../screens/client/client_bmi.dart';
 import '../screens/client/client_chest.dart';
 import '../screens/client/client_completed_trainings.dart';
 import '../screens/client/client_muscle_mass.dart';
+import '../screens/client/client_note.dart';
 import '../screens/client/client_upcoming_trainings.dart';
 import '../screens/client/client_visceral_fat.dart';
 import '../screens/clients/clients.dart';
@@ -623,6 +626,38 @@ Route<dynamic>? genRoute(RouteSettings settings) {
         builder: (_) => ClientAddMealPlan(
           filepath: data['filepath'],
           clientId: data['id'],
+        ),
+      );
+    case clientNotes:
+      var data = settings.arguments as Map;
+
+      return MaterialPageRoute(
+        builder: (_) => ClientNotes(
+          clientEmail: data['clientEmail'],
+          clientId: data['clientId'],
+        ),
+      );
+    case clientAddNotes:
+      var data = settings.arguments as Map;
+
+      return MaterialPageRoute(
+        builder: (_) => ClientAddNote(
+          clientEmail: data['clientEmail'],
+          clientId: data['clientId'],
+        ),
+      );
+    case clientNotesSingle:
+      var data = settings.arguments as Map;
+
+      return MaterialPageRoute(
+        builder: (_) => ClientNote(
+          clientEmail: data['clientEmail'],
+          clientId: data['clientId'],
+          noteId: data['noteId'],
+          name: data['name'],
+          description: data['description'],
+          filepath: data['filepath'],
+          date: data['date'],
         ),
       );
     default:

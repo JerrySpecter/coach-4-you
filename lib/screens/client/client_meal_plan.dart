@@ -79,7 +79,6 @@ class _ClientMealPlanState extends State<ClientMealPlan> {
         systemOverlayStyle: SystemUiOverlayStyle.light,
         title: const HFHeading(
           text: 'Meal plan',
-          size: 5,
         ),
         actions: <Widget>[
           // IconButton(

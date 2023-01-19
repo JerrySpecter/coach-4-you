@@ -27,6 +27,9 @@ class ClientsCompletedTrainings extends StatelessWidget {
         foregroundColor: HFColors().primaryColor(),
         shadowColor: Colors.transparent,
         systemOverlayStyle: SystemUiOverlayStyle.light,
+        title: HFHeading(
+          text: 'Completed workouts',
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -34,13 +37,6 @@ class ClientsCompletedTrainings extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              SizedBox(
-                height: 20,
-              ),
-              HFHeading(
-                text: 'Completed workouts',
-                size: 6,
-              ),
               const SizedBox(
                 height: 30,
               ),
