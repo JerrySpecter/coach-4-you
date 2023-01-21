@@ -3,14 +3,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:health_factory/constants/colors.dart';
 import 'package:health_factory/widgets/hf_heading.dart';
-import 'package:health_factory/widgets/hf_tag.dart';
 import 'package:provider/provider.dart';
-
-import '../../constants/firebase_functions.dart';
 import '../../constants/global_state.dart';
 import '../../constants/routes.dart';
 import '../../utils/helpers.dart';
-import '../hf_client_tile.dart';
 import '../hf_input_field.dart';
 import '../hf_list_view_tile.dart';
 import '../hf_paragraph.dart';
@@ -94,7 +90,7 @@ class _FindTrainerSectionState extends State<FindTrainerSection> {
                     verticalContentPadding: 12,
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 10,
                 ),
                 Expanded(
@@ -122,12 +118,12 @@ class _FindTrainerSectionState extends State<FindTrainerSection> {
           ),
           AnimatedOpacity(
             opacity: showLocationsFilter ? 1 : 0,
-            duration: Duration(milliseconds: 200),
+            duration: const Duration(milliseconds: 200),
             curve: Curves.easeInOut,
             child: AnimatedContainer(
-              duration: Duration(milliseconds: 200),
+              duration: const Duration(milliseconds: 200),
               clipBehavior: Clip.hardEdge,
-              decoration: BoxDecoration(),
+              decoration: const BoxDecoration(),
               curve: Curves.easeInOut,
               height: showLocationsFilter ? 50 : 0,
               child: StreamBuilder<Object>(
@@ -136,7 +132,7 @@ class _FindTrainerSectionState extends State<FindTrainerSection> {
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
-                    return Center(
+                    return const Center(
                         child: HFParagrpah(
                       text: 'No locations',
                     ));
@@ -162,7 +158,7 @@ class _FindTrainerSectionState extends State<FindTrainerSection> {
                     child: ListView(
                       scrollDirection: Axis.horizontal,
                       children: [
-                        SizedBox(
+                        const SizedBox(
                           width: 16,
                         ),
                         ...data.docs.map(
@@ -184,12 +180,13 @@ class _FindTrainerSectionState extends State<FindTrainerSection> {
                                     },
                                     child: Container(
                                       height: 40,
-                                      padding: EdgeInsets.only(
+                                      padding: const EdgeInsets.only(
                                           right: 10, bottom: 10),
                                       child: AnimatedContainer(
-                                        duration: Duration(milliseconds: 100),
+                                        duration:
+                                            const Duration(milliseconds: 100),
                                         curve: Curves.easeInOut,
-                                        padding: EdgeInsets.symmetric(
+                                        padding: const EdgeInsets.symmetric(
                                           horizontal: 12,
                                           vertical: 6,
                                         ),
@@ -221,7 +218,7 @@ class _FindTrainerSectionState extends State<FindTrainerSection> {
                             );
                           },
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 16,
                         )
                       ],
@@ -231,7 +228,7 @@ class _FindTrainerSectionState extends State<FindTrainerSection> {
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Padding(
@@ -280,7 +277,7 @@ class _FindTrainerSectionState extends State<FindTrainerSection> {
 
                       return ListView(
                         shrinkWrap: true,
-                        padding: EdgeInsets.symmetric(vertical: 8),
+                        padding: const EdgeInsets.symmetric(vertical: 8),
                         children: [
                           ...data.docs.map(
                             (trainer) {
@@ -288,12 +285,12 @@ class _FindTrainerSectionState extends State<FindTrainerSection> {
 
                               if (trainer['newAccount'] ||
                                   trainer['isTestAccount']) {
-                                return SizedBox(height: 0);
+                                return const SizedBox(height: 0);
                               }
 
                               if (selectedLocations != '' &&
                                   !locations.contains(selectedLocations)) {
-                                return SizedBox(height: 0);
+                                return const SizedBox(height: 0);
                               }
 
                               return Padding(
@@ -333,7 +330,7 @@ class _FindTrainerSectionState extends State<FindTrainerSection> {
                                             ),
                                           ],
                                         )
-                                      : SizedBox(
+                                      : const SizedBox(
                                           width: 0,
                                         ),
                                 ),
