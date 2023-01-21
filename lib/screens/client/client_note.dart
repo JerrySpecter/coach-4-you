@@ -43,6 +43,7 @@ class _ClientNoteState extends State<ClientNote> {
   late String filepath;
   late String initialName;
   late String initialDescription;
+  bool isTemp = false;
 
   @override
   void initState() {
@@ -50,14 +51,15 @@ class _ClientNoteState extends State<ClientNote> {
     filepath = '';
 
     setState(() {
+      isTemp = widget.clientEmail == '';
       initialName = widget.name;
       initialDescription = widget.description;
     });
 
     HFFirebaseFunctions()
         .getFirebaseAuthUser(context)
-        .collection(COLLECTION_CLIENTS)
-        .doc(widget.clientEmail)
+        .collection(isTemp ? 'tempClients' : COLLECTION_CLIENTS)
+        .doc(isTemp ? widget.clientId : widget.clientEmail)
         .collection(COLLECTION_NOTES)
         .doc(widget.noteId)
         .get()
@@ -108,8 +110,8 @@ class _ClientNoteState extends State<ClientNote> {
                   () {
                     HFFirebaseFunctions()
                         .getFirebaseAuthUser(context)
-                        .collection(COLLECTION_CLIENTS)
-                        .doc(widget.clientEmail)
+                        .collection(isTemp ? 'tempClients' : COLLECTION_CLIENTS)
+                        .doc(isTemp ? widget.clientId : widget.clientEmail)
                         .collection(COLLECTION_NOTES)
                         .doc(widget.noteId)
                         .delete()
@@ -118,7 +120,7 @@ class _ClientNoteState extends State<ClientNote> {
                       Navigator.pop(context);
 
                       ScaffoldMessenger.of(context).showSnackBar(getSnackBar(
-                        text: 'Meal plan removed!',
+                        text: 'Document removed!',
                         color: HFColors().primaryColor(opacity: 1),
                       ));
                     });
@@ -213,8 +215,8 @@ class _ClientNoteState extends State<ClientNote> {
 
     HFFirebaseFunctions()
         .getFirebaseAuthUser(context)
-        .collection(COLLECTION_CLIENTS)
-        .doc(widget.clientEmail)
+        .collection(isTemp ? 'tempClients' : COLLECTION_CLIENTS)
+        .doc(isTemp ? widget.clientId : widget.clientEmail)
         .collection(COLLECTION_NOTES)
         .doc(widget.noteId)
         .get()

@@ -55,6 +55,34 @@ class _TrainerProfileLoggedInState extends State<TrainerProfileLoggedIn> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController contentController = TextEditingController();
   bool pullUpOpen = false;
+  int clients = 0;
+
+  @override
+  void initState() {
+    super.initState();
+
+    FirebaseFirestore.instance
+        .collection('trainers')
+        .doc(widget.id)
+        .collection('clients')
+        .get()
+        .then((value) {
+      setState(() {
+        clients = clients + value.docs.length;
+      });
+    }).then((value) {
+      FirebaseFirestore.instance
+          .collection('trainers')
+          .doc(widget.id)
+          .collection('tempClients')
+          .get()
+          .then((value) {
+        setState(() {
+          clients = clients + value.docs.length;
+        });
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -303,34 +331,13 @@ class _TrainerProfileLoggedInState extends State<TrainerProfileLoggedIn> {
                                           color: HFColors().whiteColor(),
                                           size: 4,
                                         ),
-                                        StreamBuilder(
-                                          stream: HFFirebaseFunctions()
-                                              .getFirebaseAuthUser(context)
-                                              .collection('clients')
-                                              .snapshots(),
-                                          builder: ((context, snapshot) {
-                                            if (!snapshot.hasData) {
-                                              return HFHeading(
-                                                color: HFColors().whiteColor(),
-                                                text: 'Loading...',
-                                                size: 2,
-                                              );
-                                            }
-
-                                            var data =
-                                                snapshot.data as QuerySnapshot;
-
-                                            double size = 75;
-
-                                            return HFHeading(
-                                              color: HFColors().whiteColor(),
-                                              text: '${data.docs.length}',
-                                              size: 8,
-                                              lineHeight: 1,
-                                              textAlign: TextAlign.center,
-                                            );
-                                          }),
-                                        ),
+                                        HFHeading(
+                                          color: HFColors().whiteColor(),
+                                          text: '${clients}',
+                                          size: 8,
+                                          lineHeight: 1,
+                                          textAlign: TextAlign.center,
+                                        )
                                       ],
                                     ),
                                   ),

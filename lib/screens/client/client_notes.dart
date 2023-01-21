@@ -31,19 +31,30 @@ class _ClientNotesState extends State<ClientNotes> {
   final TextEditingController searchFieldController = TextEditingController();
   String searchNotesText = '';
   Stream notesStream = const Stream.empty();
+  bool isTemp = false;
 
   @override
   void initState() {
     super.initState();
 
     setState(() {
-      notesStream = HFFirebaseFunctions()
-          .getFirebaseAuthUser(context)
-          .collection(COLLECTION_CLIENTS)
-          .doc(widget.clientEmail)
-          .collection(COLLECTION_NOTES)
-          .orderBy('date', descending: true)
-          .snapshots();
+      isTemp = widget.clientEmail == '';
+
+      notesStream = isTemp
+          ? HFFirebaseFunctions()
+              .getFirebaseAuthUser(context)
+              .collection('tempClients')
+              .doc(widget.clientId)
+              .collection(COLLECTION_NOTES)
+              .orderBy('date', descending: true)
+              .snapshots()
+          : HFFirebaseFunctions()
+              .getFirebaseAuthUser(context)
+              .collection(COLLECTION_CLIENTS)
+              .doc(widget.clientEmail)
+              .collection(COLLECTION_NOTES)
+              .orderBy('date', descending: true)
+              .snapshots();
     });
   }
 
@@ -211,14 +222,24 @@ class _ClientNotesState extends State<ClientNotes> {
   }
 
   getNotesStream(searchText) {
-    return HFFirebaseFunctions()
-        .getFirebaseAuthUser(context)
-        .collection(COLLECTION_CLIENTS)
-        .doc(widget.clientEmail)
-        .collection(COLLECTION_NOTES)
-        .where('name', isGreaterThanOrEqualTo: searchText)
-        .where('name', isLessThan: '${searchText}z')
-        .orderBy("name", descending: false)
-        .snapshots();
+    return isTemp
+        ? HFFirebaseFunctions()
+            .getFirebaseAuthUser(context)
+            .collection('tempClients')
+            .doc(widget.clientId)
+            .collection(COLLECTION_NOTES)
+            .where('name', isGreaterThanOrEqualTo: searchText)
+            .where('name', isLessThan: '${searchText}z')
+            .orderBy("name", descending: false)
+            .snapshots()
+        : HFFirebaseFunctions()
+            .getFirebaseAuthUser(context)
+            .collection(COLLECTION_CLIENTS)
+            .doc(widget.clientEmail)
+            .collection(COLLECTION_NOTES)
+            .where('name', isGreaterThanOrEqualTo: searchText)
+            .where('name', isLessThan: '${searchText}z')
+            .orderBy("name", descending: false)
+            .snapshots();
   }
 }

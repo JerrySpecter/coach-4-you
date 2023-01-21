@@ -53,10 +53,7 @@ class ClientAddNote extends StatefulWidget {
 
 class _ClientAddNoteState extends State<ClientAddNote> {
   final _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
-  String _fileName = '';
   bool _isLoading = false;
-  bool _startUpload = false;
-  double _uploadingPercentage = 0;
   String _directoryPath = '';
   late PdfController _pdfController;
   final noteTitleController = TextEditingController();
@@ -65,10 +62,13 @@ class _ClientAddNoteState extends State<ClientAddNote> {
   final _formKey = GlobalKey<FormState>();
   String _initialName = '';
   String _initialDescription = '';
+  bool isTemp = false;
 
   @override
   void initState() {
     super.initState();
+
+    isTemp = widget.clientEmail == '';
 
     if (widget.isEdit) {
       setState(() {
@@ -118,15 +118,9 @@ class _ClientAddNoteState extends State<ClientAddNote> {
         });
 
         if (file.path != '') {
-          print('document selected');
-
           if (widget.filepath.isNotEmpty) {
-            print('default not empty');
-
             _pdfController.loadDocument(PdfDocument.openFile(file.path!));
           } else {
-            print('default empty');
-
             if (_directoryPath.isEmpty) {
               _pdfController = PdfController(
                 document: PdfDocument.openFile(file.path!),
@@ -316,17 +310,13 @@ class _ClientAddNoteState extends State<ClientAddNote> {
                         'filepath': _directoryPath,
                       };
 
-                      print(editedData);
-
                       var filepath = '';
 
                       if (_directoryPath != widget.filepath) {
                         if (_directoryPath == '') {
                           filepath = '';
                         } else {
-                          setState(() {
-                            _startUpload = true;
-                          });
+                          setState(() {});
 
                           var uploadValue = await cloudinarySdk.uploadResource(
                             CloudinaryUploadResource(
@@ -335,9 +325,7 @@ class _ClientAddNoteState extends State<ClientAddNote> {
                                   'clients/${widget.clientId}/notes/$noteId',
                               fileName: '${noteId}_document',
                               progressCallback: (count, total) {
-                                setState(() {
-                                  _uploadingPercentage = (count / total);
-                                });
+                                setState(() {});
                               },
                             ),
                           );
@@ -362,20 +350,20 @@ class _ClientAddNoteState extends State<ClientAddNote> {
                               (value) => noteDescriptionController.text);
                         }
 
-                        print(editedData);
-
                         await HFFirebaseFunctions()
                             .getFirebaseAuthUser(context)
-                            .collection(COLLECTION_CLIENTS)
-                            .doc(widget.clientEmail)
+                            .collection(
+                                isTemp ? 'tempClients' : COLLECTION_CLIENTS)
+                            .doc(isTemp ? widget.clientId : widget.clientEmail)
                             .collection(COLLECTION_NOTES)
                             .doc(noteId)
                             .update(editedData);
                       } else {
                         HFFirebaseFunctions()
                             .getFirebaseAuthUser(context)
-                            .collection(COLLECTION_CLIENTS)
-                            .doc(widget.clientEmail)
+                            .collection(
+                                isTemp ? 'tempClients' : COLLECTION_CLIENTS)
+                            .doc(isTemp ? widget.clientId : widget.clientEmail)
                             .collection(COLLECTION_NOTES)
                             .doc(noteId)
                             .set({
@@ -399,7 +387,6 @@ class _ClientAddNoteState extends State<ClientAddNote> {
                       Navigator.pop(context);
 
                       setState(() {
-                        _startUpload = false;
                         _isLoading = false;
                       });
                     }

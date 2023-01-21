@@ -50,8 +50,8 @@ class HFClientListViewTile extends StatelessWidget {
       children: [
         Container(
           padding: const EdgeInsets.symmetric(
-            vertical: 10,
-            horizontal: 10,
+            vertical: 4,
+            horizontal: 4,
           ),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(16)),
@@ -70,7 +70,7 @@ class HFClientListViewTile extends StatelessWidget {
                     height: imageSize,
                     width: imageSize,
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(imageSize / 6),
+                      borderRadius: BorderRadius.circular(imageSize / 5),
                       child: imageUrl == ''
                           ? HFImage(imageUrl: imageUrl)
                           : Image.network(

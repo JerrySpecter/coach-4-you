@@ -60,7 +60,7 @@ class AddClientScreenState extends State<AddClientScreen> {
                       showCursor: true,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter title.';
+                          return 'Please enter name.';
                         }
                         return null;
                       },
@@ -73,15 +73,15 @@ class AddClientScreenState extends State<AddClientScreen> {
                       hintText: 'Client email',
                       showCursor: true,
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter email address.';
+                        if (value == null) {
+                          return null;
                         }
 
-                        if (!EmailValidator.validate(value)) {
-                          return 'Please enter valid email address.';
+                        if (value.isNotEmpty) {
+                          if (!EmailValidator.validate(value)) {
+                            return 'Please enter valid email address.';
+                          }
                         }
-
-                        return null;
                       },
                     ),
                     const SizedBox(
@@ -94,32 +94,61 @@ class AddClientScreenState extends State<AddClientScreen> {
                         if (_formKey.currentState!.validate()) {
                           var newId = const Uuid().v4();
 
-                          HFFirebaseFunctions()
-                              .getFirebaseAuthUser(context)
-                              .collection('clients')
-                              .doc(clientEmailController.text)
-                              .set({
-                            'name': clientNameController.text,
-                            'email': clientEmailController.text,
-                            'imageUrl': '',
-                            'height': '',
-                            'messages': {
-                              'numberOfUnseenClient': 0,
-                              'numberOfUnseenTrainer': 0,
-                              'lastMessageDate': '',
-                              'lastMessageText': '',
-                            },
-                            'accountReady': false,
-                          }).then((value) {
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(getSnackBar(
-                              text:
-                                  '${clientNameController.text} added to clients!',
-                              color: HFColors().primaryColor(opacity: 1),
-                            ));
+                          if (clientEmailController.text == '') {
+                            HFFirebaseFunctions()
+                                .getFirebaseAuthUser(context)
+                                .collection('tempClients')
+                                .doc(newId)
+                                .set({
+                              'name': clientNameController.text,
+                              'email': '',
+                              'imageUrl': '',
+                              'height': '',
+                              'messages': {
+                                'numberOfUnseenClient': 0,
+                                'numberOfUnseenTrainer': 0,
+                                'lastMessageDate': '',
+                                'lastMessageText': '',
+                              },
+                              'accountReady': false,
+                            }).then((value) {
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(getSnackBar(
+                                text:
+                                    '${clientNameController.text} added to clients!',
+                                color: HFColors().primaryColor(opacity: 1),
+                              ));
 
-                            Navigator.pop(context);
-                          });
+                              Navigator.pop(context);
+                            });
+                          } else {
+                            HFFirebaseFunctions()
+                                .getFirebaseAuthUser(context)
+                                .collection('clients')
+                                .doc(clientEmailController.text)
+                                .set({
+                              'name': clientNameController.text,
+                              'email': clientEmailController.text,
+                              'imageUrl': '',
+                              'height': '',
+                              'messages': {
+                                'numberOfUnseenClient': 0,
+                                'numberOfUnseenTrainer': 0,
+                                'lastMessageDate': '',
+                                'lastMessageText': '',
+                              },
+                              'accountReady': false,
+                            }).then((value) {
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(getSnackBar(
+                                text:
+                                    '${clientNameController.text} added to clients!',
+                                color: HFColors().primaryColor(opacity: 1),
+                              ));
+
+                              Navigator.pop(context);
+                            });
+                          }
                         }
                       },
                     ),

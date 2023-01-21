@@ -62,6 +62,7 @@ class _TrainerProfileState extends State<TrainerProfile> {
   String initialintro = '';
   String initialbirthday = '';
   bool initialavailable = false;
+  int clients = 0;
 
   @override
   void initState() {
@@ -95,6 +96,28 @@ class _TrainerProfileState extends State<TrainerProfile> {
         });
       });
     }
+
+    FirebaseFirestore.instance
+        .collection('trainers')
+        .doc(widget.id)
+        .collection('clients')
+        .get()
+        .then((value) {
+      setState(() {
+        clients = clients + value.docs.length;
+      });
+    }).then((value) {
+      FirebaseFirestore.instance
+          .collection('trainers')
+          .doc(widget.id)
+          .collection('tempClients')
+          .get()
+          .then((value) {
+        setState(() {
+          clients = clients + value.docs.length;
+        });
+      });
+    });
 
     super.initState();
   }
@@ -301,27 +324,9 @@ class _TrainerProfileState extends State<TrainerProfile> {
                               const SizedBox(
                                 height: 10,
                               ),
-                              StreamBuilder(
-                                stream: FirebaseFirestore.instance
-                                    .collection('trainers')
-                                    .doc(widget.id)
-                                    .collection('clients')
-                                    .snapshots(),
-                                builder: ((context, snapshot) {
-                                  if (!snapshot.hasData) {
-                                    return const HFHeading(
-                                      text: '0',
-                                      size: 10,
-                                    );
-                                  }
-
-                                  var data = snapshot.data as QuerySnapshot;
-
-                                  return HFHeading(
-                                    text: '${data.docs.length}',
-                                    size: 10,
-                                  );
-                                }),
+                              HFHeading(
+                                text: '${clients}',
+                                size: 10,
                               ),
                             ],
                           ),

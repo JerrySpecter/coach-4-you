@@ -22,34 +22,30 @@ class ClientsPage extends StatefulWidget {
 }
 
 class ClientsPageState extends State<ClientsPage> {
-  final TextEditingController _searchFieldController = TextEditingController();
-  String searchText = '';
-  Stream stream = HFFirebaseFunctions()
-      .getTrainersUser()
-      .collection('clients')
-      .orderBy("name", descending: false)
-      .snapshots();
+  List<dynamic> allClients = [];
 
-  @override
-  void initState() {
-    stream = HFFirebaseFunctions()
+  getAllClients() async {
+    var clients = await HFFirebaseFunctions()
         .getTrainersUser()
         .collection('clients')
-        .where('name', isGreaterThanOrEqualTo: searchText)
-        .where('name', isLessThan: '${searchText}z')
         .orderBy("name", descending: false)
-        .snapshots();
+        .get();
 
-    super.initState();
-  }
+    var tempClients = await HFFirebaseFunctions()
+        .getTrainersUser()
+        .collection('tempClients')
+        .orderBy("name", descending: false)
+        .get();
 
-  @override
-  void dispose() {
-    super.dispose();
+    setState(() {
+      allClients = [...clients.docs, ...tempClients.docs];
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    getAllClients();
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: HFColors().backgroundColor(),
@@ -118,100 +114,68 @@ class ClientsPageState extends State<ClientsPage> {
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Column(
             children: [
-              HFInput(
-                controller: _searchFieldController,
-                onChanged: (value) {
-                  setState(() {
-                    searchText = value;
-                    stream = HFFirebaseFunctions()
-                        .getTrainersUser()
-                        .collection('clients')
-                        .where('name', isGreaterThanOrEqualTo: searchText)
-                        .where('name', isLessThan: '${searchText}z')
-                        .orderBy("name", descending: false)
-                        .snapshots();
-                  });
-                },
-                hintText: 'Search',
-                keyboardType: TextInputType.text,
-                verticalContentPadding: 12,
-              ),
               SizedBox(
-                height: 20,
-              ),
-              StreamBuilder(
-                stream: stream,
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                    return const Center(
-                      child: HFParagrpah(
-                        text: 'No clients.',
-                        size: 10,
-                        textAlign: TextAlign.center,
-                      ),
-                    );
-                  }
+                height: MediaQuery.of(context).size.height - 200,
+                child: ListView(
+                  children: [
+                    if (allClients.isNotEmpty)
+                      ...allClients.map((client) {
+                        var isTemp = client['email'] == '';
 
-                  var data = snapshot.data as QuerySnapshot;
-
-                  if (data.docs.isEmpty) {
-                    return const Center(
-                      child: HFParagrpah(
-                        text: 'There are no clients.',
-                        size: 10,
-                        textAlign: TextAlign.center,
-                      ),
-                    );
-                  }
-
-                  return SizedBox(
-                    height: MediaQuery.of(context).size.height - 136,
-                    child: ListView(
-                      children: [
-                        ...data.docs.map((client) {
-                          return HFClientListViewTile(
-                            name: client['name'],
-                            email: client['email'],
-                            imageUrl: client['imageUrl'],
-                            available: client['accountReady'],
-                            showAvailable: true,
-                            useSpacerBottom: true,
-                            onTap: () {
-                              Navigator.pushNamed(context, clientProfileRoute,
-                                  arguments: {
-                                    'name': client['name'],
-                                    'email': client['email'],
-                                    'imageUrl': client['imageUrl'],
-                                    'id': client['id'],
-                                    'weight': '',
-                                    'height': '',
-                                    'profileBackgroundImageUrl': '',
-                                    'asTrainer': true
-                                  });
-                            },
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                HFParagrpah(
-                                  text: 'Email:',
-                                  size: 7,
-                                  color: HFColors().whiteColor(),
-                                  fontWeight: FontWeight.w700,
+                        return HFClientListViewTile(
+                          name: client['name'],
+                          email: client['email'],
+                          imageUrl: client['imageUrl'],
+                          available: isTemp ? true : client['accountReady'],
+                          showAvailable: true,
+                          useSpacerBottom: true,
+                          onTap: () {
+                            Navigator.pushNamed(context, clientProfileRoute,
+                                arguments: {
+                                  'name': client['name'],
+                                  'email': isTemp ? '' : client['email'],
+                                  'imageUrl': isTemp ? '' : client['imageUrl'],
+                                  'id': isTemp ? client.id : client['id'],
+                                  'weight': '',
+                                  'height': '',
+                                  'profileBackgroundImageUrl': '',
+                                  'asTrainer': true
+                                });
+                          },
+                          child: !isTemp
+                              ? Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    HFParagrpah(
+                                      text: 'Email:',
+                                      size: 7,
+                                      color: HFColors().whiteColor(),
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                    HFParagrpah(
+                                      text: client['email'],
+                                      size: 7,
+                                      maxLines: 2,
+                                      color: HFColors().whiteColor(),
+                                    ),
+                                  ],
+                                )
+                              : SizedBox(
+                                  height: 10,
                                 ),
-                                HFParagrpah(
-                                  text: client['email'],
-                                  size: 7,
-                                  maxLines: 2,
-                                  color: HFColors().whiteColor(),
-                                ),
-                              ],
-                            ),
-                          );
-                        })
-                      ],
-                    ),
-                  );
-                },
+                        );
+                      })
+                    else
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 24.0),
+                        child: Center(
+                          child: HFHeading(
+                            text: 'No clients yet.',
+                          ),
+                        ),
+                      )
+                  ],
+                ),
               ),
             ],
           ),
@@ -220,3 +184,15 @@ class ClientsPageState extends State<ClientsPage> {
     );
   }
 }
+
+// Future<QuerySnapshot> clients = HFFirebaseFunctions()
+//     .getTrainersUser()
+//     .collection('clients')
+//     .orderBy("name", descending: false)
+//     .get();
+
+// Future<QuerySnapshot> tempClients = HFFirebaseFunctions()
+//     .getTrainersUser()
+//     .collection('tempClients')
+//     .orderBy("name", descending: false)
+//     .get();

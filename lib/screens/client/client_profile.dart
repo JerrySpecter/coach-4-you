@@ -1,19 +1,14 @@
-import 'dart:ui';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:health_factory/constants/collections.dart';
 import 'package:health_factory/constants/firebase_functions.dart';
 import 'package:health_factory/constants/global_state.dart';
-import 'package:health_factory/utils/helpers.dart';
 import 'package:health_factory/widgets/hf_heading.dart';
 import 'package:health_factory/widgets/hf_paragraph.dart';
 import 'package:provider/provider.dart';
 import '../../../constants/colors.dart';
 import '../../../widgets/hf_image.dart';
-import 'package:snapping_sheet/snapping_sheet.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -57,9 +52,11 @@ class _ClientProfileState extends State<ClientProfile> {
   String initialEmail = '';
   String initialProfileBackgroundImageUrl = '';
   String initialHeight = '';
+  bool isTemp = false;
 
   @override
   void initState() {
+    isTemp = widget.email == '';
     initialName = widget.name;
     initialId = widget.id;
     initialImageUrl = widget.imageUrl;
@@ -67,7 +64,7 @@ class _ClientProfileState extends State<ClientProfile> {
     initialProfileBackgroundImageUrl = widget.profileBackgroundImageUrl;
     initialHeight = widget.height;
 
-    if (widget.asTrainer) {
+    if (widget.asTrainer && !isTemp) {
       FirebaseFirestore.instance
           .collection(COLLECTION_CLIENTS)
           .doc(widget.id)
@@ -148,16 +145,29 @@ class _ClientProfileState extends State<ClientProfile> {
                                   context,
                                   'Are you sure you want to delete client: $initialName',
                                   () {
-                                    HFFirebaseFunctions()
-                                        .getFirebaseAuthUser(context)
-                                        .collection(COLLECTION_CLIENTS)
-                                        .doc(widget.email)
-                                        .delete()
-                                        .then((value) {
-                                      Navigator.pop(context);
-                                    }).then((value) {
-                                      Navigator.pop(context);
-                                    });
+                                    if (isTemp) {
+                                      HFFirebaseFunctions()
+                                          .getFirebaseAuthUser(context)
+                                          .collection('tempClients')
+                                          .doc(initialId)
+                                          .delete()
+                                          .then((value) {
+                                        Navigator.pop(context);
+                                      }).then((value) {
+                                        Navigator.pop(context);
+                                      });
+                                    } else {
+                                      HFFirebaseFunctions()
+                                          .getFirebaseAuthUser(context)
+                                          .collection(COLLECTION_CLIENTS)
+                                          .doc(widget.email)
+                                          .delete()
+                                          .then((value) {
+                                        Navigator.pop(context);
+                                      }).then((value) {
+                                        Navigator.pop(context);
+                                      });
+                                    }
                                   },
                                   'Yes',
                                   () {
@@ -173,7 +183,7 @@ class _ClientProfileState extends State<ClientProfile> {
                             ),
                           ),
                         ),
-                      if (widget.asTrainer)
+                      if (widget.asTrainer && !isTemp)
                         Positioned(
                           top: topOffset + 50,
                           right: 16,
@@ -292,8 +302,9 @@ class _ClientProfileState extends State<ClientProfile> {
                   size: 8,
                   textAlign: TextAlign.center,
                 ),
-                ClientInformation(context, initialHeight),
-                if (context.watch<HFGlobalState>().measurementsViewGrid)
+                if (!isTemp) ClientInformation(context, initialHeight),
+                if (context.watch<HFGlobalState>().measurementsViewGrid &&
+                    !isTemp)
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Wrap(
@@ -444,7 +455,8 @@ class _ClientProfileState extends State<ClientProfile> {
                       ],
                     ),
                   ),
-                if (!context.watch<HFGlobalState>().measurementsViewGrid)
+                if (!context.watch<HFGlobalState>().measurementsViewGrid &&
+                    !isTemp)
                   CarouselSlider(
                     options: CarouselOptions(
                       aspectRatio: 2.0,
@@ -601,110 +613,115 @@ class _ClientProfileState extends State<ClientProfile> {
                 const SizedBox(
                   height: 60,
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: HFArchiveTile(
-                    image: 'assets/trainings.svg',
-                    hideTitle: true,
-                    useChildren: true,
-                    primaryColor: HFColors().pinkColor(opacity: 0.1),
-                    secondaryColor: HFColors().pinkColor(opacity: 0.6),
-                    onTap: () {
-                      Navigator.pushNamed(
-                        context,
-                        clientUpcomingTrainingsRoute,
-                        arguments: {
-                          'id': widget.id,
-                        },
-                      );
-                    },
-                    children: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        HFHeading(
-                          text: 'Upcoming',
-                          size: 8,
-                          color: HFColors().whiteColor(opacity: 1),
-                        ),
-                        HFHeading(
-                          text: 'workouts',
-                          size: 8,
-                          color: HFColors().whiteColor(opacity: 1),
-                        ),
-                      ],
+                if (!isTemp)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: HFArchiveTile(
+                      image: 'assets/trainings.svg',
+                      hideTitle: true,
+                      useChildren: true,
+                      primaryColor: HFColors().pinkColor(opacity: 0.1),
+                      secondaryColor: HFColors().pinkColor(opacity: 0.6),
+                      onTap: () {
+                        Navigator.pushNamed(
+                          context,
+                          clientUpcomingTrainingsRoute,
+                          arguments: {
+                            'id': widget.id,
+                          },
+                        );
+                      },
+                      children: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          HFHeading(
+                            text: 'Upcoming',
+                            size: 8,
+                            color: HFColors().whiteColor(opacity: 1),
+                          ),
+                          HFHeading(
+                            text: 'workouts',
+                            size: 8,
+                            color: HFColors().whiteColor(opacity: 1),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: HFArchiveTile(
-                    image: 'assets/exercises.svg',
-                    hideTitle: true,
-                    useChildren: true,
-                    primaryColor: HFColors().purpleColor(opacity: 0.1),
-                    secondaryColor: HFColors().purpleColor(opacity: 0.6),
-                    onTap: () {
-                      Navigator.pushNamed(
-                        context,
-                        clientCompletedTrainingsRoute,
-                        arguments: {
-                          'id': widget.id,
-                        },
-                      );
-                    },
-                    children: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        HFHeading(
-                          text: 'Completed',
-                          size: 8,
-                          color: HFColors().whiteColor(opacity: 1),
-                        ),
-                        HFHeading(
-                          text: 'workouts',
-                          size: 8,
-                          color: HFColors().whiteColor(opacity: 1),
-                        ),
-                      ],
+                if (!isTemp)
+                  const SizedBox(
+                    height: 20,
+                  ),
+                if (!isTemp)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: HFArchiveTile(
+                      image: 'assets/exercises.svg',
+                      hideTitle: true,
+                      useChildren: true,
+                      primaryColor: HFColors().purpleColor(opacity: 0.1),
+                      secondaryColor: HFColors().purpleColor(opacity: 0.6),
+                      onTap: () {
+                        Navigator.pushNamed(
+                          context,
+                          clientCompletedTrainingsRoute,
+                          arguments: {
+                            'id': widget.id,
+                          },
+                        );
+                      },
+                      children: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          HFHeading(
+                            text: 'Completed',
+                            size: 8,
+                            color: HFColors().whiteColor(opacity: 1),
+                          ),
+                          HFHeading(
+                            text: 'workouts',
+                            size: 8,
+                            color: HFColors().whiteColor(opacity: 1),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: HFArchiveTile(
-                    image: 'assets/meal-plan.png',
-                    isSvg: false,
-                    hideTitle: true,
-                    useChildren: true,
-                    primaryColor: HFColors().yellowColor(opacity: 0.1),
-                    secondaryColor: HFColors().yellowColor(opacity: 0.6),
-                    onTap: () {
-                      Navigator.pushNamed(
-                        context,
-                        clientMealPlan,
-                        arguments: {
-                          'id': widget.id,
-                        },
-                      );
-                    },
-                    children: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        HFHeading(
-                          text: 'Meal plan',
-                          size: 8,
-                          color: HFColors().whiteColor(opacity: 1),
-                        ),
-                      ],
+                if (!isTemp)
+                  const SizedBox(
+                    height: 20,
+                  ),
+                if (!isTemp)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: HFArchiveTile(
+                      image: 'assets/meal-plan.png',
+                      isSvg: false,
+                      hideTitle: true,
+                      useChildren: true,
+                      primaryColor: HFColors().yellowColor(opacity: 0.1),
+                      secondaryColor: HFColors().yellowColor(opacity: 0.6),
+                      onTap: () {
+                        Navigator.pushNamed(
+                          context,
+                          clientMealPlan,
+                          arguments: {
+                            'id': widget.id,
+                          },
+                        );
+                      },
+                      children: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          HFHeading(
+                            text: 'Meal plan',
+                            size: 8,
+                            color: HFColors().whiteColor(opacity: 1),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
                 if (context.read<HFGlobalState>().userAccessLevel ==
                     accessLevels.client)
                   const SizedBox(
