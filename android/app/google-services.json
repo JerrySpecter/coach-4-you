@@ -9,6 +9,42 @@
       "client_info": {
         "mobilesdk_app_id": "1:504027153680:android:6009e61344b3e494655195",
         "android_client_info": {
+          "package_name": "com.example.health_factory"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "504027153680-2134qd7pegohnmn32qi5f3litn3qao6h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVYS0By2sjxvtwyIDcvUVmhuDIKPtm-ic"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "504027153680-2134qd7pegohnmn32qi5f3litn3qao6h.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "504027153680-aqdpnhlu93vgbogj0trmevcnkbfsnd54.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "design.specter.hf"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:504027153680:android:493830335adb2026655195",
+        "android_client_info": {
           "package_name": "design.specter.c4y"
         }
       },

@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -28,10 +25,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -49,15 +43,35 @@ class DefaultFirebaseOptions {
     }
   }
 
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyCH0cUDcq7523APpyHOlgB3-kkwgFollf0',
+    appId: '1:504027153680:web:bf058cb53d9ade4b655195',
+    messagingSenderId: '504027153680',
+    projectId: 'health-factory-56e91',
+    authDomain: 'health-factory-56e91.firebaseapp.com',
+    storageBucket: 'health-factory-56e91.appspot.com',
+    measurementId: 'G-F2W6F5FXFY',
+  );
+
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAVYS0By2sjxvtwyIDcvUVmhuDIKPtm-ic',
-    appId: '1:504027153680:android:6009e61344b3e494655195',
+    appId: '1:504027153680:android:493830335adb2026655195',
     messagingSenderId: '504027153680',
     projectId: 'health-factory-56e91',
     storageBucket: 'health-factory-56e91.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyATVoadC92lKObdDagZPvB4iTbYCgCRGbI',
+    appId: '1:504027153680:ios:652b12ddeff9864a655195',
+    messagingSenderId: '504027153680',
+    projectId: 'health-factory-56e91',
+    storageBucket: 'health-factory-56e91.appspot.com',
+    iosClientId: '504027153680-aqdpnhlu93vgbogj0trmevcnkbfsnd54.apps.googleusercontent.com',
+    iosBundleId: 'design.specter.hf',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyATVoadC92lKObdDagZPvB4iTbYCgCRGbI',
     appId: '1:504027153680:ios:652b12ddeff9864a655195',
     messagingSenderId: '504027153680',
